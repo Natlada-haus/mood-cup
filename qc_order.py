@@ -1,6 +1,7 @@
 import sys
 from playwright.sync_api import sync_playwright
 W,H,tag = int(sys.argv[1]), int(sys.argv[2]), sys.argv[3]
+MATRIX = len(sys.argv)>4
 URL='http://localhost:8765/index.html'
 errs=[]; cups=[]; final_cup=['mug']
 def shot(pg,n,full=False): pg.wait_for_timeout(600); pg.screenshot(path=f'shots/{tag}-{n}.png', full_page=full)
@@ -34,7 +35,7 @@ def brew(pg, coffee, name):
         elif 'อาร์ต' in c: pg.click('[data-act=pour]')
         elif 'ร่อนผง' in c:
             for i in range(6): pg.click('[data-act=sift]')
-        elif 'น้ำร้อน' in c: pg.fill('input[type=range]','80'); pg.dispatch_event('input[type=range]','input'); pg.click('[data-act=pourwater]')
+        elif 'น้ำร้อน' in c: wv=pg.evaluate("(()=>{const m=document.querySelector('#ctl .lbl').textContent.match(/(\\d+)–(\\d+)/);return String(Math.round((+m[1]+ +m[2])/2))})()"); pg.fill('input[type=range]',wv); pg.dispatch_event('input[type=range]','input'); pg.click('[data-act=pourwater]')
         elif 'ตีฟอง' in c: hold(pg,'[data-hold=whisk]',3000)
         elif c.endswith('นม') : pg.click('[data-act=coldmilk]')
         elif 'น้ำแข็ง' in c:
@@ -43,14 +44,15 @@ def brew(pg, coffee, name):
                 if pg.locator('#nextBtn[disabled]').count(): pg.click('[data-act=scoop]')
             shot(pg, f'{name}-ice-done')
         elif 'แก้ว' in c:
-            for cup in ['tumbler','mug','paper','glass']:
+            for cup in pg.eval_on_selector_all('[data-act=set-cup]','els=>els.map(e=>e.dataset.k)'):
                 pg.click(f'[data-act=set-cup][data-k={cup}]'); pg.wait_for_timeout(250)
                 src=pg.evaluate("document.querySelector('.preview .stamp>img').getAttribute('src')")
                 cups.append((name,cup,src.split('/')[-1]))
                 pg.screenshot(path=f'shots/{tag}-{name}-cup-{cup}.png')
-            pg.click(f'[data-act=set-cup][data-k={final_cup[0]}]'); shot(pg, f'{name}-cup')
+            fc=final_cup[0] if pg.locator(f'[data-act=set-cup][data-k={final_cup[0]}]').count() else cup
+            pg.click(f'[data-act=set-cup][data-k={fc}]'); shot(pg, f'{name}-cup')
         elif 'มู้ด' in c:
-            pg.click('[data-act=set-mood][data-k=happy]'); nxt(pg); pg.wait_for_timeout(1500); shot(pg, f'{name}-done'); return
+            pg.click('[data-act=set-mood][data-k=happy]'); pg.fill('#note','วันนี้ทดสอบ'); nxt(pg); pg.wait_for_timeout(1500); shot(pg, f'{name}-done'); return
         nxt(pg)
     errs.append('flow did not finish '+name)
 with sync_playwright() as p:
@@ -60,8 +62,8 @@ with sync_playwright() as p:
     pg.on('dialog',lambda d:d.accept())
     order(pg,'coffee','ลาเต้','iced','extra','L','25','oat'); shot(pg,'20-hot-iced')
     pg.wait_for_timeout(2500); print('bgm playing', pg.evaluate("SFX.playing"))
-    pg.click('#bgmBtn'); pg.wait_for_timeout(1500); print('bgm after toggle', pg.evaluate("[SFX.bgm,SFX.playing]")); shot(pg,'29-bgm-off')
-    pg.click('#bgmBtn'); pg.wait_for_timeout(800)
+    pg.click('#bgmBtn'); pg.click('[data-act=bgm-onoff]'); pg.wait_for_timeout(1500); print('bgm after toggle', pg.evaluate("[SFX.bgm,SFX.playing]")); shot(pg,'29-bgm-off')
+    pg.click('[data-act=bgm-onoff]'); pg.mouse.click(30,700); pg.wait_for_timeout(800)
     pg.evaluate("Object.defineProperty(document,'hidden',{configurable:true,get:()=>true});document.dispatchEvent(new Event('visibilitychange'))"); pg.wait_for_timeout(1200)
     print('hidden playing', pg.evaluate("SFX.playing"))
     pg.evaluate("Object.defineProperty(document,'hidden',{configurable:true,get:()=>false});document.dispatchEvent(new Event('visibilitychange'))"); pg.wait_for_timeout(1500)
@@ -79,6 +81,16 @@ with sync_playwright() as p:
     print('detail img', pg.evaluate("document.querySelector('.sheet .stamp>img').getAttribute('src')"))
     pg.click('.sheet-x'); pg.click('#muteBtn'); shot(pg,'28-muted'); print('muted', pg.evaluate("SFX.muted"))
     pg.click('#muteBtn'); print('ctx', pg.evaluate("1"))
+    # volume popover
+    pg.click('#bgmBtn'); pg.wait_for_timeout(300)
+    pg.fill('input[data-vol=music]','40'); pg.dispatch_event('input[data-vol=music]','input')
+    pg.fill('input[data-vol=sfx]','70'); pg.dispatch_event('input[data-vol=sfx]','input'); shot(pg,'30-volume')
+    print('vols', pg.evaluate("[SFX.vol('music'),SFX.vol('amb'),SFX.vol('sfx'), localStorage.getItem('ggcafe.moodcup.vol')]"))
+    pg.reload(); pg.wait_for_timeout(800); pg.click('#bgmBtn'); print('after reload', pg.eval_on_selector('input[data-vol=music]','e=>e.value')); pg.mouse.click(30,400)
+    if MATRIX:
+        for cat,item,temps in [('coffee','ลาเต้',['hot','iced']),('coffee','อเมริกาโน่',['hot','iced']),('coffee','คาปูชิโน่',['hot','iced']),('coffee','มอคค่า',['hot','iced']),('coffee','เดอร์ตี้',[None]),('matcha','มัทฉะลาเต้',['hot','iced']),('matcha','อุสุฉะ',[None]),('matcha','สตรอว์เบอร์รีมัทฉะ',[None]),('other','โฮจิฉะลาเต้',['hot','iced']),('other','โกโก้',['hot','iced']),('coffee','พัมพ์กิ้นลาเต้',[None])]:
+            for t in temps:
+                order(pg,cat,item,t,None,'M','50'); brew(pg, cat=='coffee', f'x-{item}-{t}')
     br.close()
 print('CUPS'); [print(' ',c) for c in cups]
 print('ERRS', errs)

@@ -3,3 +3,4 @@ moodtone/
 shots/
 qc.py
 *.pyc
+.qc/
