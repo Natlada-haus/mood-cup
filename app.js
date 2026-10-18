@@ -10,7 +10,7 @@ const BARISTAS = [
   { k:'sunny',   th:'ซันนี่',   prop:'หมวกกะลาสี',     q:'q-sway',   greet:'อะฮอย~ ยินดีต้อนรับขึ้นเรือคาเฟ่ของซันนี่!', tail:' ก๊าบ!',     quirk:'ชอบโยกตัวไปมาเหมือนอยู่บนเรือ' },
   { k:'berry',   th:'เบอร์รี่', prop:'หมวกเบเร่ต์',    q:'q-bounce', greet:'บองชูร์~ วันนี้เบอร์รี่ชงสไตล์ปารีสให้นะ', tail:' ซิลวูเปล้~', quirk:'ศิลปินลาเต้อาร์ตประจำร้าน' },
   { k:'moss',    th:'มอส',     prop:'ผ้าพันคอลายใบไม้', q:'q-nod',    greet:'สูดกลิ่นใบชาก่อน... อืม หอมจัง', tail:' ค่อยๆ นะ',   quirk:'สายมัทฉะตัวจริง ตีฟองนุ่มสุด' },
-  { k:'momo',    th:'โมโม่',   prop:'แว่นกลม',        q:'q-nod',    greet:'โมโม่จดสูตรมาเป๊ะทุกกรัมเลยนะ!', tail:' (จดโน้ต)',  quirk:'ชั่งตวงละเอียดยิบทุกกรัม' },
+  { k:'momo',    th:'โมโม่',   prop:'แว่นกลม',        q:'q-nod',    greet:'โมโม่จดสูตรมาเป๊ะทุกกรัมเลยนะ!', tail:' ✎',  quirk:'ชั่งตวงละเอียดยิบทุกกรัม' },
   { k:'bobby',   th:'บ็อบบี้', prop:'ผ้ากันเปื้อน+โบว์ไท', q:'q-bounce', greet:'สวัสดีครับ! บาริสต้าบ็อบบี้พร้อมให้บริการ', tail:' ครับผม!', quirk:'เนี้ยบเหมือนบาร์มืออาชีพ' },
   { k:'snowy',   th:'สโนวี่',  prop:'โบว์ชมพู',       q:'q-heart',  greet:'วันนี้ใส่หัวใจเพิ่มให้นะคะ ♡', tail:' ♡',          quirk:'แอบวาดหัวใจให้ทุกแก้ว' },
   { k:'biscuit', th:'บิสกิต',  prop:'หมวกเชฟเบเกอร์',  q:'q-sway',   greet:'ขนมเพิ่งออกจากเตาเลย! ได้เครื่องดื่มคู่กันพอดี', tail:' หอมๆ~', quirk:'ชอบเสิร์ฟคุกกี้แถมเงียบๆ' },
@@ -96,6 +96,14 @@ function stampHTML(e, o={}){
 function setTab(go){ document.querySelectorAll('#tabbar button').forEach(b=>b.classList.toggle('on', b.dataset.go===go)); }
 function showTab(on){ $('#tabbar').classList.toggle('hide', !on); app.classList.toggle('noTab', !on); }
 
+/* counter scene: image + barista + counter-front layer (keeps barista behind the counter) */
+const COUNTER = { ar:'612/819', duck:{l:44,t:39,w:39}, front:74.5, board:{l:42.5,t:13.2,w:54.5,h:25} };
+function counterScene(b, extra=''){
+  const c=COUNTER;
+  return `<div class="cs" style="aspect-ratio:${c.ar}"><img class="bg" src="${IMG}counter.webp" alt="หน้าร้านก๊าบก๊าบคาเฟ่">
+  <img class="cduck ${b.q}" src="${bImg(b.k)}" alt="${esc(b.th)}" style="left:${c.duck.l}%;top:${c.duck.t}%;width:${c.duck.w}%">
+  <img class="bg front" src="${IMG}counter.webp" alt="" style="clip-path:inset(${c.front}% 0 0 0)">${extra}</div>`;
+}
 /* ---------- views ---------- */
 function render(){
   const v = S.view;
@@ -118,7 +126,7 @@ function homeView(){
       <div style="font-size:13px">บาริสต้าวันนี้: <b>${esc(B(te.barista).th)}</b> · มู้ด ${esc((MOODS.find(x=>x.k===te.mood)||{}).th||'-')}</div>
       <div style="display:flex;gap:8px;margin-top:10px"><button class="btn sm" data-act="detail" data-k="${tk}">ดูแสตมป์</button><button class="btn sm soft hd" data-act="edit">แก้ไข</button></div></div>
     </div></div></div>` : `
-    <div class="hero hd"><div class="hero-img"><img class="bg" src="${IMG}counter.webp" alt="หน้าร้านก๊าบก๊าบคาเฟ่"><span class="credit">ภาพ: agy</span>${stars([[24,30,14],[330,40,12,.6]])}</div>
+    <div class="hero hd"><div class="hero-img">${counterScene(B(db.lastBarista||'sunny'))}<span class="credit">ภาพ: agy · น้องเป็ด: Duckling Sort</span>${stars([[24,30,14],[330,40,12,.6]])}</div>
       <div class="hero-body"><div class="sub">${thDate(now)}</div><div class="H" style="margin:2px 0 4px">วันนี้มู้ดแบบไหนดี?</div>
       <p style="font-size:13.5px;line-height:1.5">เข้าร้าน เจอบาริสต้าน้องเป็ดสุ่มวันละตัว แล้วชงเครื่องดื่มเองทีละขั้น เก็บเป็นแสตมป์ประจำวัน</p>
       <button class="btn wide" style="margin-top:12px" data-go="start">เข้าร้าน ชงแก้ววันนี้ ☕</button></div></div>`;
@@ -169,12 +177,10 @@ function cafeView(){
   const b = B(S.barista), sel = S.draft.drink, list = MENU.filter(m=>m.cat===S.cat), cur = M(sel);
   const col = (cat, title) => `<div><h4>${title}</h4>${MENU.filter(m=>cat.includes(m.cat)).map(m=>`<div class="r ${m.k===sel?'on':''}" data-act="pick" data-k="${m.k}"><span>${m.th.replace('สตรอว์เบอร์รีมัทฉะ','สตอฯ มัทฉะ')}</span><span>${m.p}</span></div>`).join('')}</div>`;
   return `<div>
-  <div class="board-wrap"><img class="bg" src="${IMG}counter.webp" alt="หน้าร้าน">
-    <div class="chalk" style="left:7%;top:28px;width:86%;padding:8px 12px"><div class="t">~ เมนูวันนี้ · ก๊าบก๊าบคาเฟ่ ~</div><div class="cols">${col(['coffee'],'COFFEE ☕')}${col(['matcha','other'],'MATCHA & TEA 🍵')}</div></div>
-    <img class="duck ${b.q}" src="${bImg(b.k)}" alt="${esc(b.th)}">
-    <div class="bubble" style="left:14px;top:250px;max-width:190px"><b>${esc(b.th)}</b> · บาริสต้าวันนี้<br>${esc(b.greet)}</div>
-    <button class="chip hd" style="position:absolute;right:12px;top:${S.edit?250:250}px;z-index:7;min-height:36px" data-act="home">✕ ออก</button>
-    <span class="credit" style="bottom:66px">ภาพ: agy</span>
+  <div class="board-wrap">${counterScene(b, `<div class="chalk" style="left:${COUNTER.board.l}%;top:${COUNTER.board.t}%;width:300px;transform-origin:0 0;transform:scale(var(--bs,.7))"><div class="t">~ เมนูวันนี้ ~</div><div class="cols">${col(['coffee'],'COFFEE')}${col(['matcha','other'],'MATCHA & TEA')}</div></div>`)}
+    <div class="bubble" style="left:12px;top:46%;max-width:46%"><b>${esc(b.th)}</b> · บาริสต้าวันนี้<br>${esc(b.greet)}</div>
+    <button class="chip hd" style="position:absolute;left:12px;top:14px;z-index:7;min-height:36px;background:#FFFDF7" data-act="home">✕ ออก</button>
+    <span class="credit" style="bottom:66px">ภาพ: agy · น้องเป็ด: Duckling Sort</span>
   </div>
   <div class="menu-sheet">
     <div style="display:flex;justify-content:space-between;align-items:center"><div class="H" style="font-size:24px">${S.edit?'แก้ไขแก้ววันนี้':'เลือกเมนูมู้ดวันนี้'}</div><div class="sub" style="font-size:12px">${esc(b.th)} · ${esc(b.prop)}</div></div>
@@ -216,8 +222,8 @@ function brewView(){
   <div class="steps">${S.steps.map((s,i)=>`<div class="st ${i<S.si?'d':i===S.si?'on':''}"><b class="hd thin">${i<S.si?'✓':i+1}</b>${STEP_SHORT[s]}</div>`).join('')}</div>
   <div class="stage hd" id="stage">
     ${preview ? `<div style="position:absolute;inset:0;background:radial-gradient(circle at 40% 45%,#FFF3D9,#F8E6CF)"></div><div class="preview" style="position:absolute;left:24px;top:30px;width:200px;height:200px;margin:0">${stampHTML(S.draft,{face:false})}</div>${stars([[24,20,14],[220,30,12,.5],[200,240,16,1]])}`
-      : `<img class="bg" src="${IMG}${coffeeBg?'coffee':'matcha'}.webp" alt="">`}
-    <img class="duck ${b.q}" src="${bImg(b.k)}" alt="${esc(b.th)}">
+      : `<img class="bg ${coffeeBg?"coffee":"matcha"}" src="${IMG}${coffeeBg?"coffee":"matcha"}.webp" alt="">`}
+    <span class="duckglow"></span><img class="duck ${b.q}" src="${bImg(b.k)}" alt="${esc(b.th)}">
     <div class="bubble" id="bub" ${preview?'style="left:auto;right:12px;top:12px;max-width:150px"':''}>${esc(say(st))}</div>
     <div class="fx" id="fx">${fxHTML(st)}</div>
     <span class="credit">ภาพ: agy</span>
@@ -348,7 +354,7 @@ function aboutSheet(){
   openSheet(`<div class="H">เกี่ยวกับ & เครดิต</div><p style="font-size:14px;line-height:1.6;margin-top:8px">ก๊าบก๊าบคาเฟ่ · MOOD CUP คือสมุดสะสมมู้ดประจำวัน ทุกวันเข้าร้าน เจอบาริสต้าน้องเป็ดแบบสุ่ม ชงเครื่องดื่มเองทีละขั้น แล้วเก็บเป็นแสตมป์ ข้อมูลทั้งหมดเก็บใน localStorage ของเครื่องนี้เท่านั้น</p>
   <div class="lbl">บาริสต้าทั้ง 12 ตัว</div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">${BARISTAS.map(b=>`<div style="text-align:center;font:600 11.5px Mali"><img src="${bImg(b.k)}" alt="" style="width:100%;aspect-ratio:1;object-fit:cover;mix-blend-mode:multiply;border-radius:14px">${b.th}</div>`).join('')}</div>
   <div class="lbl">เครดิตภาพ</div><ul style="font-size:13px;line-height:1.7;padding-left:18px">
-  <li>ภาพประกอบทั้งหมด (บาริสต้า 12 ตัว, หน้าร้าน, บาร์กาแฟ, บาร์มัทฉะ, แก้ว, แสตมป์เครื่องดื่ม) วาดด้วย <b>agy (Google Antigravity CLI)</b> อ้างอิงตัวละครจาก Duckling Sort · ก๊าบก๊าบคลับ</li>
+  <li>หน้าร้าน บาร์กาแฟ บาร์มัทฉะ และแสตมป์เครื่องดื่ม: วาดด้วย <b>agy (Google Antigravity CLI)</b></li><li>บาริสต้าน้องเป็ด 12 ตัว: จากชีตตัวละคร Duckling Sort (เวอร์ชันชั่วคราว) · ชุดใหม่พร้อมพร็อพกำลังวาดด้วย agy</li>
   <li>สติกเกอร์ หน้ามู้ด เส้นวาดมือ และกราฟ: SVG ที่เขียนด้วยโค้ด</li><li>ฟอนต์: Itim, Mali, Sriracha (Google Fonts)</li></ul>`);
 }
 
