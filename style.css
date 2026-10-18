@@ -248,3 +248,19 @@ textarea{width:100%;border:0;border-radius:16px;background:var(--card);padding:1
 .stage .bg.matcha{object-position:30% 50%}
 .stage .fx{left:auto;right:14px;bottom:30px;background:rgba(255,253,247,.85);border-radius:14px;padding:6px}
 .stage .fx:empty{display:none}
+/* order options + temp visuals + mute */
+.opts{margin-top:12px;border-radius:18px;background:#FFF3D9;padding:12px 14px 14px}
+.opts .lbl{margin:10px 0 6px}
+.opts .chip{min-height:38px;padding:5px 12px;font-size:13px}
+.otag{margin-top:12px;border-radius:14px;background:#FFF3D9;padding:8px 12px;font:500 12.5px/1.5 Mali}
+.stamp .icefx,.stamp .steamfx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.stamp .icefx g{animation:icedrop .5s cubic-bezier(.3,1.6,.5,1) backwards}
+@keyframes icedrop{from{opacity:0;transform:translateY(-30px)}}
+.stamp .steamfx path{opacity:0;animation:steam 2.4s ease-in-out infinite}
+@keyframes steam{0%{opacity:0;transform:translateY(6px)}40%{opacity:.9}100%{opacity:0;transform:translateY(-10px)}}
+.day .icefx,.day .steamfx{display:none}
+.fx .cube{animation:icedrop .45s cubic-bezier(.3,1.6,.5,1)}
+.mute{position:absolute;right:10px;top:calc(12px + env(safe-area-inset-top));z-index:40;width:36px;height:36px;border-radius:50%;background:#FFFDF7;font-size:17px;display:grid;place-items:center;opacity:.92}
+.mute.off{background:#F3E6D3}
+@media (prefers-reduced-motion:reduce){.stamp .steamfx path,.stamp .icefx g{animation:none;opacity:.8}}
+.top{padding-right:56px}.bhead{padding-right:52px!important}
