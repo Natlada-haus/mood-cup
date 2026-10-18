@@ -243,3 +243,8 @@ textarea{width:100%;border:0;border-radius:16px;background:var(--card);padding:1
 .stage .duckglow{position:absolute;right:-40px;bottom:-40px;width:250px;height:250px;border-radius:50%;background:radial-gradient(closest-side,#FFF8EC 55%,rgba(255,248,236,0));z-index:1;pointer-events:none}
 .stage .duck{z-index:2}.stage .bubble{z-index:8}.stage .fx{z-index:6}
 @media (min-width:900px){.side{width:calc(50% - 129px);justify-content:center;padding:0 48px}.side-in{max-width:360px}.side-logo{font-size:46px}}
+.stage{height:330px}
+.stage .bg.coffee{object-position:35% 50%}
+.stage .bg.matcha{object-position:30% 50%}
+.stage .fx{left:auto;right:14px;bottom:30px;background:rgba(255,253,247,.85);border-radius:14px;padding:6px}
+.stage .fx:empty{display:none}

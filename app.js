@@ -7,6 +7,7 @@ const KEY = 'ggcafe.moodcup.v1';
 
 /* ---------- data ---------- */
 const BARISTAS = [
+  { k:'pe', th:'เป๊ะ', prop:'หมวกแก๊ปแดง', q:'', greet:'สวัสดีค่า~ วันนี้มู้ดไหนดี? เป๊ะชงให้เอง!', tail:' ก๊าบ!', quirk:'หัวหน้าบาร์ประจำร้าน ยิ้มเก่งที่สุด' },
   { k:'sunny',   th:'ซันนี่',   prop:'หมวกกะลาสี',     q:'q-sway',   greet:'อะฮอย~ ยินดีต้อนรับขึ้นเรือคาเฟ่ของซันนี่!', tail:' ก๊าบ!',     quirk:'ชอบโยกตัวไปมาเหมือนอยู่บนเรือ' },
   { k:'berry',   th:'เบอร์รี่', prop:'หมวกเบเร่ต์',    q:'q-bounce', greet:'บองชูร์~ วันนี้เบอร์รี่ชงสไตล์ปารีสให้นะ', tail:' ซิลวูเปล้~', quirk:'ศิลปินลาเต้อาร์ตประจำร้าน' },
   { k:'moss',    th:'มอส',     prop:'ผ้าพันคอลายใบไม้', q:'q-nod',    greet:'สูดกลิ่นใบชาก่อน... อืม หอมจัง', tail:' ค่อยๆ นะ',   quirk:'สายมัทฉะตัวจริง ตีฟองนุ่มสุด' },
@@ -21,6 +22,7 @@ const BARISTAS = [
   { k:'puddle',  th:'พัดเดิ้ล', prop:'หูฟังสีส้ม',      q:'q-bop',    greet:'เปิดเพลงชิลๆ แล้ว... ชงไปฟังไปกันนะ ♪', tail:' ♪',    quirk:'โยกหัวตามจังหวะเพลง' },
 ];
 const B = k => BARISTAS.find(b=>b.k===k) || BARISTAS[0];
+const RANDOM_BARISTA = false; // เปิดเมื่อ agy วาดน้องเป็ดครบ 12 ตัว
 
 const MENU = [
   { k:'latte',      th:'ลาเต้',          p:75, cat:'coffee', img:'latte',       milk:1, art:1, desc:'เอสเปรสโซ่ + นมสตีมเนียนนุ่ม หอมละมุน' },
@@ -99,10 +101,7 @@ function showTab(on){ $('#tabbar').classList.toggle('hide', !on); app.classList.
 /* counter scene: image + barista + counter-front layer (keeps barista behind the counter) */
 const COUNTER = { ar:'612/819', duck:{l:44,t:39,w:39}, front:74.5, board:{l:42.5,t:13.2,w:54.5,h:25} };
 function counterScene(b, extra=''){
-  const c=COUNTER;
-  return `<div class="cs" style="aspect-ratio:${c.ar}"><img class="bg" src="${IMG}counter.webp" alt="หน้าร้านก๊าบก๊าบคาเฟ่">
-  <img class="cduck ${b.q}" src="${bImg(b.k)}" alt="${esc(b.th)}" style="left:${c.duck.l}%;top:${c.duck.t}%;width:${c.duck.w}%">
-  <img class="bg front" src="${IMG}counter.webp" alt="" style="clip-path:inset(${c.front}% 0 0 0)">${extra}</div>`;
+  return `<div class="cs" style="aspect-ratio:${COUNTER.ar}"><img class="bg" src="${IMG}counter.webp" alt="หน้าร้านก๊าบก๊าบคาเฟ่ กับบาริสต้าเป๊ะ">${extra}</div>`;
 }
 /* ---------- views ---------- */
 function render(){
@@ -126,12 +125,12 @@ function homeView(){
       <div style="font-size:13px">บาริสต้าวันนี้: <b>${esc(B(te.barista).th)}</b> · มู้ด ${esc((MOODS.find(x=>x.k===te.mood)||{}).th||'-')}</div>
       <div style="display:flex;gap:8px;margin-top:10px"><button class="btn sm" data-act="detail" data-k="${tk}">ดูแสตมป์</button><button class="btn sm soft hd" data-act="edit">แก้ไข</button></div></div>
     </div></div></div>` : `
-    <div class="hero hd"><div class="hero-img">${counterScene(B(db.lastBarista||'sunny'))}<span class="credit">ภาพ: agy · น้องเป็ด: Duckling Sort</span>${stars([[24,30,14],[330,40,12,.6]])}</div>
+    <div class="hero hd"><div class="hero-img">${counterScene(B('pe'))}<span class="credit">ภาพ: agy</span>${stars([[24,30,14],[330,40,12,.6]])}</div>
       <div class="hero-body"><div class="sub">${thDate(now)}</div><div class="H" style="margin:2px 0 4px">วันนี้มู้ดแบบไหนดี?</div>
       <p style="font-size:13.5px;line-height:1.5">เข้าร้าน เจอบาริสต้าน้องเป็ดสุ่มวันละตัว แล้วชงเครื่องดื่มเองทีละขั้น เก็บเป็นแสตมป์ประจำวัน</p>
       <button class="btn wide" style="margin-top:12px" data-go="start">เข้าร้าน ชงแก้ววันนี้ ☕</button></div></div>`;
   return `<div>
-  <div class="top"><div class="logo"><img src="${IMG}b-sunny.webp" alt="">ก๊าบก๊าบคาเฟ่</div><div class="pill hd thin">MOOD CUP</div></div>
+  <div class="top"><div class="logo"><img src="${IMG}b-pe.webp" alt="">ก๊าบก๊าบคาเฟ่</div><div class="pill hd thin">MOOD CUP</div></div>
   ${hero}
   ${calendarHTML()}
   <div class="homeacts"><button class="btn sm yel" data-go="summary">สรุปเดือนนี้ ◔</button><button class="btn sm soft hd" data-act="demo">เติมข้อมูลตัวอย่าง</button><button class="btn sm soft hd" data-act="about">เกี่ยวกับ & เครดิต</button></div>
@@ -165,8 +164,8 @@ function calendarHTML(){
 function enterCafe(){
   S.edit = !!db.entries[todayKey()] && S.edit;
   if (!S.edit){
-    const last = db.lastBarista; let pick;
-    do { pick = BARISTAS[Math.floor(Math.random()*BARISTAS.length)].k; } while (pick===last && BARISTAS.length>1);
+    const last = db.lastBarista; let pick='pe';
+    if (RANDOM_BARISTA) do { pick = BARISTAS[1+Math.floor(Math.random()*(BARISTAS.length-1))].k; } while (pick===last);
     S.barista = pick; db.lastBarista = pick; save();
   }
   S.draft = S.draft || { drink:'latte' };
@@ -180,7 +179,7 @@ function cafeView(){
   <div class="board-wrap">${counterScene(b, `<div class="chalk" style="left:${COUNTER.board.l}%;top:${COUNTER.board.t}%;width:300px;transform-origin:0 0;transform:scale(var(--bs,.7))"><div class="t">~ เมนูวันนี้ ~</div><div class="cols">${col(['coffee'],'COFFEE')}${col(['matcha','other'],'MATCHA & TEA')}</div></div>`)}
     <div class="bubble" style="left:12px;top:46%;max-width:46%"><b>${esc(b.th)}</b> · บาริสต้าวันนี้<br>${esc(b.greet)}</div>
     <button class="chip hd" style="position:absolute;left:12px;top:14px;z-index:7;min-height:36px;background:#FFFDF7" data-act="home">✕ ออก</button>
-    <span class="credit" style="bottom:66px">ภาพ: agy · น้องเป็ด: Duckling Sort</span>
+    <span class="credit" style="bottom:66px">ภาพ: agy</span>
   </div>
   <div class="menu-sheet">
     <div style="display:flex;justify-content:space-between;align-items:center"><div class="H" style="font-size:24px">${S.edit?'แก้ไขแก้ววันนี้':'เลือกเมนูมู้ดวันนี้'}</div><div class="sub" style="font-size:12px">${esc(b.th)} · ${esc(b.prop)}</div></div>
@@ -218,12 +217,12 @@ function brewView(){
   const coffeeBg = isCoffee(m);
   const preview = ['cup','deco','mood'].includes(st);
   return `<div>
-  <div class="bhead"><button class="x hd" data-act="quit" aria-label="ออก">✕</button><div style="text-align:center"><div style="font:400 19px Itim">${esc(m.th)} <span style="font:500 12px Mali">· บาร์ชง</span></div><div class="sub" style="font-size:11.5px">บาริสต้า ${esc(b.th)}</div></div><div style="font:600 12px Mali;width:38px;text-align:right">${S.si+1}/${S.steps.length}</div></div>
+  <div class="bhead"><button class="x hd" data-act="quit" aria-label="ออก">✕</button><div style="text-align:center"><div style="font:400 19px Itim">${esc(m.th)} <span style="font:500 12px Mali">· บาร์ชง</span></div><div class="sub" style="font-size:11.5px">${coffeeBg?'บาริสต้า '+esc(b.th):'ชมพู ผู้ช่วยบาร์มัทฉะ'}</div></div><div style="font:600 12px Mali;width:38px;text-align:right">${S.si+1}/${S.steps.length}</div></div>
   <div class="steps">${S.steps.map((s,i)=>`<div class="st ${i<S.si?'d':i===S.si?'on':''}"><b class="hd thin">${i<S.si?'✓':i+1}</b>${STEP_SHORT[s]}</div>`).join('')}</div>
   <div class="stage hd" id="stage">
     ${preview ? `<div style="position:absolute;inset:0;background:radial-gradient(circle at 40% 45%,#FFF3D9,#F8E6CF)"></div><div class="preview" style="position:absolute;left:24px;top:30px;width:200px;height:200px;margin:0">${stampHTML(S.draft,{face:false})}</div>${stars([[24,20,14],[220,30,12,.5],[200,240,16,1]])}`
       : `<img class="bg ${coffeeBg?"coffee":"matcha"}" src="${IMG}${coffeeBg?"coffee":"matcha"}.webp" alt="">`}
-    <span class="duckglow"></span><img class="duck ${b.q}" src="${bImg(b.k)}" alt="${esc(b.th)}">
+    ${preview?`<span class="duckglow"></span><img class="duck" src="${bImg(b.k)}" alt="">`:""}
     <div class="bubble" id="bub" ${preview?'style="left:auto;right:12px;top:12px;max-width:150px"':''}>${esc(say(st))}</div>
     <div class="fx" id="fx">${fxHTML(st)}</div>
     <span class="credit">ภาพ: agy</span>
@@ -352,9 +351,9 @@ function detailSheet(k){
 }
 function aboutSheet(){
   openSheet(`<div class="H">เกี่ยวกับ & เครดิต</div><p style="font-size:14px;line-height:1.6;margin-top:8px">ก๊าบก๊าบคาเฟ่ · MOOD CUP คือสมุดสะสมมู้ดประจำวัน ทุกวันเข้าร้าน เจอบาริสต้าน้องเป็ดแบบสุ่ม ชงเครื่องดื่มเองทีละขั้น แล้วเก็บเป็นแสตมป์ ข้อมูลทั้งหมดเก็บใน localStorage ของเครื่องนี้เท่านั้น</p>
-  <div class="lbl">บาริสต้าทั้ง 12 ตัว</div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">${BARISTAS.map(b=>`<div style="text-align:center;font:600 11.5px Mali"><img src="${bImg(b.k)}" alt="" style="width:100%;aspect-ratio:1;object-fit:cover;mix-blend-mode:multiply;border-radius:14px">${b.th}</div>`).join('')}</div>
+  <div class="lbl">น้องเป็ดที่จะมาเป็นบาริสต้าเร็วๆ นี้</div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">${BARISTAS.slice(1).map(b=>`<div style="text-align:center;font:600 11.5px Mali"><img src="${bImg(b.k)}" alt="" style="width:100%;aspect-ratio:1;object-fit:cover;mix-blend-mode:multiply;border-radius:14px">${b.th}</div>`).join('')}</div>
   <div class="lbl">เครดิตภาพ</div><ul style="font-size:13px;line-height:1.7;padding-left:18px">
-  <li>หน้าร้าน บาร์กาแฟ บาร์มัทฉะ และแสตมป์เครื่องดื่ม: วาดด้วย <b>agy (Google Antigravity CLI)</b></li><li>บาริสต้าน้องเป็ด 12 ตัว: จากชีตตัวละคร Duckling Sort (เวอร์ชันชั่วคราว) · ชุดใหม่พร้อมพร็อพกำลังวาดด้วย agy</li>
+  <li>หน้าร้าน บาร์กาแฟ บาร์มัทฉะ และแสตมป์เครื่องดื่ม: วาดด้วย <b>agy (Google Antigravity CLI)</b></li><li>บาริสต้าเป๊ะ: วาดด้วย agy · น้องเป็ดอีก 12 ตัว (ภาพในหน้านี้จากชีตตัวละคร Duckling Sort) กำลังวาดด้วย agy แล้วจะสุ่มมาเป็นบาริสต้า</li>
   <li>สติกเกอร์ หน้ามู้ด เส้นวาดมือ และกราฟ: SVG ที่เขียนด้วยโค้ด</li><li>ฟอนต์: Itim, Mali, Sriracha (Google Fonts)</li></ul>`);
 }
 
