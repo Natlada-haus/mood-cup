@@ -2,7 +2,7 @@ import sys
 from playwright.sync_api import sync_playwright
 W,H,tag = int(sys.argv[1]), int(sys.argv[2]), sys.argv[3]
 URL='http://localhost:8765/index.html'
-errs=[]
+errs=[]; cups=[]; final_cup=['mug']
 def shot(pg,n,full=False): pg.wait_for_timeout(600); pg.screenshot(path=f'shots/{tag}-{n}.png', full_page=full)
 def hold(pg,sel,ms):
     b=pg.locator(sel).first.bounding_box(); pg.mouse.move(b['x']+b['width']/2,b['y']+b['height']/2); pg.mouse.down(); pg.wait_for_timeout(ms); pg.mouse.up(); pg.wait_for_timeout(250)
@@ -42,24 +42,43 @@ def brew(pg, coffee, name):
             for i in range(6):
                 if pg.locator('#nextBtn[disabled]').count(): pg.click('[data-act=scoop]')
             shot(pg, f'{name}-ice-done')
-        elif 'แก้ว' in c: shot(pg, f'{name}-cup')
+        elif 'แก้ว' in c:
+            for cup in ['tumbler','mug','paper','glass']:
+                pg.click(f'[data-act=set-cup][data-k={cup}]'); pg.wait_for_timeout(250)
+                src=pg.evaluate("document.querySelector('.preview .stamp>img').getAttribute('src')")
+                cups.append((name,cup,src.split('/')[-1]))
+                pg.screenshot(path=f'shots/{tag}-{name}-cup-{cup}.png')
+            pg.click(f'[data-act=set-cup][data-k={final_cup[0]}]'); shot(pg, f'{name}-cup')
         elif 'มู้ด' in c:
             pg.click('[data-act=set-mood][data-k=happy]'); nxt(pg); pg.wait_for_timeout(1500); shot(pg, f'{name}-done'); return
         nxt(pg)
     errs.append('flow did not finish '+name)
 with sync_playwright() as p:
-    br=p.chromium.launch(executable_path='/usr/bin/google-chrome', args=['--autoplay-policy=user-gesture-required'])
+    br=p.chromium.launch(executable_path='/usr/bin/google-chrome', args=['--autoplay-policy=user-gesture-required','--mute-audio'])
     pg=br.new_page(viewport={'width':W,'height':H}, device_scale_factor=2 if W<500 else 1)
     pg.on('pageerror',lambda e:errs.append('PAGEERR '+str(e))); pg.on('console',lambda m: m.type in('error','warning') and errs.append(m.type+' '+m.text))
     pg.on('dialog',lambda d:d.accept())
-    order(pg,'coffee','ลาเต้','iced','extra','L','25','oat'); shot(pg,'20-hot-iced'); 
+    order(pg,'coffee','ลาเต้','iced','extra','L','25','oat'); shot(pg,'20-hot-iced')
+    pg.wait_for_timeout(2500); print('bgm playing', pg.evaluate("SFX.playing"))
+    pg.click('#bgmBtn'); pg.wait_for_timeout(1500); print('bgm after toggle', pg.evaluate("[SFX.bgm,SFX.playing]")); shot(pg,'29-bgm-off')
+    pg.click('#bgmBtn'); pg.wait_for_timeout(800)
+    pg.evaluate("Object.defineProperty(document,'hidden',{configurable:true,get:()=>true});document.dispatchEvent(new Event('visibilitychange'))"); pg.wait_for_timeout(1200)
+    print('hidden playing', pg.evaluate("SFX.playing"))
+    pg.evaluate("Object.defineProperty(document,'hidden',{configurable:true,get:()=>false});document.dispatchEvent(new Event('visibilitychange'))"); pg.wait_for_timeout(1500)
+    print('visible playing', pg.evaluate("SFX.playing"))
+    final_cup[0]='mug'
     st=pg.evaluate("[!!window.SFX, SFX.muted]"); print('sfx',st)
     brew(pg,True,'21-coffee-iced')
+    final_cup[0]='tumbler'
     order(pg,'coffee','ลาเต้','hot',None,'S','50'); shot(pg,'22-coffee-hot-order'); brew(pg,True,'23-coffee-hot')
+    final_cup[0]='glass'
     order(pg,'matcha','มัทฉะลาเต้','iced','less','M','0','soy'); shot(pg,'24-matcha-iced-order'); brew(pg,False,'25-matcha-iced')
+    final_cup[0]='mug'
     order(pg,'matcha','มัทฉะลาเต้','hot',None,'M','100'); brew(pg,False,'26-matcha-hot')
     pg.click('[data-act=home]'); pg.click('.hero [data-act=detail]'); shot(pg,'27-detail')
+    print('detail img', pg.evaluate("document.querySelector('.sheet .stamp>img').getAttribute('src')"))
     pg.click('.sheet-x'); pg.click('#muteBtn'); shot(pg,'28-muted'); print('muted', pg.evaluate("SFX.muted"))
     pg.click('#muteBtn'); print('ctx', pg.evaluate("1"))
     br.close()
+print('CUPS'); [print(' ',c) for c in cups]
 print('ERRS', errs)

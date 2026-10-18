@@ -39,7 +39,7 @@ const MENU = [
 const M = k => MENU.find(m=>m.k===k) || MENU[0];
 const isCoffee = m => m.cat==='coffee';
 const CAT = { coffee:{th:'กาแฟ',c:'#C79A6B'}, matcha:{th:'มัทฉะ',c:'#9DBF6A'}, other:{th:'อื่นๆ',c:'#F2A7A0'} };
-const TINT = { icelatte:'#EEDCC8', hotmatcha:'#DCEBC7', latte:'#F3DCC4', americano:'#EBD9C8', mocha:'#ECD4C4', icematcha:'#DCEBC7', strawmatcha:'#F7D6E0', hojicha:'#EDD8C3', cocoa:'#EFDACE', usucha:'#D9EAD2' };
+const TINT = { glassmatcha:'#DCEBC7', icelatte:'#EEDCC8', hotmatcha:'#DCEBC7', latte:'#F3DCC4', americano:'#EBD9C8', mocha:'#ECD4C4', icematcha:'#DCEBC7', strawmatcha:'#F7D6E0', hojicha:'#EDD8C3', cocoa:'#EFDACE', usucha:'#D9EAD2' };
 const CUPS = [ {k:'tumbler',th:'แก้วใสทรงสูง'}, {k:'mug',th:'แก้วมัค'}, {k:'paper',th:'แก้วกระดาษ'}, {k:'glass',th:'แก้วใสทรงเตี้ย'} ];
 const SLEEVES = [ {k:'none',c:null,th:'ไม่มี'}, {k:'peach',c:'#F8C4A4'}, {k:'butter',c:'#FFE08A'}, {k:'rose',c:'#F4A9B8'}, {k:'mint',c:'#BFE3C4'}, {k:'sky',c:'#B8DCF2'}, {k:'lilac',c:'#D5C4F0'} ];
 const STK = ['heart','star','flower','smile','leaf','cat'];
@@ -57,10 +57,15 @@ const TEMPS = [ {k:'hot',th:'☕ ร้อน'}, {k:'iced',th:'🧊 เย็น
 const OPT_DEF = { temp:'hot', ice:'normal', size:'M', sweet:50, milk:'fresh' };
 const priceOf = d => M(d.drink).p + ((SIZES.find(z=>z.k===d.size)||SIZES[1]).add) + (d.milk && d.milk!=='fresh' && M(d.drink).milk ? 15 : 0);
 const tempOf = d => M(d.drink).temp || d.temp || 'hot';
-/* artwork that matches hot/iced */
-const ICED_IMG = { latte:'icelatte', americano:'icelatte', cappuccino:'icelatte', dirty:'icelatte', mocha:'mocha', matchalatte:'icematcha', hojicha:'icelatte', cocoa:'mocha' };
-const HOT_IMG = { matchalatte:'hotmatcha' };
-const imgOf = e => { const m=M(e.drink); return (tempOf(e)==='iced' ? ICED_IMG[m.k] : HOT_IMG[m.k]) || m.img; };
+/* artwork follows the chosen cup (all agy pencil art; matcha/coffee variants are recolours of the same drawings) */
+const famOf = m => ['matcha'].includes(m.cat) ? 'matcha' : m.k==='cocoa' ? 'cocoa' : 'coffee';
+const CUP_ART = {
+  tumbler:{ coffee:'icelatte', cocoa:'icelatte', matcha:'icematcha', straw:'strawmatcha' },
+  glass:  { coffee:'mocha', cocoa:'mocha', matcha:'glassmatcha' },
+  mug:    { coffee:'latte', cocoa:'cocoa', matcha:'hotmatcha' },
+  paper:  { coffee:'americano', cocoa:'americano', matcha:'americano' },
+};
+const imgOf = e => { const m=M(e.drink), c=CUP_ART[e.cup]; if(!c) return m.img; return (m.k==='strawmatcha' && c.straw) || c[famOf(m)] || m.img; };
 const THM = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
 const THD = ['อา.','จ.','อ.','พ.','พฤ.','ศ.','ส.'];
 
@@ -100,18 +105,12 @@ const S = { view:'home', calY:new Date().getFullYear(), calM:new Date().getMonth
 /* ---------- helpers ---------- */
 const esc = s => String(s??'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const stars = arr => arr.map(([x,y,s,d])=>`<span class="star" style="left:${x}px;top:${y}px;font-size:${s||14}px;animation-delay:${d||0}s">★</span>`).join('');
-function toast(t, ok){ if(!ok) SFX.play('oops',{vol:.35}); const el=$('#toast'); el.textContent=t; el.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(()=>el.classList.remove('show'),2200); }
+function toast(t, ok){ if(!ok) SFX.play('oops',{vol:.22}); const el=$('#toast'); el.textContent=t; el.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(()=>el.classList.remove('show'),2200); }
 function bImg(k){ return `${IMG}b-${k}.webp`; }
 function say(step){ const b=B(S.barista); const x=STEP_TXT[step]; return (x?x.s:b.greet) + b.tail; }
 function stampHTML(e, o={}){
   const m = M(e.drink), sl = (SLEEVES.find(s=>s.k===e.sleeve)||SLEEVES[0]).c;
-  return `<div class="stamp" style="--d:${TINT[imgOf(e)]};${sl?`--sl:${sl}`:''}">${sl?'<i class="ring"></i>':''}<img src="${IMG}d-${imgOf(e)}.webp" alt="${esc(m.th)}" style="transform:scale(${(SIZES.find(z=>z.k===e.size)||SIZES[2]).sc})">${tempFX(e)}${(e.stickers||[]).map((k,i)=>`<span class="stk" style="left:${STK_POS[i][0]}%;top:${STK_POS[i][1]}%">${miniSticker(k)}</span>`).join('')}${o.face!==false && e.barista ? `<span class="bface"><img src="${bImg(e.barista)}" alt=""></span>`:''}</div>`;
-}
-function tempFX(e){
-  if (tempOf(e)==='iced'){ const n=(ICES.find(i=>i.k===(e.ice||'normal'))||ICES[2]).n; if(!n) return '';
-    const P=[[40,34,-12],[56,32,10],[47,44,4],[62,46,-18],[36,50,16],[54,56,-6]];
-    return `<svg class="icefx" viewBox="0 0 100 100" aria-hidden="true">${P.slice(0,n).map(([x,y,r],i)=>`<g transform="translate(${x} ${y}) rotate(${r})" style="animation-delay:${i*.08}s"><rect x="-5.5" y="-5.5" width="11" height="11" rx="3" fill="rgba(240,250,255,.6)" stroke="#5A4636" stroke-opacity=".75" stroke-width="1.3"/><path d="M-3 -2.5 L-.5 -3.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></g>`).join('')}</svg>`; }
-  return `<svg class="steamfx" viewBox="0 0 100 100" aria-hidden="true">${[38,50,62].map((x,i)=>`<path style="animation-delay:${i*.5}s" d="M${x} 30 q-6 -7 0 -14 q6 -7 0 -14" fill="none" stroke="#B49478" stroke-width="2.6" stroke-linecap="round"/>`).join('')}</svg>`;
+  return `<div class="stamp" style="--d:${TINT[imgOf(e)]};${sl?`--sl:${sl}`:''}">${sl?'<i class="ring"></i>':''}<img src="${IMG}d-${imgOf(e)}.webp" alt="${esc(m.th)}" style="transform:scale(${(SIZES.find(z=>z.k===e.size)||SIZES[2]).sc})">${(e.stickers||[]).map((k,i)=>`<span class="stk" style="left:${STK_POS[i][0]}%;top:${STK_POS[i][1]}%">${miniSticker(k)}</span>`).join('')}${o.face!==false && e.barista ? `<span class="bface"><img src="${bImg(e.barista)}" alt=""></span>`:''}</div>`;
 }
 function setTab(go){ document.querySelectorAll('#tabbar button').forEach(b=>b.classList.toggle('on', b.dataset.go===go)); }
 function showTab(on){ $('#tabbar').classList.toggle('hide', !on); app.classList.toggle('noTab', !on); }
@@ -301,8 +300,7 @@ function fxHTML(st){
 }
 function orderTag(d){ const t=tempOf(d); return `<div class="otag hd thin">ออเดอร์: <b>${t==='iced'?'🧊 เย็น':'☕ ร้อน'}</b>${t==='iced'?` · ${(ICES.find(i=>i.k===d.ice)||{}).th}`:''} · ${(SIZES.find(z=>z.k===d.size)||{}).th} · ${(SWEETS.find(x=>x.k===d.sweet)||{}).th}${M(d.drink).milk?` · ${(MILKS.find(x=>x.k===d.milk)||{}).th}`:''}</div>`; }
 function iceGlass(n, have){
-  const P=[[30,62,-10],[50,66,12],[40,48,4],[60,50,-16],[26,40,18],[52,36,-4]];
-  return `<svg width="86" height="96" viewBox="0 0 86 96" style="filter:url(#wob)"><path d="M14 14 L72 14 L66 88 Q65 92 60 92 L26 92 Q21 92 20 88Z" fill="#EAF6FB" stroke="#5A4636" stroke-width="2.5"/><path d="M18 46 L68 46 L66 88 Q65 92 60 92 L26 92 Q21 92 20 88Z" fill="${TINT[M(S.draft.drink).img]}" opacity=".9"/>${P.slice(0,have).map(([x,y,r],i)=>`<g class="cube" transform="translate(${x+4} ${y}) rotate(${r})"><rect x="-8" y="-8" width="16" height="16" rx="4" fill="rgba(240,250,255,.85)" stroke="#5A4636" stroke-width="2"/><path d="M-4.5 -4 L-1 -5" stroke="#fff" stroke-width="2" stroke-linecap="round"/></g>`).join('')}<text x="43" y="10" text-anchor="middle" font-family="Mali" font-size="10" font-weight="700" fill="#5A4636">${have}/${n}</text></svg>`;
+  return `<div class="iceart"><img src="${IMG}d-${imgOf(Object.assign({},S.draft,{cup:'tumbler'}))}.webp" alt=""><b>🧊 ${have}/${n}</b></div>`;
 }
 function thermo(t){ const f=Math.max(0,Math.min(1,(t-20)/80)); return `<svg width="40" height="96" viewBox="0 0 40 96" style="filter:url(#wob)"><rect x="13" y="6" width="14" height="66" rx="7" fill="#FFFDF7" stroke="#5A4636" stroke-width="2.4"/><rect x="17" y="${68-56*f}" width="6" height="${56*f+6}" rx="3" fill="#E8896A"/><circle cx="20" cy="80" r="11" fill="#E8896A" stroke="#5A4636" stroke-width="2.4"/><text x="20" y="95" text-anchor="middle" font-size="0">.</text></svg><div style="font:700 13px Mali;background:#FFFDF7;border-radius:8px;padding:0 6px;margin-top:2px">${Math.round(t)}°C</div>`; }
 function artPath(a){
@@ -376,7 +374,7 @@ function finish(){
   if (!isCoffee(M(e.drink))) e.shots = 0;
   db.entries[todayKey()] = e; save();
   const d=new Date(); S.calY=d.getFullYear(); S.calM=d.getMonth();
-  S.edit=false; S.draft=null; go('done'); confetti(); SFX.play('stamp',{vol:.7, delay:.25});
+  S.edit=false; S.draft=null; go('done'); confetti(); SFX.play('stamp',{vol:.45, delay:.25});
 }
 
 /* ----- sheets ----- */
@@ -396,7 +394,7 @@ function aboutSheet(){
   <div class="lbl">น้องเป็ดที่จะมาเป็นบาริสต้าเร็วๆ นี้</div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">${BARISTAS.slice(1).map(b=>`<div style="text-align:center;font:600 11.5px Mali"><img src="${bImg(b.k)}" alt="" style="width:100%;aspect-ratio:1;object-fit:cover;mix-blend-mode:multiply;border-radius:14px">${b.th}</div>`).join('')}</div>
   <div class="lbl">เครดิตภาพ</div><ul style="font-size:13px;line-height:1.7;padding-left:18px">
   <li>หน้าร้าน บาร์กาแฟ บาร์มัทฉะ และแสตมป์เครื่องดื่ม: วาดด้วย <b>agy (Google Antigravity CLI)</b></li><li>บาริสต้าเป๊ะ: วาดด้วย agy · น้องเป็ดอีก 12 ตัว (ภาพในหน้านี้จากชีตตัวละคร Duckling Sort) กำลังวาดด้วย agy แล้วจะสุ่มมาเป็นบาริสต้า</li>
-  <li>สติกเกอร์ หน้ามู้ด เส้นวาดมือ และกราฟ: SVG ที่เขียนด้วยโค้ด</li><li>ฟอนต์: Itim, Mali, Sriracha (Google Fonts)</li></ul>`);
+  <li>สติกเกอร์ หน้ามู้ด เส้นวาดมือ และกราฟ: SVG ที่เขียนด้วยโค้ด</li><li>ฟอนต์: Itim, Mali, Sriracha (Google Fonts)</li><li>เพลงโลไฟ: Seth_Makes_Sounds · เสียงบรรยากาศร้าน: Anya_Media (Freesound, CC0) · เสียงเอฟเฟกต์: Kenyset</li></ul>`);
 }
 
 /* ----- summary ----- */
@@ -493,18 +491,20 @@ function confetti(){
 
 /* ---------- sound mapping ---------- */
 function sfxFor(a, t){
-  if (a==='mute') return;
+  if (a==='mute'||a==='bgm') return;
   const P=S.prog||{};
-  if (a==='next') return SFX.play('swoosh',{vol:.45});
-  if (a==='back'||a==='quit'||a==='home'||a==='close') return SFX.play('swoosh',{vol:.3, rate:1.2});
-  if (a==='pick'||a==='cat'||a==='startbrew') return SFX.play('plop',{vol:.6});
-  if (a==='scoop'){ if(!P.ice){ SFX.play('ice',{vol:.8, rate:.8+Math.random()*.5}); SFX.play('ice',{vol:.5, rate:1.3+Math.random()*.3, delay:.07}); } return; }
-  if (a==='opt-temp'&&t.dataset.k==='iced'||a==='opt-ice'||a==='set-ice') return SFX.play('ice',{vol:.7, rate:1.1});
-  if (a==='pourwater'||a==='coldmilk'||a==='pour') return SFX.play('pour',{vol:.55});
-  if (a==='sift') return SFX.play('tap',{vol:.5, rate:.8+Math.random()*.4});
-  if (a==='pull') return SFX.play('pour',{vol:.35, rate:.8});
-  if (a==='stk'||a==='set-mood') return SFX.play('pop',{vol:.5});
-  SFX.play('tap',{vol:.55});
+  if (a==='next') return SFX.play('next',{vol:.32, rate:1.15});
+  if (a==='back'||a==='quit'||a==='home'||a==='close') return SFX.play('next',{vol:.22, rate:.95});
+  if (a==='cat') return SFX.play('bubble',{vol:.22, rate:1.2});
+  if (a==='pick') return SFX.play('blip',{vol:.35, rate:1.1});
+  if (a==='startbrew') return SFX.play('chime',{vol:.22});
+  if (a==='scoop'){ if(!P.ice){ SFX.play('ice',{vol:.5, rate:1+Math.random()*.4}); SFX.play('ice',{vol:.3, rate:1.5+Math.random()*.3, delay:.07}); } return; }
+  if (a==='opt-temp'&&t.dataset.k==='iced'||a==='opt-ice'||a==='set-ice') return SFX.play('ice',{vol:.4, rate:1.3});
+  if (a==='pourwater'||a==='coldmilk'||a==='pour') return SFX.play('pour',{vol:.3});
+  if (a==='pull') return SFX.play('pour',{vol:.2, rate:.85});
+  if (a==='sift') return SFX.play('tap',{vol:.3, rate:1+Math.random()*.4});
+  if (a==='stk'||a==='set-mood') return SFX.play('plop',{vol:.25, rate:1.15});
+  SFX.play('tap',{vol:.3, rate:1.1});
 }
 /* ---------- events ---------- */
 document.addEventListener('click', ev=>{
@@ -521,6 +521,7 @@ document.addEventListener('click', ev=>{
   switch(a){
     case 'close': closeSheet(); break;
     case 'mute': SFX.toggle(); break;
+    case 'bgm': SFX.toggleBgm(); toast(SFX.bgm?'เปิดเพลงและเสียงบรรยากาศร้านแล้ว ♪':'ปิดเพลงและเสียงบรรยากาศร้านแล้ว',1); break;
     case 'opt-temp': case 'opt-ice': case 'opt-size': case 'opt-sweet': case 'opt-milk': {
       const f=a.slice(4); d[f] = f==='sweet' ? +k : k; const y=app.scrollTop; render(); app.scrollTop=y; break; }
     case 'set-sweet': d.sweet=+k; refresh(); break;
@@ -569,7 +570,7 @@ function pull(){
   if (S.busy) return; S.busy=true; S.prog.shot=false; S.shotf=0; refreshStep();
   const total=S.draft.shots*900, t0=performance.now();
   (function tick(now){ const f=Math.min(1,(now-t0)/total); S.shotf=f; $('#fx').innerHTML=fxHTML('shot'); const g=$('#g1'); if(g) g.style.width=f*100+'%'; const gm=$('#gm'); if(gm) gm.textContent=`กำลังดึงช็อตที่ ${Math.min(S.draft.shots,Math.floor(f*S.draft.shots)+1)}...`;
-    if (f<1) requestAnimationFrame(tick); else { S.busy=false; S.prog.shot=true; SFX.play('pop',{vol:.5}); speak(S.draft.shots>=3?'เข้มสะใจ!':'ช็อตสวยงาม'); refreshStep(); } })(t0);
+    if (f<1) requestAnimationFrame(tick); else { S.busy=false; S.prog.shot=true; SFX.play('plop',{vol:.25}); speak(S.draft.shots>=3?'เข้มสะใจ!':'ช็อตสวยงาม'); refreshStep(); } })(t0);
 }
 render();
 })();
