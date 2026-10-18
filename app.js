@@ -8,7 +8,6 @@ const KEY = 'ggcafe.moodcup.v1';
 /* ---------- data ---------- */
 const BARISTAS = [
   { k:'pe', th:'เป๊ะ', prop:'หมวกแก๊ปแดง', q:'', greet:'สวัสดีค่า~ วันนี้มู้ดไหนดี? เป๊ะชงให้เอง!', tail:' ก๊าบ!', quirk:'หัวหน้าบาร์ประจำร้าน ยิ้มเก่งที่สุด' },
-  { k:'sunny',   th:'ซันนี่',   prop:'หมวกกะลาสี',     q:'q-sway',   greet:'อะฮอย~ ยินดีต้อนรับขึ้นเรือคาเฟ่ของซันนี่!', tail:' ก๊าบ!',     quirk:'ชอบโยกตัวไปมาเหมือนอยู่บนเรือ' },
   { k:'berry',   th:'เบอร์รี่', prop:'หมวกเบเร่ต์',    q:'q-bounce', greet:'บองชูร์~ วันนี้เบอร์รี่ชงสไตล์ปารีสให้นะ', tail:' ซิลวูเปล้~', quirk:'ศิลปินลาเต้อาร์ตประจำร้าน' },
   { k:'moss',    th:'มอส',     prop:'ผ้าพันคอลายใบไม้', q:'q-nod',    greet:'สูดกลิ่นใบชาก่อน... อืม หอมจัง', tail:' ค่อยๆ นะ',   quirk:'สายมัทฉะตัวจริง ตีฟองนุ่มสุด' },
   { k:'momo',    th:'โมโม่',   prop:'แว่นกลม',        q:'q-nod',    greet:'โมโม่จดสูตรมาเป๊ะทุกกรัมเลยนะ!', tail:' ✎',  quirk:'ชั่งตวงละเอียดยิบทุกกรัม' },
@@ -22,7 +21,7 @@ const BARISTAS = [
   { k:'puddle',  th:'พัดเดิ้ล', prop:'หูฟังสีส้ม',      q:'q-bop',    greet:'เปิดเพลงชิลๆ แล้ว... ชงไปฟังไปกันนะ ♪', tail:' ♪',    quirk:'โยกหัวตามจังหวะเพลง' },
 ];
 const B = k => BARISTAS.find(b=>b.k===k) || BARISTAS[0];
-const RANDOM_BARISTA = false; // เปิดเมื่อ agy วาดน้องเป็ดครบ 12 ตัว
+const RANDOM_BARISTA = true;
 
 const MENU = [
   { k:'latte',      th:'ลาเต้',          p:75, cat:'coffee', img:'latte',       milk:1, art:1, desc:'เอสเปรสโซ่ + นมสตีมเนียนนุ่ม หอมละมุน' },
@@ -42,7 +41,9 @@ const menuNow = () => MENU.filter(m => !m.season || m.season.includes(new Date()
 const M = k => MENU.find(m=>m.k===k) || MENU[0];
 const isCoffee = m => m.cat==='coffee';
 const CAT = { coffee:{th:'กาแฟ',c:'#C79A6B'}, matcha:{th:'มัทฉะ',c:'#9DBF6A'}, other:{th:'อื่นๆ',c:'#F2A7A0'} };
-const TINT = { pumpkin:'#F6D9BE', xmascocoa:'#F3D3CF', glassmatcha:'#DCEBC7', icelatte:'#EEDCC8', hotmatcha:'#DCEBC7', latte:'#F3DCC4', americano:'#EBD9C8', mocha:'#ECD4C4', icematcha:'#DCEBC7', strawmatcha:'#F7D6E0', hojicha:'#EDD8C3', cocoa:'#EFDACE', usucha:'#D9EAD2' };
+const TINT_BASE = { pumpkin:'#F6D9BE', xmascocoa:'#F3D3CF', glassmatcha:'#DCEBC7', icelatte:'#EEDCC8', hotmatcha:'#DCEBC7', latte:'#F3DCC4', americano:'#EBD9C8', mocha:'#ECD4C4', icematcha:'#DCEBC7', strawmatcha:'#F7D6E0', hojicha:'#EDD8C3', cocoa:'#EFDACE', usucha:'#D9EAD2' };
+Object.assign(TINT_BASE,{ matcha:'#DCEBC7', matchalatte:'#E3EFD2', xmas:'#F3D3CF' });
+const TINT = new Proxy(TINT_BASE,{ get:(t,k)=> t[k] || t[String(k).split('-').pop()] || '#F8E6CF' });
 const CUPS = [ {k:'tumbler',th:'แก้วใสทรงสูง'}, {k:'mug',th:'แก้วมัค'}, {k:'paper',th:'แก้วกระดาษ'}, {k:'glass',th:'แก้วใสทรงเตี้ย'} ];
 const SLEEVES = [ {k:'none',c:null,th:'ไม่มี'}, {k:'peach',c:'#F8C4A4'}, {k:'butter',c:'#FFE08A'}, {k:'rose',c:'#F4A9B8'}, {k:'mint',c:'#BFE3C4'}, {k:'sky',c:'#B8DCF2'}, {k:'lilac',c:'#D5C4F0'}, {k:'gold',c:'#E9B949',th:'สีทอง'} ];
 const STK = ['heart','star','flower','smile','leaf','cat','crown','duck'];
@@ -80,18 +81,34 @@ const CUP_ART = {
   mug:    { coffee:'latte', cocoa:'cocoa', matcha:'hotmatcha', pumpkin:'pumpkin', xmas:'xmascocoa' },
   paper:  { coffee:'americano', cocoa:'americano', matcha:'americano', pumpkin:'americano', xmas:'americano' },
 };
-const CUPS_BY_TEMP = { hot:['mug','paper'], iced:['tumbler','glass'] };
-const cupsFor = d => CUPS.filter(c => CUPS_BY_TEMP[tempOf(d)].includes(c.k));
-const fixCup = d => { if (!CUPS_BY_TEMP[tempOf(d)].includes(d.cup)) d.cup = tempOf(d)==='iced' ? 'tumbler' : 'mug'; };
+/* vessels: the cup IS the shape choice; every vessel shows the actual drink (agy drawings) */
+const VESSELS = {
+  mug:  [ {k:'mug1',th:'มัคครีมโบว์ชมพู'}, {k:'mug2',th:'มัคสีชมพู'}, {k:'mug3',th:'มัคเขียวเดซี่'}, {k:'mug4',th:'มัคบับเบิ้ล'}, {k:'mug5',th:'มัคแก้วลอนผูกโบว์'}, {k:'mug6',th:'มัคลายจุดขอบชมพู'} ],
+  glass:[ {k:'gl1',th:'แก้วทัมเบลอร์'}, {k:'gl2',th:'แก้วทรงสูง'}, {k:'gl3',th:'แก้วลอนซ้อน'}, {k:'gl4',th:'แก้วบับเบิ้ล'}, {k:'gl5',th:'แก้วทรงกระป๋อง'}, {k:'gl6',th:'แก้วร็อก'} ],
+  bowl: [ {k:'bw1',th:'ยูกิ ชิโนะ'}, {k:'bw2',th:'โอริเบะ เขียว'}, {k:'bw3',th:'โอริเบะ ชิโนะ'}, {k:'bw4',th:'ไอวอรี่ กรีน'}, {k:'bw5',th:'เบจ กรีน'}, {k:'bw6',th:'บราวน์ กรีน ดริป'} ],
+  straw:[ {k:'straw',th:'แก้วสตรอว์เบอร์รี'} ],
+};
+const VESSEL_KEYS = Object.values(VESSELS).flat().map(v=>v.k);
+const vesselType = d => { const m=M(d.drink); if (m.k==='strawmatcha') return 'straw'; if (tempOf(d)==='iced') return 'glass'; return m.k==='usucha' ? 'bowl' : 'mug'; };
+const VARIANT = {
+  mug:  { latte:'latte', cappuccino:'latte', mocha:'mocha', americano:'americano', hojicha:'hojicha', cocoa:'cocoa', pumpkin:'pumpkin', xmascocoa:'xmas', matchalatte:'matcha' },
+  glass:{ latte:'latte', cappuccino:'latte', dirty:'latte', mocha:'mocha', americano:'americano', matchalatte:'matcha', hojicha:'hojicha', cocoa:'cocoa' },
+  bowl: { usucha:'usucha' },
+};
+const cupsFor = d => VESSELS[vesselType(d)];
+const fixCup = d => { const L=cupsFor(d); if (!L.some(v=>v.k===d.cup)) d.cup = L[0].k; };
+const vesselArt = e => { const t=VESSEL_KEYS.includes(e.cup) ? (e.cup==='straw'?'straw':e.cup.slice(0,2)==='gl'?'glass':e.cup.slice(0,2)==='bw'?'bowl':'mug') : null; if(!t) return null; if (t==='straw') return 'strawmatcha'; const v=VARIANT[t][M(e.drink).k]; return v ? `v-${e.cup}-${v}` : null; };
 /* tidy overlays placed per drawing (percent of the 100×100 art box) */
 const ART_FX = {
+  bw1:{steam:[16,[36,48,60]]}, bw2:{steam:[16,[36,48,60]]}, bw3:{steam:[16,[36,48,60]]}, bw4:{steam:[16,[36,48,60]]}, bw5:{steam:[18,[36,48,60]]}, bw6:{steam:[18,[36,48,60]]},
+  mug1:{steam:[13,[26,37,48]]}, mug2:{steam:[13,[26,37,48]]}, mug3:{steam:[13,[28,39,50]]}, mug4:{steam:[15,[24,35,46]]}, mug5:{steam:[15,[28,39,50]]}, mug6:{steam:[13,[27,38,49]]},
   icelatte:{ ice:[[38,25],[56,23],[47,32],[64,31],[32,34],[54,40]] }, icematcha:{ ice:[[38,25],[56,23],[47,32],[64,31],[32,34],[54,40]] },
   strawmatcha:{ ice:[[38,19],[56,17],[47,26],[64,25],[32,28],[56,33]] },
   mocha:{ ice:[[36,51],[52,50],[66,52],[29,60],[71,60],[44,56]] }, glassmatcha:{ ice:[[36,51],[52,50],[66,52],[29,60],[71,60],[44,56]] },
   latte:{ steam:[22,[36,48,60]] }, pumpkin:{ steam:[22,[36,48,60]] }, xmascocoa:{ steam:[11,[38,50,62]] }, hotmatcha:{ steam:[22,[36,48,60]] }, cocoa:{ steam:[11,[38,50,62]] }, americano:{ steam:[15,[42,52,62]] },
 };
 function artFX(e){
-  const fx = ART_FX[imgOf(e)]; if (!fx) return '';
+  const im0=imgOf(e), fx = ART_FX[im0] || ART_FX[im0.split("-")[1]]; if (!fx) return '';
   if (tempOf(e)==='iced' && fx.ice){ const n=(ICES.find(i=>i.k===(e.ice||'normal'))||ICES[2]).n; if(!n) return '';
     const rot=[-12,9,3,-16,14,-5];
     return `<svg class="artfx" viewBox="0 0 100 100" aria-hidden="true"><g filter="url(#wob)">${fx.ice.slice(0,n).map(([x,y],i)=>`<g class="cube" transform="translate(${x} ${y}) rotate(${rot[i]})" style="animation-delay:${i*.07}s"><rect x="-4.6" y="-4.6" width="9.2" height="9.2" rx="2.4" fill="rgba(255,255,255,.62)" stroke="#8A7262" stroke-width=".8" stroke-opacity=".8"/><rect x="-4.6" y="1.2" width="9.2" height="3.4" rx="1.6" fill="rgba(170,200,220,.28)"/><path d="M-2.8 -2.4 L-.4 -3.2" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/></g>`).join('')}</g></svg>`; }
@@ -99,7 +116,7 @@ function artFX(e){
     return `<svg class="artfx" viewBox="0 0 100 100" aria-hidden="true">${xs.map((x,i)=>{ const d=`M${x} ${y} q-4 -5 0 -10 q4 -5 0 -10`; return `<g class="steam" style="animation-delay:${i*.6}s"><path d="${d}" fill="none" stroke="#B49478" stroke-opacity=".45" stroke-width="3.4" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></g>`; }).join('')}</svg>`; }
   return '';
 }
-const imgOf = e => { const m=M(e.drink), c=CUP_ART[e.cup]; if(!c) return m.img; return (m.k==='strawmatcha' && c.straw) || c[famOf(m)] || m.img; };
+const imgOf = e => { const va=vesselArt(e); if (va) return va; const m=M(e.drink), c=CUP_ART[e.cup]; if(!c) return m.img; return (m.k==='strawmatcha' && c.straw) || c[famOf(m)] || m.img; };
 /* duck replies matching the mood */
 const MOOD_REPLY = {
   happy:'ดีใจด้วยน้า~ วันสดใสแบบนี้ต้องฉลองด้วยแก้วโปรด',
@@ -163,8 +180,9 @@ function showTab(on){ $('#tabbar').classList.toggle('hide', !on); $('#tabfade').
 
 /* counter scene: image + barista + counter-front layer (keeps barista behind the counter) */
 const COUNTER = { ar:'612/819', duck:{l:44,t:39,w:39}, front:74.5, board:{l:42.5,t:13.2,w:54.5,h:25} };
+const COUNTER_ART = ['pe','berry','moss','momo','bobby'];
 function counterScene(b, extra=''){
-  return `<div class="cs" style="aspect-ratio:${COUNTER.ar}"><img class="bg" src="${IMG}counter.webp" alt="หน้าร้านก๊าบก๊าบคาเฟ่ กับบาริสต้าเป๊ะ">${extra}</div>`;
+  return `<div class="cs" style="aspect-ratio:${COUNTER.ar}"><img class="bg" src="${IMG}counter-${COUNTER_ART.includes(b.k)?b.k:'pe'}.webp" alt="หน้าร้านก๊าบก๊าบคาเฟ่ กับบาริสต้า${esc(b.th)}">${extra}</div>`;
 }
 /* ---------- views ---------- */
 function render(){
@@ -228,7 +246,8 @@ function enterCafe(){
   S.edit = !!db.entries[todayKey()] && S.edit;
   if (!S.edit){
     const last = db.lastBarista; let pick='pe';
-    if (RANDOM_BARISTA) do { pick = BARISTAS[1+Math.floor(Math.random()*(BARISTAS.length-1))].k; } while (pick===last);
+    const pool = BARISTAS.filter(b=>COUNTER_ART.includes(b.k));
+    if (RANDOM_BARISTA && pool.length>1) do { pick = pool[Math.floor(Math.random()*pool.length)].k; } while (pick===last);
     S.barista = pick; db.lastBarista = pick; save();
   }
   S.draft = Object.assign({ drink:'latte' }, OPT_DEF, S.draft||{});
@@ -300,7 +319,7 @@ function brewView(){
   <div class="steps">${S.steps.map((s,i)=>`<div class="st ${i<S.si?'d':i===S.si?'on':''}"><b class="hd thin">${i<S.si?'✓':i+1}</b>${STEP_SHORT[s]}</div>`).join('')}</div>
   <div class="stage hd" id="stage">
     ${preview ? `<div style="position:absolute;inset:0;background:radial-gradient(circle at 40% 45%,#FFF3D9,#F8E6CF)"></div><div class="preview" style="position:absolute;left:24px;top:30px;width:200px;height:200px;margin:0">${stampHTML(S.draft,{face:false})}</div>${stars([[24,20,14],[220,30,12,.5],[200,240,16,1]])}`
-      : `<img class="bg ${coffeeBg?"coffee":"matcha"}" src="${IMG}${coffeeBg?"coffee":"matcha"}.webp" alt="">`}
+      : `<img class="bg ${coffeeBg?"coffee":"matcha"}" src="${IMG}${(['milk','art'].includes(st) && m.milk && tempOf(S.draft)==='hot')?"steam":coffeeBg?"coffee":"matcha"}.webp" alt="">`}
     ${preview?`<span class="duckglow"></span><img class="duck" src="${bImg(b.k)}" alt="">`:""}
     <div class="bubble" id="bub" ${preview?'style="left:auto;right:12px;top:12px;max-width:150px"':''}>${esc(say(st))}</div>
     <div class="fx" id="fx">${fxHTML(st)}</div>
@@ -328,7 +347,7 @@ function ctrlHTML(st){
     case 'milk2': return `<div class="lbl">นม${m.straw?' (มีสตรอว์เบอร์รีบดรองแก้วแล้ว ✓)':''}</div>${chips(MILKS,d.milk,'set-milk')}<button class="btn wide yel" style="margin-top:12px" data-act="coldmilk">${P.milk?'เทนมแล้ว ✓':d.temp==='iced'?'เทนมเย็น 🥛':'เทนมอุ่น 🥛'}</button>${orderTag(d)}`;
     case 'ice': { const n=(ICES.find(i=>i.k===d.ice)||ICES[2]).n; return `<div class="lbl">ปริมาณน้ำแข็ง</div>${chips(ICES.filter(i=>i.n),d.ice,'set-ice')}${gauge('g1',Math.min(100,(S.icen||0)*100/n))}<div class="gmeta"><span id="gm">${P.ice?`น้ำแข็ง ${n} ก้อน ✓`:`ตักแล้ว ${S.icen||0}/${n} ก้อน`}</span><span>แตะทีละก้อน</span></div><button class="btn wide yel" style="margin-top:12px" data-act="scoop">${P.ice?'น้ำแข็งครบแล้ว ✓':'ตักน้ำแข็ง 🧊'}</button>`; }
     case 'top': return `<div class="lbl">ท็อปปิ้ง</div>${chips(TOPS,d.topping,'set-top')}<div class="lbl">ความหวาน</div>${chips(SWEETS,d.sweet,'set-sweet')}`;
-    case 'cup': { const L=cupsFor(d); return `<div class="cups" style="margin-top:12px;grid-template-columns:repeat(${L.length},1fr)">${L.map(c=>`<button class="cupopt hd ${d.cup===c.k?'on':''}" data-act="set-cup" data-k="${c.k}"><img src="${IMG}d-${imgOf(Object.assign({},d,{cup:c.k}))}.webp" alt="">${c.th}</button>`).join('')}</div><div class="sub" style="font-size:12px;margin-top:8px">${tempOf(d)==='iced'?'เครื่องดื่มเย็น: เสิร์ฟในแก้วใส':'เครื่องดื่มร้อน: เสิร์ฟในแก้วมัคหรือแก้วกระดาษ'}</div>`; }
+    case 'cup': { const L=cupsFor(d); return `<div class="cups" style="margin-top:12px;grid-template-columns:repeat(${Math.min(3,L.length)},1fr)">${L.map(c=>`<button class="cupopt hd ${d.cup===c.k?'on':''}" data-act="set-cup" data-k="${c.k}"><img src="${IMG}d-${imgOf(Object.assign({},d,{cup:c.k}))}.webp" alt="">${c.th}</button>`).join('')}</div><div class="sub" style="font-size:12px;margin-top:8px">${({glass:'เครื่องดื่มเย็น: เลือกทรงแก้วใสที่ชอบ',mug:'เครื่องดื่มร้อน: เลือกแก้วมัคเซรามิกที่ชอบ',bowl:'อุสุฉะ: เสิร์ฟในถ้วยชาวันแบบญี่ปุ่น เลือกลายเคลือบได้',straw:'เมนูนี้เสิร์ฟในแก้วใสทรงสูงแบบเดียว'})[vesselType(d)]}</div>`; }
     case 'deco': return `<div class="lbl">สีปลอกแก้ว</div><div class="chips">${SLEEVES.map(s=>{ const L=lockOf('sleeve',s.k); return `<button class="sw hd thin ${s.c?'':'none'} ${d.sleeve===s.k?'on':''} ${L?'locked':''}" style="${s.c?`background:${s.c}`:''}" data-act="set-sleeve" data-k="${s.k}" aria-label="${s.th||s.k}${L?' (ล็อก)':''}">${L?'🔒':''}</button>`; }).join('')}</div><div class="lbl">สติกเกอร์ (${d.stickers.length}/3)</div><div class="chips">${STK.map(k=>{ const L=lockOf('sticker',k); return `<button class="stkbtn hd thin ${d.stickers.includes(k)?'on':''} ${L?'locked':''}" data-act="stk" data-k="${k}" aria-label="${k}${L?' (ล็อก)':''}">${miniSticker(k)}${L?'<i class="lk">🔒</i>':''}</button>`; }).join('')}</div><div class="sub" style="font-size:11.5px;margin-top:8px">🔒 ปลดล็อกของพิเศษเมื่อสะสมแสตมป์ติดกัน 7 / 14 / 30 วัน</div>`;
     case 'mood': return `<div class="chips" style="margin-top:12px">${MOODS.map(x=>`<button class="moodbtn hd thin ${d.mood===x.k?'on':''}" data-act="set-mood" data-k="${x.k}">${faceSVG(x.k,34)}${x.th}</button>`).join('')}</div><div class="lbl">วันนี้เป็นไง? (หนึ่งบรรทัด ไม่ใส่ก็ได้)</div><input id="note" class="noteline" type="text" maxlength="60" enterkeyhint="done" placeholder="เช่น ประชุมเยอะ แต่กาแฟอร่อย" value="${esc(d.note)}">`;
   }
@@ -346,7 +365,7 @@ function fxHTML(st){
 }
 function orderTag(d){ const t=tempOf(d); return `<div class="otag hd thin">ออเดอร์: <b>${t==='iced'?'🧊 เย็น':'☕ ร้อน'}</b>${t==='iced'?` · ${(ICES.find(i=>i.k===d.ice)||{}).th}`:''} · ${(SIZES.find(z=>z.k===d.size)||{}).th} · ${(SWEETS.find(x=>x.k===d.sweet)||{}).th}${M(d.drink).milk?` · ${(MILKS.find(x=>x.k===d.milk)||{}).th}`:''}</div>`; }
 function iceGlass(n, have){
-  return `<div class="iceart"><img src="${IMG}d-${imgOf(Object.assign({},S.draft,{cup:'tumbler'}))}.webp" alt=""><b>🧊 ${have}/${n}</b></div>`;
+  return `<div class="iceart"><img src="${IMG}d-${imgOf(Object.assign({},S.draft,{cup:vesselType(S.draft)==='glass'?S.draft.cup:'tumbler'}))}.webp" alt=""><b>🧊 ${have}/${n}</b></div>`;
 }
 function thermo(t){ const f=Math.max(0,Math.min(1,(t-20)/80)); return `<svg width="40" height="96" viewBox="0 0 40 96" style="filter:url(#wob)"><rect x="13" y="6" width="14" height="66" rx="7" fill="#FFFDF7" stroke="#5A4636" stroke-width="2.4"/><rect x="17" y="${68-56*f}" width="6" height="${56*f+6}" rx="3" fill="#E8896A"/><circle cx="20" cy="80" r="11" fill="#E8896A" stroke="#5A4636" stroke-width="2.4"/><text x="20" y="95" text-anchor="middle" font-size="0">.</text></svg><div style="font:700 13px Mali;background:#FFFDF7;border-radius:8px;padding:0 6px;margin-top:2px">${Math.round(t)}°C</div>`; }
 function artPath(a){
@@ -452,7 +471,7 @@ function detailSheet(k){
 }
 function aboutSheet(){
   openSheet(`<div class="H">เกี่ยวกับ & เครดิต</div><p style="font-size:14px;line-height:1.6;margin-top:8px">ก๊าบก๊าบคาเฟ่ · MOOD CUP คือสมุดสะสมมู้ดประจำวัน ทุกวันเข้าร้าน เจอบาริสต้าน้องเป็ดแบบสุ่ม ชงเครื่องดื่มเองทีละขั้น แล้วเก็บเป็นแสตมป์ ข้อมูลทั้งหมดเก็บใน localStorage ของเครื่องนี้เท่านั้น</p>
-  <div class="lbl">น้องเป็ดที่จะมาเป็นบาริสต้าเร็วๆ นี้</div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">${BARISTAS.slice(1).map(b=>`<div style="text-align:center;font:600 11.5px Mali"><img src="${bImg(b.k)}" alt="" style="width:100%;aspect-ratio:1;object-fit:cover;mix-blend-mode:multiply;border-radius:14px">${b.th}</div>`).join('')}</div>
+  <div class="lbl">น้องเป็ดบาริสต้าประจำร้าน (สุ่มมาชงให้ทุกวัน)</div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">${BARISTAS.slice(1).map(b=>`<div style="text-align:center;font:600 11.5px Mali"><img src="${bImg(b.k)}" alt="" style="width:100%;aspect-ratio:1;object-fit:cover;mix-blend-mode:multiply;border-radius:14px">${b.th}</div>`).join('')}</div>
   <div class="lbl">เครดิตภาพ</div><ul style="font-size:13px;line-height:1.7;padding-left:18px">
   <li>หน้าร้าน บาร์กาแฟ บาร์มัทฉะ และแสตมป์เครื่องดื่ม: วาดด้วย <b>agy (Google Antigravity CLI)</b></li><li>บาริสต้าเป๊ะ: วาดด้วย agy · น้องเป็ดอีก 12 ตัว (ภาพในหน้านี้จากชีตตัวละคร Duckling Sort) กำลังวาดด้วย agy แล้วจะสุ่มมาเป็นบาริสต้า</li>
   <li>สติกเกอร์ หน้ามู้ด เส้นวาดมือ และกราฟ: SVG ที่เขียนด้วยโค้ด</li><li>ฟอนต์: Itim, Mali, Sriracha (Google Fonts)</li><li>เพลงโลไฟ: Seth_Makes_Sounds · เสียงบรรยากาศร้าน: Anya_Media (Freesound, CC0) · เสียงเอฟเฟกต์: Kenyset</li></ul>`);

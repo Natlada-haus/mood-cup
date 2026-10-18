@@ -8,7 +8,10 @@ def shot(pg,n,full=False): pg.wait_for_timeout(600); pg.screenshot(path=f'shots/
 def hold(pg,sel,ms):
     b=pg.locator(sel).first.bounding_box(); pg.mouse.move(b['x']+b['width']/2,b['y']+b['height']/2); pg.mouse.down(); pg.wait_for_timeout(ms); pg.mouse.up(); pg.wait_for_timeout(250)
 def nxt(pg):
-    pg.wait_for_selector('#nextBtn:not([disabled])',timeout=8000); pg.click('#nextBtn'); pg.wait_for_timeout(300)
+    try: pg.wait_for_selector('#nextBtn:not([disabled])',timeout=8000)
+    except Exception:
+        pg.screenshot(path=f'shots/{tag}-STUCK.png'); errs.append('stuck at '+cur(pg)); return
+    pg.click('#nextBtn'); pg.wait_for_timeout(300)
 def cur(pg): return pg.evaluate("document.querySelector('.st.on')?.textContent||''")
 def order(pg, cat, item, temp, ice=None, size='L', sweet='25', milk=None):
     pg.goto(URL); pg.evaluate('localStorage.clear()'); pg.reload(); pg.wait_for_timeout(800)
@@ -68,14 +71,14 @@ with sync_playwright() as p:
     print('hidden playing', pg.evaluate("SFX.playing"))
     pg.evaluate("Object.defineProperty(document,'hidden',{configurable:true,get:()=>false});document.dispatchEvent(new Event('visibilitychange'))"); pg.wait_for_timeout(1500)
     print('visible playing', pg.evaluate("SFX.playing"))
-    final_cup[0]='mug'
+    final_cup[0]='gl2'
     st=pg.evaluate("[!!window.SFX, SFX.muted]"); print('sfx',st)
     brew(pg,True,'21-coffee-iced')
-    final_cup[0]='tumbler'
+    final_cup[0]='mug3'
     order(pg,'coffee','ลาเต้','hot',None,'S','50'); shot(pg,'22-coffee-hot-order'); brew(pg,True,'23-coffee-hot')
-    final_cup[0]='glass'
+    final_cup[0]='gl4'
     order(pg,'matcha','มัทฉะลาเต้','iced','less','M','0','soy'); shot(pg,'24-matcha-iced-order'); brew(pg,False,'25-matcha-iced')
-    final_cup[0]='mug'
+    final_cup[0]='mug5'
     order(pg,'matcha','มัทฉะลาเต้','hot',None,'M','100'); brew(pg,False,'26-matcha-hot')
     pg.click('[data-act=home]'); pg.click('.hero [data-act=detail]'); shot(pg,'27-detail')
     print('detail img', pg.evaluate("document.querySelector('.sheet .stamp>img').getAttribute('src')"))
