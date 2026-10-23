@@ -306,3 +306,45 @@ textarea{width:100%;border:0;border-radius:16px;background:var(--card);padding:1
 .reward .rsl{width:34px;height:34px;border-radius:50%;border:8px solid;display:block}
 .sw.locked,.stkbtn.locked{opacity:.45;position:relative;font-size:13px}
 .stkbtn .lk{position:absolute;right:-4px;bottom:-4px;font-style:normal;font-size:12px}
+
+/* ===== Phase 1 ===== */
+/* launch splash (web stand-in for the iOS launch screen) */
+.splash{position:absolute;inset:0;z-index:50;background:#FFF7EA;display:grid;place-items:center;transition:opacity .5s}
+.splash img{width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply}
+.splash.out{opacity:0;pointer-events:none}
+/* real time-of-day lighting over the counter scene */
+.cs .tod{position:absolute;inset:0;z-index:3;pointer-events:none;transition:background 1s}
+.tod-morning .cs .tod{background:linear-gradient(180deg,rgba(255,240,205,.5),rgba(255,255,255,0) 70%);mix-blend-mode:multiply}
+.tod-day .cs .tod{background:none}
+.tod-evening .cs .tod{background:linear-gradient(180deg,rgba(255,170,110,.55),rgba(255,214,170,.45));mix-blend-mode:multiply}
+.tod-night .cs .tod{background:radial-gradient(ellipse at 62% 12%,rgba(255,226,170,.55),rgba(150,140,200,.75) 75%);mix-blend-mode:multiply}
+.closesign{position:absolute;left:4%;top:7.5%;width:34%;z-index:6;animation:sway 3.2s ease-in-out infinite;transform-origin:50% 0}
+.closesign img{width:100%;display:block}
+.closesign b{position:absolute;left:44%;right:8%;top:50%;transform:translateY(-35%);font:400 clamp(11px,3.4vw,15px)/1.1 Itim;color:#6B4A2E;text-align:center}
+@keyframes sway{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+/* banners */
+.banner{display:flex;align-items:center;gap:10px;margin:10px 14px 0;padding:10px 12px;border-radius:18px;background:var(--card);font-size:13px;line-height:1.4;position:relative}
+.banner img{width:48px;height:48px;border-radius:50%;object-fit:cover;mix-blend-mode:multiply;flex:0 0 48px}
+.banner .big{font-size:28px}.banner .sub{font-size:12px}
+.banner.miss{background:#FFE7EE}.banner.nudge{background:#FFF1C9}
+.banner .bx{position:absolute;right:6px;top:4px;font-size:12px;opacity:.6;padding:4px}
+.gprog{margin:10px 14px 0;padding:10px 12px;border-radius:18px;background:var(--card)}
+.gfaces{display:flex;gap:6px;margin-bottom:6px}
+.gfaces img{width:44px;height:44px;border-radius:50%;object-fit:cover;mix-blend-mode:multiply;background:#FFF3DF}
+.gfaces img.lock{filter:grayscale(1) blur(2px) opacity(.35)}
+/* usual order + late-night hint */
+.usual{display:flex;align-items:center;gap:10px;width:100%;margin:10px 0 2px;padding:8px 12px;border-radius:18px;background:#FFF1C9;text-align:left;font:500 12.5px/1.35 Mali}
+.usual img{width:44px;height:44px;mix-blend-mode:multiply}.usual span{flex:1}.usual i{font-style:normal;font-size:18px}
+.latehint{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0 2px;padding:8px 12px;border-radius:18px;background:#EEE6F7;font:500 12.5px/1.4 Mali}
+.latehint img{width:40px;height:40px;mix-blend-mode:multiply}.latehint span{flex:1;min-width:150px}
+/* unlock + reminder cards on the done screen */
+.unlock{display:flex;gap:12px;align-items:center;text-align:left;margin-top:14px;padding:10px 12px;border-radius:18px;background:#FFF1C9;font-size:13px;line-height:1.45}
+.unlock img{width:76px;height:76px;mix-blend-mode:multiply;flex:0 0 76px}
+.remask{margin-top:14px;padding:12px;border-radius:18px;background:var(--card);text-align:left;font-size:13.5px}
+.remform{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.remform input[type=time]{font:600 15px Mali;padding:6px 10px;border-radius:12px;border:2px solid var(--ink);background:#FFFDF7;color:var(--ink)}
+.devpre{font:11px/1.35 ui-monospace,monospace;white-space:pre-wrap;background:#FFFDF7;border-radius:12px;padding:8px;max-height:260px;overflow:auto}
+.footnote a{text-decoration:underline;color:inherit}
+
+.hero-img .closesign{top:45%;width:30%}
+.banner.unlockb{background:#FFF1C9}

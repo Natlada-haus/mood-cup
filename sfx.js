@@ -59,7 +59,8 @@ function loop(n, o = {}){
   } catch (e) { return () => {}; }
 }
 /* light haptics where supported (Android Chrome); silent with SFX muted */
-function buzz(p){ if (muted || !navigator.vibrate) return; try { navigator.vibrate(p); } catch (e) {} }
+/* haptics go through the platform adapter (own on/off setting; native shell can swap it) */
+function buzz(p){ if (window.Platform) return window.Platform.haptic.play(p); if (!navigator.vibrate) return; try { navigator.vibrate(p); } catch (e) {} }
 function setVol(k, v){
   vols[k] = Math.max(0, Math.min(1, v)); localStorage.setItem(VKEY, JSON.stringify(vols));
   if (!ctx) return;

@@ -3,7 +3,9 @@
 const $ = (s, r=document) => r.querySelector(s);
 const app = $('#app');
 const IMG = 'assets/img/';
-const KEY = 'ggcafe.moodcup.v1';
+const KEY = 'ggcafe.moodcup.v1';   /* storage key kept for continuity; schema version lives inside (db.v) */
+const SCHEMA = 2;
+const P = window.Platform, ENV = P.env, NOW = () => ENV.now();
 
 /* ---------- data ---------- */
 const BARISTAS = [
@@ -21,6 +23,18 @@ const BARISTAS = [
   { k:'puddle',  th:'พัดเดิ้ล', prop:'หูฟังสีส้ม',      q:'q-bop',    greet:'เปิดเพลงชิลๆ แล้ว... ชงไปฟังไปกันนะ ♪', tail:' ♪',    quirk:'โยกหัวตามจังหวะเพลง' },
 ];
 const B = k => BARISTAS.find(b=>b.k===k) || BARISTAS[0];
+/* launch roster: 5 ducks (Nadda, 23 Oct 2026). The other 7 stay in data for a later phase but are never shown. */
+const LAUNCH_DUCKS = ['pe','berry','moss','momo','bobby'];
+const LIVE = BARISTAS.filter(b=>LAUNCH_DUCKS.includes(b.k));
+/* guests: unlocked by CUMULATIVE stamps (sample data excluded), permanent once unlocked */
+const GUESTS = [
+  { k:'frog',     th:'กบขาประจำ', at:3,  role:'ลูกค้าประจำ สั่งมัทฉะเสมอ', line:'วันนี้ก็มัทฉะเหมือนเดิมนะ~ อ๊บ!' },
+  { k:'hedgehog', th:'เม่นจิ๋ว',   at:7,  role:'บาริสต้ารับเชิญ', helper:1, line:'วันนี้เม่นจิ๋วขอช่วยชงด้วยนะ ระวังหนามนิดนึง!' },
+  { k:'otter',    th:'นากทะเล',   at:14, role:'ชอบวางแก้วไว้บนพุง', line:'โกโก้อุ่นๆ วางบนพุงแบบนี้แหละ สบายที่สุด' },
+  { k:'sheep',    th:'แกะขนฟู',   at:30, role:'บาริสต้าฝึกหัด', helper:1, line:'แกะขนฟูจดออเดอร์ให้เองนะ ขอเวลาแป๊บ~' },
+  { k:'redpanda', th:'แพนด้าแดง', at:60, role:'แขกพิเศษ เปิดเมนูลับ', line:'ชู่ว... วันนี้มีเมนูลับนะ บอกแค่เธอคนเดียว ✦' },
+];
+const G = k => GUESTS.find(g=>g.k===k);
 const RANDOM_BARISTA = true;
 
 const MENU = [
@@ -36,17 +50,21 @@ const MENU = [
   { k:'pumpkin',    th:'พัมพ์กิ้นลาเต้', p:95, cat:'coffee', img:'pumpkin', milk:1, art:1, temp:'hot', season:[9], badge:'🎃 ฮาโลวีน · ตุลาคมเท่านั้น', desc:'เมนูฮาโลวีน ฟักทองอบ + อบเชยอุ่นๆ บนเอสเปรสโซ่' },
   { k:'xmascocoa',  th:'โกโก้คริสต์มาส', p:90, cat:'other', img:'xmascocoa', milk:1, powder:'โกโก้', wt:[70,90], temp:'hot', season:[11], badge:'🎄 คริสต์มาส · ธันวาคมเท่านั้น', desc:'โกโก้เข้มข้น มาร์ชแมลโลว์ + เปปเปอร์มินต์ หอมหวานรับลมหนาว' },
   { k:'cocoa',      th:'โกโก้',           p:70, cat:'other',  img:'cocoa',       milk:1, powder:'โกโก้', wt:[70,90], desc:'โกโก้เข้มข้น + มาร์ชแมลโลว์' },
+  { k:'secret',     th:'เมเปิลซินนามอนลาเต้', p:99, cat:'coffee', img:'secret', milk:1, art:0, temp:'hot', secret:'redpanda', badge:'✦ เมนูลับจากแพนด้าแดง', desc:'เมนูลับ: เมเปิลหอมๆ + อบเชย บนลาเต้ลายดาว' },
 ];
-const menuNow = () => MENU.filter(m => !m.season || m.season.includes(new Date().getMonth()));
+/* limited-time items are driven by the festival date engine (festivals.js), not by month numbers */
+const secretOpen = m => !m.secret || !!(db.guests||{})[m.secret];
+const menuNow = () => { const fm = Festivals.festivalMenu(NOW()); return MENU.filter(m => (!m.season || fm.includes(m.k)) && secretOpen(m)); };
+const badgeIcon = m => m.secret ? '✦' : m.k==='pumpkin' ? '🎃' : m.k==='xmascocoa' ? '🎄' : '';
 const M = k => MENU.find(m=>m.k===k) || MENU[0];
 const isCoffee = m => m.cat==='coffee';
 const CAT = { coffee:{th:'กาแฟ',c:'#C79A6B'}, matcha:{th:'มัทฉะ',c:'#9DBF6A'}, other:{th:'อื่นๆ',c:'#F2A7A0'} };
 const TINT_BASE = { pumpkin:'#F6D9BE', xmascocoa:'#F3D3CF', glassmatcha:'#DCEBC7', icelatte:'#EEDCC8', hotmatcha:'#DCEBC7', latte:'#F3DCC4', americano:'#EBD9C8', mocha:'#ECD4C4', icematcha:'#DCEBC7', strawmatcha:'#F7D6E0', hojicha:'#EDD8C3', cocoa:'#EFDACE', usucha:'#D9EAD2' };
-Object.assign(TINT_BASE,{ matcha:'#DCEBC7', matchalatte:'#E3EFD2', xmas:'#F3D3CF' });
+Object.assign(TINT_BASE,{ matcha:'#DCEBC7', matchalatte:'#E3EFD2', xmas:'#F3D3CF', secret:'#F6DCC6', decaf:'#E6DDF2' });
 const TINT = new Proxy(TINT_BASE,{ get:(t,k)=> t[k] || t[String(k).split('-').pop()] || '#F8E6CF' });
 const CUPS = [ {k:'tumbler',th:'แก้วใสทรงสูง'}, {k:'mug',th:'แก้วมัค'}, {k:'paper',th:'แก้วกระดาษ'}, {k:'glass',th:'แก้วใสทรงเตี้ย'} ];
 const SLEEVES = [ {k:'none',c:null,th:'ไม่มี'}, {k:'peach',c:'#F8C4A4'}, {k:'butter',c:'#FFE08A'}, {k:'rose',c:'#F4A9B8'}, {k:'mint',c:'#BFE3C4'}, {k:'sky',c:'#B8DCF2'}, {k:'lilac',c:'#D5C4F0'}, {k:'gold',c:'#E9B949',th:'สีทอง'} ];
-const STK = ['heart','star','flower','smile','leaf','cat','crown','duck'];
+const STK = ['heart','star','flower','smile','leaf','bean','crown','duck'];   /* 'cat' removed (no cats) -> 'bean'; old entries migrated */
 /* streak rewards (best all-time streak, sample data excluded) */
 const REWARDS = [
   { d:7,  type:'sleeve',  k:'gold',  th:'ปลอกแก้วสีทอง' },
@@ -70,10 +88,11 @@ const SIZES = [ {k:'S',th:'เล็ก 12oz',add:0,sc:.84}, {k:'M',th:'กล�
 const ICES = [ {k:'none',th:'ไม่ใส่น้ำแข็ง',n:0}, {k:'less',th:'น้ำแข็งน้อย',n:2}, {k:'normal',th:'ปกติ',n:4}, {k:'extra',th:'น้ำแข็งเยอะ',n:6} ];
 const SWEETS = [ {k:0,th:'ไม่หวาน 0%'}, {k:25,th:'หวานน้อย 25%'}, {k:50,th:'หวานกลาง 50%'}, {k:100,th:'หวานปกติ 100%'}, {k:120,th:'หวานมาก 120%'} ];
 const TEMPS = [ {k:'hot',th:'☕ ร้อน'}, {k:'iced',th:'🧊 เย็น'} ];
-const OPT_DEF = { temp:'hot', ice:'normal', size:'M', sweet:50, milk:'fresh' };
-const priceOf = d => M(d.drink).p + ((SIZES.find(z=>z.k===d.size)||SIZES[1]).add) + (d.milk && d.milk!=='fresh' && M(d.drink).milk ? 15 : 0);
+const OPT_DEF = { temp:'hot', ice:'normal', size:'M', sweet:50, milk:'fresh', decaf:0 };
+const DECAFS = [ {k:0,th:'ปกติ'}, {k:1,th:'🌙 ดีแคฟ'} ];
+const priceOf = d => M(d.drink).secret ? M(d.drink).p : (M(d.drink).p) + ((SIZES.find(z=>z.k===d.size)||SIZES[1]).add) + (d.milk && d.milk!=='fresh' && M(d.drink).milk ? 15 : 0);
 const tempOf = d => M(d.drink).temp || d.temp || 'hot';
-/* artwork follows the chosen cup (all agy pencil art; matcha/coffee variants are recolours of the same drawings) */
+/* artwork follows the chosen cup (matcha/coffee variants are recolours of the same pencil drawings) */
 const famOf = m => m.k==='pumpkin' ? 'pumpkin' : m.k==='xmascocoa' ? 'xmas' : ['matcha'].includes(m.cat) ? 'matcha' : m.k==='cocoa' ? 'cocoa' : 'coffee';
 const CUP_ART = {
   tumbler:{ coffee:'icelatte', cocoa:'icelatte', matcha:'icematcha', straw:'strawmatcha' },
@@ -81,23 +100,25 @@ const CUP_ART = {
   mug:    { coffee:'latte', cocoa:'cocoa', matcha:'hotmatcha', pumpkin:'pumpkin', xmas:'xmascocoa' },
   paper:  { coffee:'americano', cocoa:'americano', matcha:'americano', pumpkin:'americano', xmas:'americano' },
 };
-/* vessels: the cup IS the shape choice; every vessel shows the actual drink (agy drawings) */
+/* vessels: the cup IS the shape choice; every vessel shows the actual drink */
 const VESSELS = {
   mug:  [ {k:'mug1',th:'มัคครีมโบว์ชมพู'}, {k:'mug2',th:'มัคสีชมพู'}, {k:'mug3',th:'มัคเขียวเดซี่'}, {k:'mug4',th:'มัคบับเบิ้ล'}, {k:'mug5',th:'มัคแก้วลอนผูกโบว์'}, {k:'mug6',th:'มัคลายจุดขอบชมพู'} ],
   glass:[ {k:'gl1',th:'แก้วทัมเบลอร์'}, {k:'gl2',th:'แก้วทรงสูง'}, {k:'gl3',th:'แก้วลอนซ้อน'}, {k:'gl4',th:'แก้วบับเบิ้ล'}, {k:'gl5',th:'แก้วทรงกระป๋อง'}, {k:'gl6',th:'แก้วร็อก'} ],
   bowl: [ {k:'bw1',th:'ยูกิ ชิโนะ'}, {k:'bw2',th:'โอริเบะ เขียว'}, {k:'bw3',th:'โอริเบะ ชิโนะ'}, {k:'bw4',th:'ไอวอรี่ กรีน'}, {k:'bw5',th:'เบจ กรีน'}, {k:'bw6',th:'บราวน์ กรีน ดริป'} ],
   straw:[ {k:'straw',th:'แก้วสตรอว์เบอร์รี'} ],
+  secret:[ {k:'secretcup',th:'แก้วลายดาวเมนูลับ'} ],
 };
+const DECAF_MUG = {k:'decafmug',th:'มัคม่วงพระจันทร์ (ดีแคฟ)'};
 const VESSEL_KEYS = Object.values(VESSELS).flat().map(v=>v.k);
-const vesselType = d => { const m=M(d.drink); if (m.k==='strawmatcha') return 'straw'; if (tempOf(d)==='iced') return 'glass'; return m.k==='usucha' ? 'bowl' : 'mug'; };
+const vesselType = d => { const m=M(d.drink); if (m.secret) return 'secret'; if (m.k==='strawmatcha') return 'straw'; if (tempOf(d)==='iced') return 'glass'; return m.k==='usucha' ? 'bowl' : 'mug'; };
 const VARIANT = {
   mug:  { latte:'latte', cappuccino:'latte', mocha:'mocha', americano:'americano', hojicha:'hojicha', cocoa:'cocoa', pumpkin:'pumpkin', xmascocoa:'xmas', matchalatte:'matcha' },
   glass:{ latte:'latte', cappuccino:'latte', dirty:'latte', mocha:'mocha', americano:'americano', matchalatte:'matcha', hojicha:'hojicha', cocoa:'cocoa' },
   bowl: { usucha:'usucha' },
 };
-const cupsFor = d => VESSELS[vesselType(d)];
+const cupsFor = d => { const t=vesselType(d); return t==='mug' && d.decaf && isCoffee(M(d.drink)) ? [DECAF_MUG, ...VESSELS.mug] : VESSELS[t]; };
 const fixCup = d => { const L=cupsFor(d); if (!L.some(v=>v.k===d.cup)) d.cup = L[0].k; };
-const vesselArt = e => { const t=VESSEL_KEYS.includes(e.cup) ? (e.cup==='straw'?'straw':e.cup.slice(0,2)==='gl'?'glass':e.cup.slice(0,2)==='bw'?'bowl':'mug') : null; if(!t) return null; if (t==='straw') return 'strawmatcha'; const v=VARIANT[t][M(e.drink).k]; return v ? `v-${e.cup}-${v}` : null; };
+const vesselArt = e => { if (e.cup==='secretcup') return 'secret'; if (e.cup==='decafmug') return 'decaf'; const t=VESSEL_KEYS.includes(e.cup) ? (e.cup==='straw'?'straw':e.cup.slice(0,2)==='gl'?'glass':e.cup.slice(0,2)==='bw'?'bowl':'mug') : null; if(!t) return null; if (t==='straw') return 'strawmatcha'; const v=VARIANT[t][M(e.drink).k]; return v ? `v-${e.cup}-${v}` : null; };
 /* tidy overlays placed per drawing (percent of the 100×100 art box) */
 const ART_FX = {
   bw1:{steam:[16,[36,48,60]]}, bw2:{steam:[16,[36,48,60]]}, bw3:{steam:[16,[36,48,60]]}, bw4:{steam:[16,[36,48,60]]}, bw5:{steam:[18,[36,48,60]]}, bw6:{steam:[18,[36,48,60]]},
@@ -105,6 +126,7 @@ const ART_FX = {
   icelatte:{ ice:[[38,25],[56,23],[47,32],[64,31],[32,34],[54,40]] }, icematcha:{ ice:[[38,25],[56,23],[47,32],[64,31],[32,34],[54,40]] },
   strawmatcha:{ ice:[[38,19],[56,17],[47,26],[64,25],[32,28],[56,33]] },
   mocha:{ ice:[[36,51],[52,50],[66,52],[29,60],[71,60],[44,56]] }, glassmatcha:{ ice:[[36,51],[52,50],[66,52],[29,60],[71,60],[44,56]] },
+  secret:{ steam:[13,[30,41,52]] }, decaf:{ steam:[14,[30,41,52]] },
   latte:{ steam:[22,[36,48,60]] }, pumpkin:{ steam:[22,[36,48,60]] }, xmascocoa:{ steam:[11,[38,50,62]] }, hotmatcha:{ steam:[22,[36,48,60]] }, cocoa:{ steam:[11,[38,50,62]] }, americano:{ steam:[15,[42,52,62]] },
 };
 function artFX(e){
@@ -153,17 +175,111 @@ const STEP_TXT = {
 const STEP_SHORT = {bean:'เมล็ด',grind:'บด',tamp:'แทมป์',shot:'ช็อต',milk:'สตีมนม',art:'อาร์ต',syrup:'ไซรัป',sift:'ร่อนผง',water:'น้ำร้อน',whisk:'ตีฟอง',milk2:'นม',ice:'น้ำแข็ง',top:'ท็อปปิ้ง',cup:'แก้ว',deco:'แต่ง',mood:'มู้ด'};
 
 /* ---------- storage ---------- */
+/* all persistence goes through Platform.storage (localStorage on web). Data never leaves the device
+   unless the user exports a backup file themselves. Schema: see HANDOFF.md §3. */
+const SETTINGS_DEF = { reminder:null, reminderAsked:false, hemi:'auto', lastNudge:null, missShown:null };
+function migrate(d){
+  d = d && typeof d==='object' && !Array.isArray(d) ? d : {};
+  d.entries = d.entries && typeof d.entries==='object' ? d.entries : {};
+  const from = d.v || 1;
+  if (from < 2){
+    Object.values(d.entries).forEach(e=>{ if (e && Array.isArray(e.stickers)) e.stickers = [...new Set(e.stickers.map(k=>k==='cat'?'bean':k))]; });
+  }
+  d.v = SCHEMA;
+  d.guests = d.guests && typeof d.guests==='object' ? d.guests : {};
+  d.settings = Object.assign({}, SETTINGS_DEF, d.settings||{});
+  return d;
+}
+function load(){
+  const raw = P.storage.getJSON(KEY, null), fromV = raw ? (raw.v||1) : 0;
+  if (raw && fromV < SCHEMA && !P.storage.get(KEY+'.bak-v1')) P.storage.set(KEY+'.bak-v1', JSON.stringify(raw)); /* one-time safety copy before migrating */
+  const d = migrate(raw);
+  if (fromV < SCHEMA) P.storage.setJSON(KEY, d);
+  return d;
+}
 let db = load();
-function load(){ try { return Object.assign({entries:{}}, JSON.parse(localStorage.getItem(KEY)) || {}); } catch(e){ return {entries:{}}; } }
-function save(){ localStorage.setItem(KEY, JSON.stringify(db)); }
+function save(){ P.storage.setJSON(KEY, db); }
+const KEY_RE = /^\d{4}-\d{2}-\d{2}$/;
+function exportBackup(){
+  P.file.saveJSON({ app:'moodcup', schema:SCHEMA, exportedAt:new Date().toISOString(), data:db }, `moodcup-backup-${todayKey()}.json`);
+  toast('บันทึกไฟล์สำรองแล้ว เก็บไว้ในที่ปลอดภัยนะ',1);
+}
+/* validate + merge: unknown drinks / bad dates are skipped; same-day entries take the file's version */
+function importBackup(obj){
+  const src = obj && obj.app==='moodcup' && obj.data ? obj.data : obj;
+  if (!src || typeof src!=='object' || typeof src.entries!=='object') throw new Error('ไฟล์นี้ไม่ใช่ไฟล์สำรองของ MOOD CUP');
+  if ((src.v||1) > SCHEMA) throw new Error('ไฟล์สำรองมาจากเวอร์ชันใหม่กว่า กรุณาอัปเดตแอปก่อน');
+  const inc = migrate(JSON.parse(JSON.stringify(src)));
+  let n=0, skip=0;
+  Object.entries(inc.entries).forEach(([k,e])=>{ if (KEY_RE.test(k) && e && MENU.some(m=>m.k===e.drink)){ db.entries[k]=e; n++; } else skip++; });
+  Object.entries(inc.guests).forEach(([k,g])=>{ if (G(k) && !db.guests[k]) db.guests[k]=g; });
+  syncGuests(); save(); return { n, skip };
+}
 const pad = n => String(n).padStart(2,'0');
 const keyOf = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-const todayKey = () => keyOf(new Date());
+const todayKey = () => keyOf(NOW());
 const parseKey = k => { const [y,m,d] = k.split('-').map(Number); return new Date(y, m-1, d); };
 const thDate = d => `${THD[d.getDay()]} ${d.getDate()} ${THM[d.getMonth()]} ${d.getFullYear()+543}`;
 
+/* ---------- progress: guests, streak, usual order, return greeting ---------- */
+const realEntries = () => Object.entries(db.entries).filter(([,e])=>!e.demo);
+const stampCount = () => realEntries().length;
+/* unlock every guest whose threshold is reached; never re-lock. Returns newly unlocked guests. */
+function syncGuests(){
+  const n = stampCount(), out = [];
+  GUESTS.forEach(g=>{ if (n>=g.at && !db.guests[g.k]){ db.guests[g.k] = { on:todayKey(), at:g.at }; out.push(g); } });
+  return out;
+}
+const unlockedGuests = () => GUESTS.filter(g=>db.guests[g.k]);
+const nextGuest = () => GUESTS.find(g=>!db.guests[g.k]);
+/* deterministic daily visitor: ~1 in 3 days one unlocked guest drops by (never on the unlock day itself) */
+function visitorFor(k){
+  const L = unlockedGuests().filter(g=>db.guests[g.k].on!==k); if (!L.length) return null;
+  let h=0; for (const c of k) h=(h*31+c.charCodeAt(0))>>>0;
+  return h%3===0 ? L[(h>>>3)%L.length] : null;
+}
+function currentStreak(){ let cur=0; const d=NOW(); d.setHours(0,0,0,0); if(!db.entries[keyOf(d)] || db.entries[keyOf(d)].demo) d.setDate(d.getDate()-1); while (db.entries[keyOf(d)] && !db.entries[keyOf(d)].demo){ cur++; d.setDate(d.getDate()-1); } return cur; }
+/* 'usual order': most frequent drink+options among the last 10 real cups (needs >= 2 repeats) */
+const ORDER_KEYS = ['drink','temp','size','sweet','milk','ice','decaf'];
+function usualOrder(){
+  const last = realEntries().sort((a,b)=>a[0]<b[0]?1:-1).slice(0,10).map(([,e])=>e).filter(e=>{ const m=MENU.find(x=>x.k===e.drink); return m && menuNow().includes(m); });
+  const c={}; last.forEach(e=>{ const o={drink:e.drink, temp:tempOf(e), size:e.size||'M', sweet:e.sweet??50, milk:e.milk||'fresh', ice:tempOf(e)==='iced'?(e.ice||'normal'):'normal', decaf:e.decaf?1:0}; const k=JSON.stringify(o); c[k]=(c[k]||0)+1; });
+  const top = Object.entries(c).sort((a,b)=>b[1]-a[1])[0];
+  return top && top[1]>=2 ? JSON.parse(top[0]) : null;
+}
+const orderLine = o => { const m=M(o.drink); return [m.th, tempOf(o)==='iced'?'เย็น':'ร้อน', o.size, (SWEETS.find(x=>x.k===o.sweet)||{}).th, o.decaf?'ดีแคฟ':''].filter(Boolean).join(' · '); };
+/* 'คิดถึงนะ': shown once when the user comes back after 3+ days away. Nothing is lost while away. */
+function missGap(){
+  const tk=todayKey(); if (db.entries[tk]) return 0;
+  const ks = realEntries().map(([k])=>k).filter(k=>k<tk).sort(); if (!ks.length) return 0;
+  return Math.round((parseKey(tk)-parseKey(ks[ks.length-1]))/864e5);
+}
+/* real time-of-day lighting; 'closing soon' from 22:00 until 05:00 */
+function timeOfDay(d=NOW()){ const h=d.getHours(); return h>=5&&h<11?'morning':h<17&&h>=11?'day':h>=17&&h<20?'evening':'night'; }
+const closingSoon = (d=NOW()) => { const h=d.getHours(); return h>=22 || h<5; };
+function applyLighting(){ const ph=$('#phone'); if(!ph) return; ['morning','day','evening','night'].forEach(t=>ph.classList.toggle('tod-'+t, timeOfDay()===t)); ph.classList.toggle('closing', closingSoon()); }
+const hemiNow = () => Festivals.hemisphere({ override:ENV.hemiOverride(), setting:db.settings.hemi, timeZone:ENV.timeZone(), region:ENV.region() });
+
+/* ---------- reminder (Platform.notify; in-app fallback banner) ---------- */
+function applyReminder(){
+  const t=db.settings.reminder;
+  if (!t){ P.notify.cancel(); return; }
+  P.notify.scheduleDaily(t, { title:'ก๊าบก๊าบคาเฟ่ ☕', body:'แวะมาชงแก้ววันนี้กันไหม? น้องเป็ดรออยู่นะ', shouldFire:()=>!db.entries[todayKey()] });
+}
+function reminderDue(){
+  const t=db.settings.reminder, tk=todayKey(); if (!t || db.entries[tk] || db.settings.lastNudge===tk) return false;
+  const [h,m]=t.split(':').map(Number), n=NOW(); return n.getHours()*60+n.getMinutes() >= h*60+m;
+}
+async function setReminder(t){
+  db.settings.reminderAsked = true; db.settings.reminder = t || null; save();
+  if (t){ const perm = await P.notify.requestPermission(); applyReminder();
+    toast(perm==='granted' ? `ตั้งเตือนทุกวัน ${t} น. แล้ว` : `ตั้งเตือน ${t} น. แล้ว (จะเตือนในแอปตอนเปิด เพราะเครื่องนี้ไม่อนุญาตแจ้งเตือน)`,1);
+  } else { applyReminder(); toast('ปิดการเตือนแล้ว',1); }
+}
+function reminderForm(t){ return `<div class="remform"><input type="time" id="remTime" value="${esc(t||'20:00')}" aria-label="เวลาเตือน"><button class="btn sm" data-act="rem-save">ตั้งเตือน</button><button class="btn sm soft hd" data-act="rem-off">${t?'ปิดการเตือน':'ไม่ต้องเตือน'}</button></div>`; }
+
 /* ---------- state ---------- */
-const S = { view:'home', calY:new Date().getFullYear(), calM:new Date().getMonth(), barista:null, draft:null, steps:[], si:0, cat:'coffee', edit:false };
+const S = { view:'home', calY:NOW().getFullYear(), calM:NOW().getMonth(), barista:null, draft:null, steps:[], si:0, cat:'coffee', edit:false };
 
 /* ---------- helpers ---------- */
 const esc = s => String(s??'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -181,13 +297,16 @@ function showTab(on){ $('#tabbar').classList.toggle('hide', !on); $('#tabfade').
 /* counter scene: image + barista + counter-front layer (keeps barista behind the counter) */
 const COUNTER = { ar:'612/819', duck:{l:44,t:39,w:39}, front:74.5, board:{l:42.5,t:13.2,w:54.5,h:25} };
 const COUNTER_ART = ['pe','berry','moss','momo','bobby'];
-function counterScene(b, extra=''){
-  return `<div class="cs" style="aspect-ratio:${COUNTER.ar}"><img class="bg" src="${IMG}counter-${COUNTER_ART.includes(b.k)?b.k:'pe'}.webp" alt="หน้าร้านก๊าบก๊าบคาเฟ่ กับบาริสต้า${esc(b.th)}">${extra}</div>`;
+function counterScene(b, extra='', o={}){
+  const g = o.guest, src = g ? `scene-${g.k}` : `counter-${COUNTER_ART.includes(b.k)?b.k:'pe'}`;
+  const alt = g ? `${g.th} มาเยี่ยมร้านก๊าบก๊าบคาเฟ่` : `หน้าร้านก๊าบก๊าบคาเฟ่ กับบาริสต้า${b.th}`;
+  const sign = o.sign && closingSoon() ? `<div class="closesign"><img src="${IMG}sign-closing.webp" alt=""><b>ใกล้ปิดร้าน</b></div>` : '';
+  return `<div class="cs" style="aspect-ratio:${COUNTER.ar}"><img class="bg" src="${IMG}${src}.webp" alt="${esc(alt)}"><i class="tod" aria-hidden="true"></i>${sign}${extra}</div>`;
 }
 /* ---------- views ---------- */
 function render(){
   const v = S.view;
-  showTab(v==='home'); setTab(v==='home'?'home':'start');
+  showTab(v==='home'); setTab(v==='home'?'home':'start'); applyLighting();
   if (v==='home') app.innerHTML = homeView();
   if (v==='cafe') app.innerHTML = cafeView();
   if (v==='brew') app.innerHTML = brewView();
@@ -198,7 +317,7 @@ function render(){
 function go(v){ S.view=v; app.scrollTop=0; render(); }
 
 function homeView(){
-  const tk = todayKey(), te = db.entries[tk], now = new Date();
+  const tk = todayKey(), te = db.entries[tk], now = NOW();
   const hero = te ? `
     <div class="hero hd"><div class="hero-body"><div class="today">
       <div class="stampbig">${stampHTML(te)}</div>
@@ -206,22 +325,37 @@ function homeView(){
       <div style="font-size:13px">บาริสต้าวันนี้: <b>${esc(B(te.barista).th)}</b> · มู้ด ${esc((MOODS.find(x=>x.k===te.mood)||{}).th||'-')}</div>
       <div style="display:flex;gap:8px;margin-top:10px"><button class="btn sm" data-act="detail" data-k="${tk}">ดูแสตมป์</button><button class="btn sm soft hd" data-act="edit">แก้ไข</button></div></div>
     </div></div></div>` : `
-    <div class="hero hd"><div class="hero-img">${counterScene(B('pe'))}<span class="credit">ภาพ: agy</span>${stars([[24,30,14],[330,40,12,.6]])}</div>
+    <div class="hero hd"><div class="hero-img">${counterScene(B('pe'),'',{sign:1})}${stars([[24,30,14],[330,40,12,.6]])}</div>
       <div class="hero-body"><div class="sub">${thDate(now)}</div><div class="H" style="margin:2px 0 4px">วันนี้มู้ดแบบไหนดี?</div>
       <p style="font-size:13.5px;line-height:1.5">เข้าร้าน เจอบาริสต้าน้องเป็ดสุ่มวันละตัว แล้วชงเครื่องดื่มเองทีละขั้น เก็บเป็นแสตมป์ประจำวัน</p>
       <button class="btn wide" style="margin-top:12px" data-go="start">เข้าร้าน ชงแก้ววันนี้ ☕</button></div></div>`;
   return `<div>
   <div class="top"><div class="logo"><img src="${IMG}b-pe.webp" alt="">ก๊าบก๊าบคาเฟ่</div><div class="pill hd thin">MOOD CUP</div></div>
+  ${banners()}
   ${hero}
+  ${guestProgress()}
   ${calendarHTML()}
-  <div class="homeacts"><button class="btn sm yel" data-go="summary">สรุปเดือนนี้ ◔</button><button class="btn sm soft hd" data-act="demo">เติมข้อมูลตัวอย่าง</button><button class="btn sm soft hd" data-act="about">เกี่ยวกับ & เครดิต</button></div>
-  <div class="footnote">ข้อมูลเก็บในเครื่องนี้เท่านั้น · <button data-act="reset">ล้างข้อมูล</button></div>
+  <div class="homeacts"><button class="btn sm yel" data-go="summary">สรุปเดือนนี้ ◔</button><button class="btn sm soft hd" data-act="demo">เติมข้อมูลตัวอย่าง</button><button class="btn sm soft hd" data-act="settings">ตั้งค่า & สำรองข้อมูล ⚙</button><button class="btn sm soft hd" data-act="about">เกี่ยวกับ & เครดิต</button></div>
+  <div class="footnote">ข้อมูลเก็บในเครื่องนี้เท่านั้น · <a href="privacy.html">นโยบายความเป็นส่วนตัว</a> · <button data-act="reset">ล้างข้อมูล</button></div>
   </div>`;
 }
 
+function banners(){
+  let h=''; const gap=missGap(), tk=todayKey();
+  if (gap>=3 && db.settings.missShown!==tk){ const b=B(db.lastBarista||'pe');
+    h += `<div class="banner miss hd thin"><img src="${bImg(b.k)}" alt=""><div><b>คิดถึงนะ!</b> ไม่ได้เจอกัน ${gap} วันเลย<br><span class="sub">แสตมป์ แขก และของที่ปลดล็อกยังอยู่ครบ ไม่มีอะไรหายนะ ☕</span></div><button class="bx" data-act="miss-ok" aria-label="ปิด">✕</button></div>`; }
+  if ((S.bootGuests||[]).length) h += `<div class="banner unlockb hd thin"><img src="${IMG}g-${S.bootGuests[S.bootGuests.length-1].k}.webp" alt=""><div><b>แขกปลดล็อกแล้ว ${S.bootGuests.length} ตัว! ✦</b><br><span class="sub">${S.bootGuests.map(g=>esc(g.th)).join(' · ')} · ดูได้ที่ "สะสม"</span></div><button class="bx" data-act="bootg-ok" aria-label="ปิด">✕</button></div>`;
+  if (reminderDue()) h += `<div class="banner nudge hd thin"><span class="big">⏰</span><div><b>ถึงเวลาแก้ววันนี้แล้ว</b><br><span class="sub">แวะมาชงสักแก้วไหม? ใช้เวลาแป๊บเดียว</span></div><button class="btn sm" data-go="start">ไปชง</button><button class="bx" data-act="nudge-ok" aria-label="ปิด">✕</button></div>`;
+  return h;
+}
+function guestProgress(){
+  const n=stampCount(), nx=nextGuest(), L=unlockedGuests();
+  return `<div class="gprog hd thin"><div class="gfaces">${GUESTS.map(g=>`<img src="${IMG}g-${g.k}.webp" alt="${db.guests[g.k]?esc(g.th):'ยังไม่ปลดล็อก'}" class="${db.guests[g.k]?'':'lock'}">`).join('')}</div>
+    <div class="sub" style="font-size:12.5px">${nx?`สะสมแล้ว ${n} แสตมป์ · อีก ${nx.at-n} แสตมป์ แขกคนใหม่จะมาเยี่ยมร้าน`:`แขกครบทั้ง ${L.length} ตัวแล้ว! แวะมาเยี่ยมร้านเรื่อยๆ นะ ✦`}</div></div>`;
+}
 function monthEntries(y,m){ return Object.entries(db.entries).filter(([k])=>{ const d=parseKey(k); return d.getFullYear()===y && d.getMonth()===m; }); }
 function calendarHTML(){
-  const y=S.calY, m=S.calM, first=new Date(y,m,1).getDay(), days=new Date(y,m+1,0).getDate(), tk=todayKey(), now=new Date();
+  const y=S.calY, m=S.calM, first=new Date(y,m,1).getDay(), days=new Date(y,m+1,0).getDate(), tk=todayKey(), now=NOW();
   const ents = monthEntries(y,m);
   const cnt = {coffee:0,matcha:0,other:0}; ents.forEach(([,e])=>cnt[M(e.drink).cat]++);
   const tot = ents.length || 1;
@@ -246,31 +380,36 @@ function enterCafe(){
   S.edit = !!db.entries[todayKey()] && S.edit;
   if (!S.edit){
     const last = db.lastBarista; let pick='pe';
-    const pool = BARISTAS.filter(b=>COUNTER_ART.includes(b.k));
+    const pool = LIVE;
     if (RANDOM_BARISTA && pool.length>1) do { pick = pool[Math.floor(Math.random()*pool.length)].k; } while (pick===last);
     S.barista = pick; db.lastBarista = pick; save();
   }
+  S.visitor = S.edit ? (db.entries[todayKey()].guest ? G(db.entries[todayKey()].guest) : null) : visitorFor(todayKey());
   S.draft = Object.assign({ drink:'latte' }, OPT_DEF, S.draft||{});
+  if (!menuNow().some(m=>m.k===S.draft.drink)) S.draft.drink='latte';
   S.cat = M(S.draft.drink).cat;
   go('cafe');
 }
 function cafeView(){
   const b = B(S.barista), sel = S.draft.drink, list = menuNow().filter(m=>m.cat===S.cat), cur = M(sel);
   const col = (cat, title) => `<div><h4>${title}</h4>${menuNow().filter(m=>cat.includes(m.cat)).map(m=>`<div class="r ${m.k===sel?'on':''}" data-act="pick" data-k="${m.k}"><span>${m.th.replace('สตรอว์เบอร์รีมัทฉะ','สตอฯ มัทฉะ')}</span><span>${m.p}</span></div>`).join('')}</div>`;
+  const v = S.visitor, uo = !S.edit && usualOrder(), late = closingSoon();
+  const greet = v ? `<b>${esc(v.th)}</b> · ${v.helper?'มาช่วยชงวันนี้':'แวะมาเยี่ยมร้าน'}<br>${esc(v.line)}<br><span class="sub" style="font-size:11.5px">บาริสต้าวันนี้: ${esc(b.th)}</span>` : `<b>${esc(b.th)}</b> · บาริสต้าวันนี้<br>${esc(late?'ดึกแล้ว ขอบคุณที่แวะมานะ ใกล้ปิดร้านแล้วแต่ยังชงให้ได้':b.greet)}`;
   return `<div>
-  <div class="board-wrap">${counterScene(b, `<div class="chalk" style="left:${COUNTER.board.l}%;top:${COUNTER.board.t}%;width:300px;transform-origin:0 0;transform:scale(var(--bs,.7))"><div class="t">~ เมนูวันนี้ ~</div><div class="cols">${col(['coffee'],'COFFEE')}${col(['matcha','other'],'MATCHA & TEA')}</div></div>`)}
-    <div class="bubble" style="left:12px;top:46%;max-width:46%"><b>${esc(b.th)}</b> · บาริสต้าวันนี้<br>${esc(b.greet)}</div>
+  <div class="board-wrap">${counterScene(b, `<div class="chalk" style="left:${COUNTER.board.l}%;top:${COUNTER.board.t}%;width:300px;transform-origin:0 0;transform:scale(var(--bs,.7))"><div class="t">~ เมนูวันนี้ ~</div><div class="cols">${col(['coffee'],'COFFEE')}${col(['matcha','other'],'MATCHA & TEA')}</div></div>`, { guest:v, sign:1 })}
+    <div class="bubble" style="left:12px;top:46%;max-width:46%">${greet}</div>
     <button class="chip hd" style="position:absolute;left:12px;top:14px;z-index:7;min-height:36px;background:#FFFDF7" data-act="home">✕ ออก</button>
-    <span class="credit" style="bottom:66px">ภาพ: agy</span>
   </div>
   <div class="menu-sheet">
     <div style="display:flex;justify-content:space-between;align-items:center"><div class="H" style="font-size:24px">${S.edit?'แก้ไขแก้ววันนี้':'เลือกเมนูมู้ดวันนี้'}</div><div class="sub" style="font-size:12px">${esc(b.th)} · ${esc(b.prop)}</div></div>
+    ${uo?`<button class="usual hd thin" data-act="usual"><img src="${IMG}d-${M(uo.drink).img}.webp" alt=""><span><b>เหมือนเดิมไหม?</b><br>${esc(orderLine(uo))}</span><i>→</i></button>`:''}
+    ${late?`<div class="latehint hd thin"><img src="${IMG}d-decaf.webp" alt=""><span>ดึกแล้ว ถ้าอยากเลี่ยงคาเฟอีน ลองแบบ <b>ดีแคฟ</b> หรือโกโก้ดูไหม?</span>${isCoffee(cur)?`<button class="chip hd ${S.draft.decaf?'on':''}" data-act="opt-decaf" data-k="${S.draft.decaf?0:1}">${S.draft.decaf?'ดีแคฟแล้ว ✓':'เปลี่ยนเป็นดีแคฟ'}</button>`:''}</div>`:''}
     <div class="tabs">${Object.entries(CAT).map(([k,c])=>`<button class="hd ${S.cat===k?'on':''}" data-act="cat" data-k="${k}">${k==='matcha'?'มัทฉะ':k==='other'?'ชา & อื่นๆ':'กาแฟ'}</button>`).join('')}</div>
-    <div class="items">${list.map(m=>`<button class="it hd ${m.k===sel?'on':''}" data-act="pick" data-k="${m.k}">${m.season?'<i class="seasonbadge">'+(m.k==='pumpkin'?'🎃':'🎄')+'</i>':''}<img src="${IMG}d-${m.img}.webp" alt=""><span>${m.th}</span><small>฿${m.p}</small></button>`).join('')}</div>
+    <div class="items">${list.map(m=>`<button class="it hd ${m.k===sel?'on':''}" data-act="pick" data-k="${m.k}">${badgeIcon(m)?'<i class="seasonbadge">'+badgeIcon(m)+'</i>':''}<img src="${IMG}d-${m.img}.webp" alt=""><span>${m.th}</span><small>฿${m.p}</small></button>`).join('')}</div>
     <div class="desc hd thin">${cur.badge?`<div class="seasontag">${cur.badge}</div>`:''}<b>${cur.th}</b> — ${cur.desc}</div>
     ${optionsHTML()}
     <div class="sub" style="font-size:12px;margin-top:10px">ทำเองทีละขั้น ${buildSteps(cur,S.draft).length} สเต็ป: ${buildSteps(cur,S.draft).map(s=>STEP_SHORT[s]).join(' → ')}</div>
-    <div class="sticky-foot" style="padding-left:0;padding-right:0"><button class="btn wide" data-act="startbrew">สั่ง ${cur.th} ${tempOf(S.draft)==='iced'?'เย็น':'ร้อน'} · ฿${priceOf(S.draft)} →</button></div>
+    <div class="sticky-foot" style="padding-left:0;padding-right:0"><button class="btn wide" data-act="startbrew">สั่ง ${cur.th} ${tempOf(S.draft)==='iced'?'เย็น':'ร้อน'}${S.draft.decaf&&isCoffee(cur)?' ดีแคฟ':''} · ฿${priceOf(S.draft)} →</button></div>
   </div></div>`;
 }
 
@@ -279,6 +418,7 @@ function optionsHTML(){
   return `<div class="opts hd thin" id="opts"><div class="H" style="font-size:19px">ปรับแก้วของคุณ</div>
     <div class="lbl">ร้อน หรือ เย็น</div>${m.temp?`<div class="sub" style="font-size:13px">เมนูนี้เสิร์ฟแบบ${m.temp==='iced'?'เย็นเท่านั้น 🧊':'ร้อนเท่านั้น ☕'}</div>`:chips(TEMPS,t,'opt-temp')}
     ${t==='iced'?`<div class="lbl">ปริมาณน้ำแข็ง</div>${chips(ICES,d.ice,'opt-ice')}`:''}
+    ${isCoffee(m)?`<div class="lbl">กาแฟ</div>${chips(DECAFS,d.decaf?1:0,'opt-decaf')}`:''}
     <div class="lbl">ขนาดแก้ว</div>${chips(SIZES.map(z=>({k:z.k,th:`${z.th}${z.add?` +${z.add}`:''}`})),d.size,'opt-size')}
     <div class="lbl">ระดับความหวาน</div>${chips(SWEETS,d.sweet,'opt-sweet')}
     ${m.milk?`<div class="lbl">ชนิดนม</div>${chips(MILKS.map(x=>({k:x.k,th:x.th+(x.k!=='fresh'?' +15':'')})),d.milk,'opt-milk')}`:''}
@@ -292,7 +432,7 @@ function buildSteps(m, d={}){
 }
 function startBrew(){
   const m = M(S.draft.drink), prev = S.edit ? db.entries[todayKey()] : null, o = S.draft;
-  const opts = { temp:m.temp||o.temp||'hot', ice:o.ice||'normal', size:o.size||'M', sweet:o.sweet??50, milk:o.milk||'fresh' };
+  const opts = { temp:m.temp||o.temp||'hot', ice:o.ice||'normal', size:o.size||'M', sweet:o.sweet??50, milk:o.milk||'fresh', decaf:isCoffee(m)&&o.decaf?1:0, guest:S.visitor?S.visitor.k:undefined };
   const base = { drink:m.k, barista:S.barista, temp:m.temp||'hot', bean:'medium', grind:'fine', shots:2, milk:'fresh', art:'heart', syrup:'none', scoops:2, water:Math.round(((m.wt||[80,80])[0]+(m.wt||[80,80])[1])/2)-6, topping:'none', cup:m.temp==='iced'?'tumbler':'mug', sleeve:'none', stickers:[], mood:'', note:'' };
   S.draft = Object.assign(base, prev && prev.drink===m.k ? prev : {}, opts, { drink:m.k, barista:S.barista });
   fixCup(S.draft);
@@ -323,7 +463,6 @@ function brewView(){
     ${preview?`<span class="duckglow"></span><img class="duck" src="${bImg(b.k)}" alt="">`:""}
     <div class="bubble" id="bub" ${preview?'style="left:auto;right:12px;top:12px;max-width:150px"':''}>${esc(say(st))}</div>
     <div class="fx" id="fx">${fxHTML(st)}</div>
-    <span class="credit">ภาพ: agy</span>
   </div>
   <div class="ctrl"><div class="H">สเต็ป ${S.si+1} · ${x.t}</div><div class="sub" style="font-size:13px;margin-top:2px">${x.h}</div><div id="ctl">${ctrlHTML(st)}</div></div>
   <div class="bfoot"><button class="btn soft hd" data-act="back">← ${S.si? 'ย้อน':'เมนู'}</button><button class="btn" id="nextBtn" data-act="next" ${stepReady(st)?'':'disabled'}>${S.si===S.steps.length-1?'เก็บแสตมป์ ✦':'ถัดไป →'}</button></div>
@@ -334,7 +473,7 @@ function gauge(id, val, zone){ return `<div class="gauge hd thin">${zone?`<div c
 function ctrlHTML(st){
   const d = S.draft, m = M(d.drink), P = S.prog;
   switch(st){
-    case 'bean': return `<div class="lbl">เมล็ดกาแฟ</div>${chips(BEANS,d.bean,'set-bean')}${orderTag(d)}`;
+    case 'bean': return `<div class="lbl">เมล็ดกาแฟ${d.decaf?' (ดีแคฟ)':''}</div>${chips(BEANS,d.bean,'set-bean')}${orderTag(d)}`;
     case 'grind': return `<div class="lbl">ความละเอียด</div>${chips(GRINDS,d.grind,'set-grind')}${gauge('g1',P.grind?100:(S.tmp||0))}<div class="gmeta"><span>${P.grind?'บดเสร็จแล้ว 18 g ✓':'ผงกาแฟ 0–18 g'}</span><span>${d.grind!=='fine'?'เอสเปรสโซ่ใช้แบบละเอียดดีสุดนะ':''}</span></div><button class="btn wide yel holdbtn" style="margin-top:12px" data-hold="grind">${P.grind?'บดใหม่':'กดค้างเพื่อบด ⚙'}</button>`;
     case 'tamp': return `${gauge('g1',P.tamp?P.tampv:0,[55,80])}<div class="gmeta"><span id="gm">${P.tamp?`แรงกด ${Math.round(P.tampv/5)} kg · พอดีเป๊ะ! ✓`:'แรงกด 0 kg'}</span><span>โซนเขียว 11–16 kg</span></div><button class="btn wide yel holdbtn" style="margin-top:12px" data-hold="tamp">${P.tamp?'แทมป์อีกครั้ง':'กดค้างเพื่อแทมป์ แล้วปล่อย'}</button>`;
     case 'shot': return `<div class="lbl">จำนวนช็อต</div><div class="chips">${[1,2,3,4].map(n=>`<button class="chip hd ${d.shots===n?'on':''}" style="width:62px;justify-content:center" data-act="set-shots" data-k="${n}" ${S.busy?'disabled':''}>${n} ช็อต</button>`).join('')}</div>${gauge('g1',P.shot?100/1.15:0,[76.5,88.7])}<div class="gmeta"><span id="gm">${P.shot?`ได้ ${d.shots} ช็อต (${d.shots*30} ml) ${d.shotq==='perfect'?'· เพอร์เฟกต์ ✦':'✓'}`:'กดค้าง แล้วปล่อยในโซนทอง'}</span><span>โซนทอง = ช็อตเพอร์เฟกต์</span></div><button class="btn wide yel holdbtn" style="margin-top:12px" data-hold="shot" ${S.busy?'disabled':''}>${P.shot?'กดค้างเพื่อดึงใหม่':'กดค้างเพื่อดึงช็อต ☕'}</button><button class="linkbtn" data-act="pull" ${S.busy?'disabled':''}>หรือแตะเพื่อดึงอัตโนมัติ</button>`;
@@ -347,8 +486,8 @@ function ctrlHTML(st){
     case 'milk2': return `<div class="lbl">นม${m.straw?' (มีสตรอว์เบอร์รีบดรองแก้วแล้ว ✓)':''}</div>${chips(MILKS,d.milk,'set-milk')}<button class="btn wide yel" style="margin-top:12px" data-act="coldmilk">${P.milk?'เทนมแล้ว ✓':d.temp==='iced'?'เทนมเย็น 🥛':'เทนมอุ่น 🥛'}</button>${orderTag(d)}`;
     case 'ice': { const n=(ICES.find(i=>i.k===d.ice)||ICES[2]).n; return `<div class="lbl">ปริมาณน้ำแข็ง</div>${chips(ICES.filter(i=>i.n),d.ice,'set-ice')}${gauge('g1',Math.min(100,(S.icen||0)*100/n))}<div class="gmeta"><span id="gm">${P.ice?`น้ำแข็ง ${n} ก้อน ✓`:`ตักแล้ว ${S.icen||0}/${n} ก้อน`}</span><span>แตะทีละก้อน</span></div><button class="btn wide yel" style="margin-top:12px" data-act="scoop">${P.ice?'น้ำแข็งครบแล้ว ✓':'ตักน้ำแข็ง 🧊'}</button>`; }
     case 'top': return `<div class="lbl">ท็อปปิ้ง</div>${chips(TOPS,d.topping,'set-top')}<div class="lbl">ความหวาน</div>${chips(SWEETS,d.sweet,'set-sweet')}`;
-    case 'cup': { const L=cupsFor(d); return `<div class="cups" style="margin-top:12px;grid-template-columns:repeat(${Math.min(3,L.length)},1fr)">${L.map(c=>`<button class="cupopt hd ${d.cup===c.k?'on':''}" data-act="set-cup" data-k="${c.k}"><img src="${IMG}d-${imgOf(Object.assign({},d,{cup:c.k}))}.webp" alt="">${c.th}</button>`).join('')}</div><div class="sub" style="font-size:12px;margin-top:8px">${({glass:'เครื่องดื่มเย็น: เลือกทรงแก้วใสที่ชอบ',mug:'เครื่องดื่มร้อน: เลือกแก้วมัคเซรามิกที่ชอบ',bowl:'อุสุฉะ: เสิร์ฟในถ้วยชาวันแบบญี่ปุ่น เลือกลายเคลือบได้',straw:'เมนูนี้เสิร์ฟในแก้วใสทรงสูงแบบเดียว'})[vesselType(d)]}</div>`; }
-    case 'deco': return `<div class="lbl">สีปลอกแก้ว</div><div class="chips">${SLEEVES.map(s=>{ const L=lockOf('sleeve',s.k); return `<button class="sw hd thin ${s.c?'':'none'} ${d.sleeve===s.k?'on':''} ${L?'locked':''}" style="${s.c?`background:${s.c}`:''}" data-act="set-sleeve" data-k="${s.k}" aria-label="${s.th||s.k}${L?' (ล็อก)':''}">${L?'🔒':''}</button>`; }).join('')}</div><div class="lbl">สติกเกอร์ (${d.stickers.length}/3)</div><div class="chips">${STK.map(k=>{ const L=lockOf('sticker',k); return `<button class="stkbtn hd thin ${d.stickers.includes(k)?'on':''} ${L?'locked':''}" data-act="stk" data-k="${k}" aria-label="${k}${L?' (ล็อก)':''}">${miniSticker(k)}${L?'<i class="lk">🔒</i>':''}</button>`; }).join('')}</div><div class="sub" style="font-size:11.5px;margin-top:8px">🔒 ปลดล็อกของพิเศษเมื่อสะสมแสตมป์ติดกัน 7 / 14 / 30 วัน</div>`;
+    case 'cup': { const L=cupsFor(d); return `<div class="cups" style="margin-top:12px;grid-template-columns:repeat(${Math.min(3,L.length)},1fr)">${L.map(c=>`<button class="cupopt hd ${d.cup===c.k?'on':''}" data-act="set-cup" data-k="${c.k}"><img src="${IMG}d-${imgOf(Object.assign({},d,{cup:c.k}))}.webp" alt="">${c.th}</button>`).join('')}</div><div class="sub" style="font-size:12px;margin-top:8px">${({glass:'เครื่องดื่มเย็น: เลือกทรงแก้วใสที่ชอบ',mug:'เครื่องดื่มร้อน: เลือกแก้วมัคเซรามิกที่ชอบ',bowl:'อุสุฉะ: เสิร์ฟในถ้วยชาวันแบบญี่ปุ่น เลือกลายเคลือบได้',straw:'เมนูนี้เสิร์ฟในแก้วใสทรงสูงแบบเดียว',secret:'เมนูลับเสิร์ฟในแก้วลายดาวใบพิเศษ'})[vesselType(d)]}${d.decaf&&vesselType(d)==='mug'?' · ดีแคฟมีมัคม่วงพระจันทร์ให้เลือกด้วย':''}</div>`; }
+    case 'deco': return `<div class="lbl">สีปลอกแก้ว</div><div class="chips">${SLEEVES.map(s=>{ const L=lockOf('sleeve',s.k); return `<button class="sw hd thin ${s.c?'':'none'} ${d.sleeve===s.k?'on':''} ${L?'locked':''}" style="${s.c?`background:${s.c}`:''}" data-act="set-sleeve" data-k="${s.k}" aria-label="${s.th||s.k}${L?' (ล็อก)':''}">${L?'🔒':''}</button>`; }).join('')}</div><div class="lbl">สติกเกอร์ (${d.stickers.length}/3)</div><div class="chips">${STK.map(k=>{ const L=lockOf('sticker',k); return `<button class="stkbtn hd thin ${d.stickers.includes(k)?'on':''} ${L?'locked':''}" data-act="stk" data-k="${k}" aria-label="${k}${L?' (ล็อก)':''}">${miniSticker(k)}${L?'<i class="lk">🔒</i>':''}</button>`; }).join('')}</div><div class="sub" style="font-size:11.5px;margin-top:8px">🔒 ของตกแต่งโบนัส: เคยสะสมติดกัน 7 / 14 / 30 วัน (นับสถิติดีที่สุด ขาดวันก็ไม่หาย)</div>`;
     case 'mood': return `<div class="chips" style="margin-top:12px">${MOODS.map(x=>`<button class="moodbtn hd thin ${d.mood===x.k?'on':''}" data-act="set-mood" data-k="${x.k}">${faceSVG(x.k,34)}${x.th}</button>`).join('')}</div><div class="lbl">วันนี้เป็นไง? (หนึ่งบรรทัด ไม่ใส่ก็ได้)</div><input id="note" class="noteline" type="text" maxlength="60" enterkeyhint="done" placeholder="เช่น ประชุมเยอะ แต่กาแฟอร่อย" value="${esc(d.note)}">`;
   }
   return '';
@@ -363,7 +502,7 @@ function fxHTML(st){
   if (st==='whisk'){ const v=P.whisk?100:(S.wv||0); return `<svg width="86" height="50" viewBox="0 0 86 50" style="filter:url(#wob)"><ellipse cx="43" cy="25" rx="40" ry="20" fill="#7FA83A" stroke="#5A4636" stroke-width="2.5"/><ellipse cx="43" cy="25" rx="36" ry="16" fill="#D7EBA0" opacity="${v/100}"/>${[...Array(9)].map((_,i)=>`<circle cx="${18+i*6}" cy="${20+(i%3)*5}" r="2.4" fill="#F7FBE4" opacity="${v/100}"/>`).join('')}</svg>`; }
   return '';
 }
-function orderTag(d){ const t=tempOf(d); return `<div class="otag hd thin">ออเดอร์: <b>${t==='iced'?'🧊 เย็น':'☕ ร้อน'}</b>${t==='iced'?` · ${(ICES.find(i=>i.k===d.ice)||{}).th}`:''} · ${(SIZES.find(z=>z.k===d.size)||{}).th} · ${(SWEETS.find(x=>x.k===d.sweet)||{}).th}${M(d.drink).milk?` · ${(MILKS.find(x=>x.k===d.milk)||{}).th}`:''}</div>`; }
+function orderTag(d){ const t=tempOf(d); return `<div class="otag hd thin">ออเดอร์: <b>${t==='iced'?'🧊 เย็น':'☕ ร้อน'}</b>${d.decaf?' · 🌙 ดีแคฟ':''}${t==='iced'?` · ${(ICES.find(i=>i.k===d.ice)||{}).th}`:''} · ${(SIZES.find(z=>z.k===d.size)||{}).th} · ${(SWEETS.find(x=>x.k===d.sweet)||{}).th}${M(d.drink).milk?` · ${(MILKS.find(x=>x.k===d.milk)||{}).th}`:''}</div>`; }
 function iceGlass(n, have){
   return `<div class="iceart"><img src="${IMG}d-${imgOf(Object.assign({},S.draft,{cup:vesselType(S.draft)==='glass'?S.draft.cup:'tumbler'}))}.webp" alt=""><b>🧊 ${have}/${n}</b></div>`;
 }
@@ -439,11 +578,14 @@ function updWhisk(){
 function doneView(){
   const e = db.entries[todayKey()], b=B(e.barista), m=M(e.drink);
   return `<div class="done"><div class="badge hd thin">STAMP COLLECTED! ✦</div>
-  <div class="H xl" style="margin-top:14px">ได้แสตมป์วันนี้แล้ว!</div><div class="sub">${thDate(new Date())}</div>
+  <div class="H xl" style="margin-top:14px">ได้แสตมป์วันนี้แล้ว!</div><div class="sub">${thDate(NOW())}</div>
   ${stampHTML(e)}
   <div class="H" style="font-size:24px">${esc(m.th)}</div>
   <div style="font-size:13.5px;margin-top:4px">บาริสต้าวันนี้: <b>${esc(b.th)}</b> (${esc(b.prop)})</div>
   <div class="greet hd thin" style="margin:14px 0 0;text-align:left"><img src="${bImg(b.k)}" alt=""><span>${e.note?`<span class="sub" style="font-size:12px">วันนี้เป็นไง: "${esc(e.note)}"</span><br>`:''}"${esc(replyFor(e))}${b.tail}"</span></div>
+  ${(S.newGuests||[]).map(g=>`<div class="unlock hd thin"><img src="${IMG}g-${g.k}.webp" alt=""><div><div class="badge hd thin" style="font-size:11px;padding:2px 10px">แขกใหม่ปลดล็อก! ✦</div><b>${esc(g.th)}</b> · ${esc(g.role)}<br><span class="sub" style="font-size:12px">ครบ ${g.at} แสตมป์ · จะแวะมาเยี่ยมร้านในวันต่อๆ ไป${g.k==='redpanda'?' และเปิด "เมนูลับ" ให้แล้ว':''}</span></div></div>`).join('')}
+  ${(()=>{ const c=currentStreak(); return c>=2?`<div class="sub" style="font-size:12.5px;margin-top:10px">ชงติดกัน ${c} วันแล้ว ✦ (ขาดวันก็ไม่เป็นไรนะ ของที่ได้แล้วอยู่ถาวร)</div>`:''; })()}
+  ${S.askReminder?`<div class="remask hd thin"><b>ให้น้องเป็ดช่วยเตือนชงแก้วทุกวันไหม?</b><div class="sub" style="font-size:12px;margin:2px 0 8px">เลือกเวลาได้ จะเปลี่ยนหรือปิดภายหลังก็ได้ที่ "ตั้งค่า"</div>${reminderForm(null)}</div>`:''}
   <button class="btn wide yel" style="margin-top:16px" data-act="story-day" data-k="${todayKey()}">แชร์แก้ววันนี้ · สตอรี่ 9:16 ↗</button>
   <div style="display:flex;gap:10px;margin-top:10px"><button class="btn soft hd" style="flex:1" data-act="home">ดูสมุดแสตมป์</button><button class="btn" style="flex:1" data-go="summary">สรุปเดือนนี้ ◔</button></div>
   ${stars([[30,40,16],[330,70,12,.4],[40,330,12,.8],[320,300,16,1.2]])}</div>`;
@@ -452,9 +594,13 @@ function finish(){
   const n=$('#note'); if(n) S.draft.note=n.value.trim();
   const e = Object.assign({}, S.draft, { ts:Date.now() });
   if (!isCoffee(M(e.drink))) e.shots = 0;
-  db.entries[todayKey()] = e; save();
-  const d=new Date(); S.calY=d.getFullYear(); S.calM=d.getMonth();
-  S.edit=false; S.draft=null; go('done'); confetti(); SFX.play('stamp',{vol:.4, delay:.25}); SFX.play('quack',{vol:.35, rate:1.25, delay:.9}); SFX.buzz([20,60,20,60,30]);
+  if (!e.guest) delete e.guest; if (!e.decaf) delete e.decaf;
+  db.entries[todayKey()] = e;
+  S.newGuests = syncGuests();
+  S.askReminder = !db.settings.reminderAsked && stampCount()>=1;
+  save();
+  const d=NOW(); S.calY=d.getFullYear(); S.calM=d.getMonth();
+  S.edit=false; S.draft=null; go('done'); confetti(); SFX.play('stamp',{vol:.4, delay:.25}); SFX.play('quack',{vol:.35, rate:1.25, delay:.9}); P.haptic.play('stamp');
 }
 
 /* ----- sheets ----- */
@@ -462,7 +608,7 @@ function openSheet(html){ $('#sheetBody').innerHTML=html; $('#sheet').classList.
 function closeSheet(){ $('#sheet').classList.remove('open'); $('#sheetBack').classList.remove('open'); }
 function detailSheet(k){
   const e=db.entries[k]; if(!e) return; const m=M(e.drink), b=B(e.barista), d=parseKey(k), mood=MOODS.find(x=>x.k===e.mood);
-  const rows = [['เมนู',`${m.th} · ${tempOf(e)==='iced'?'เย็น':'ร้อน'}`], ...(e.size?[['ขนาด',`${(SIZES.find(z=>z.k===e.size)||{}).th}${e.price?` · ฿${e.price}`:''}`]]:[]), ...(tempOf(e)==='iced'&&e.ice?[['น้ำแข็ง',(ICES.find(i=>i.k===e.ice)||{}).th]]:[]), ...(e.sweet!==undefined?[['ความหวาน',(SWEETS.find(x=>x.k===e.sweet)||{}).th]]:[]), ...(isCoffee(m)?[['เมล็ด',(BEANS.find(x=>x.k===e.bean)||{}).th],['ช็อต',`${e.shots} ช็อต`]]:[['ผง',`${e.scoops} ช้อน · น้ำ ${e.water}°C`]]), ...(m.milk?[['นม',(MILKS.find(x=>x.k===e.milk)||{}).th]]:[]), ...(m.art&&tempOf(e)==='hot'?[['ลาเต้อาร์ต',(ARTS.find(x=>x.k===e.art)||{}).th]]:[]), ...(isCoffee(m)?[['ไซรัป',(SYRUPS.find(x=>x.k===e.syrup)||{}).th]]:[['ท็อปปิ้ง',(TOPS.find(x=>x.k===e.topping)||{}).th]]), ['แก้ว',(CUPS.find(x=>x.k===e.cup)||{}).th], ['บาริสต้า',`${b.th} (${b.prop})`]];
+  const rows = [['เมนู',`${m.th} · ${tempOf(e)==='iced'?'เย็น':'ร้อน'}`], ...(e.size?[['ขนาด',`${(SIZES.find(z=>z.k===e.size)||{}).th}${e.price?` · ฿${e.price}`:''}`]]:[]), ...(tempOf(e)==='iced'&&e.ice?[['น้ำแข็ง',(ICES.find(i=>i.k===e.ice)||{}).th]]:[]), ...(e.sweet!==undefined?[['ความหวาน',(SWEETS.find(x=>x.k===e.sweet)||{}).th]]:[]), ...(isCoffee(m)?[['เมล็ด',(BEANS.find(x=>x.k===e.bean)||{}).th],['ช็อต',`${e.shots} ช็อต`]]:[['ผง',`${e.scoops} ช้อน · น้ำ ${e.water}°C`]]), ...(m.milk?[['นม',(MILKS.find(x=>x.k===e.milk)||{}).th]]:[]), ...(m.art&&tempOf(e)==='hot'?[['ลาเต้อาร์ต',(ARTS.find(x=>x.k===e.art)||{}).th]]:[]), ...(isCoffee(m)?[['ไซรัป',(SYRUPS.find(x=>x.k===e.syrup)||{}).th]]:[['ท็อปปิ้ง',(TOPS.find(x=>x.k===e.topping)||{}).th]]), ['แก้ว',(CUPS.find(x=>x.k===e.cup)||Object.values(VESSELS).flat().concat([DECAF_MUG]).find(x=>x.k===e.cup)||{}).th], ...(e.decaf?[['กาแฟ','ดีแคฟ']]:[]), ['บาริสต้า',`${b.th} (${b.prop})`], ...(e.guest&&G(e.guest)?[['แขกวันนั้น',G(e.guest).th]]:[])];
   openSheet(`<div style="text-align:center"><div class="sub">${thDate(d)}</div><div class="H" style="margin:4px 0 14px">${esc(m.th)}</div><div style="width:190px;margin:0 auto">${stampHTML(e)}</div>
   <div style="margin-top:14px;display:flex;align-items:center;justify-content:center;gap:8px;font:600 14px Mali">${mood?faceSVG(mood.k,30)+'มู้ด '+mood.th:''}</div>${e.note?`<div class="desc hd thin" style="text-align:left"><span class="sub" style="font-size:12px">วันนี้เป็นไง</span><br>"${esc(e.note)}"</div>`:''}${e.mood?`<div class="sub" style="font-size:12.5px;margin-top:8px">${esc(B(e.barista).th)}: "${esc(replyFor(e))}"</div>`:''}</div>
   <dl class="kv">${rows.map(([a,c])=>`<dt>${a}</dt><dd>${esc(c||'-')}</dd>`).join('')}</dl>
@@ -470,23 +616,44 @@ function detailSheet(k){
   ${k===todayKey()?`<div style="display:flex;gap:10px;margin-top:16px"><button class="btn soft hd" style="flex:1" data-act="del">ลบแก้ววันนี้</button><button class="btn" style="flex:1" data-act="edit">แก้ไข / ชงใหม่</button></div>`:''}<button class="btn wide yel" style="margin-top:10px" data-act="story-day" data-k="${k}">การ์ดแก้ววันนั้น · สตอรี่ 9:16 ↗</button>`);
 }
 function aboutSheet(){
-  openSheet(`<div class="H">เกี่ยวกับ & เครดิต</div><p style="font-size:14px;line-height:1.6;margin-top:8px">ก๊าบก๊าบคาเฟ่ · MOOD CUP คือสมุดสะสมมู้ดประจำวัน ทุกวันเข้าร้าน เจอบาริสต้าน้องเป็ดแบบสุ่ม ชงเครื่องดื่มเองทีละขั้น แล้วเก็บเป็นแสตมป์ ข้อมูลทั้งหมดเก็บใน localStorage ของเครื่องนี้เท่านั้น</p>
-  <div class="lbl">น้องเป็ดบาริสต้าประจำร้าน (สุ่มมาชงให้ทุกวัน)</div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">${BARISTAS.slice(1).map(b=>`<div style="text-align:center;font:600 11.5px Mali"><img src="${bImg(b.k)}" alt="" style="width:100%;aspect-ratio:1;object-fit:cover;mix-blend-mode:multiply;border-radius:14px">${b.th}</div>`).join('')}</div>
+  openSheet(`<div class="H">เกี่ยวกับ & เครดิต</div><p style="font-size:14px;line-height:1.6;margin-top:8px">ก๊าบก๊าบคาเฟ่ · MOOD CUP คือสมุดสะสมมู้ดประจำวัน ทุกวันเข้าร้าน เจอบาริสต้าน้องเป็ดแบบสุ่ม ชงเครื่องดื่มเองทีละขั้น แล้วเก็บเป็นแสตมป์ ข้อมูลทั้งหมดเก็บในเครื่องนี้เท่านั้น ไม่มีบัญชี ไม่มีโฆษณา ไม่มีการซื้อในแอป</p>
+  <div class="lbl">น้องเป็ดบาริสต้าประจำร้าน (สุ่มมาชงให้ทุกวัน)</div><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">${LIVE.map(b=>`<div style="text-align:center;font:600 11.5px Mali"><img src="${bImg(b.k)}" alt="" style="width:100%;aspect-ratio:1;object-fit:cover;mix-blend-mode:multiply;border-radius:14px">${b.th}</div>`).join('')}</div>
   <div class="lbl">เครดิตภาพ</div><ul style="font-size:13px;line-height:1.7;padding-left:18px">
-  <li>หน้าร้าน บาร์กาแฟ บาร์มัทฉะ และแสตมป์เครื่องดื่ม: วาดด้วย <b>agy (Google Antigravity CLI)</b></li><li>บาริสต้าเป๊ะ: วาดด้วย agy · น้องเป็ดอีก 12 ตัว (ภาพในหน้านี้จากชีตตัวละคร Duckling Sort) กำลังวาดด้วย agy แล้วจะสุ่มมาเป็นบาริสต้า</li>
+  <li>ภาพประกอบใหม่ทั้งหมด (แขก 5 ตัว ฉากแขกในร้าน แก้วเมนูลับ แก้วดีแคฟ ป้ายใกล้ปิดร้าน สติกเกอร์เมล็ดกาแฟ ไอคอน และหน้าเปิดแอป): สร้างด้วย <b>Grok</b> ในสไตล์ดินสอสีเดียวกับร้าน</li><li>ภาพชุดแรกของร้าน (หน้าร้าน บาร์ แก้ว และน้องเป็ด): ภาพสไตล์ดินสอสีเดิมของโปรเจกต์ (ดู CREDITS.md)</li>
   <li>สติกเกอร์ หน้ามู้ด เส้นวาดมือ และกราฟ: SVG ที่เขียนด้วยโค้ด</li><li>ฟอนต์: Itim, Mali, Sriracha (Google Fonts)</li><li>เพลงโลไฟ: Seth_Makes_Sounds · เสียงบรรยากาศร้าน: Anya_Media (Freesound, CC0) · เสียงเอฟเฟกต์: Kenyset</li></ul>`);
 }
 
+/* ----- settings & backup ----- */
+function settingsSheet(){
+  const st=db.settings, h=hemiNow(), fest=Festivals.active(NOW()), se=Festivals.season(NOW(), h.hemi), perm=P.notify.permission();
+  const TH_SEASON={spring:'ใบไม้ผลิ',summer:'ร้อน',autumn:'ใบไม้ร่วง',winter:'หนาว'};
+  openSheet(`<div class="H">ตั้งค่า</div>
+  <div class="lbl">เตือนชงแก้วทุกวัน</div><div class="sub" style="font-size:12.5px">${st.reminder?`ตอนนี้: ทุกวัน ${esc(st.reminder)} น.`:'ตอนนี้: ปิดอยู่'}${st.reminder&&perm!=='granted'?' · เครื่องนี้ไม่อนุญาตแจ้งเตือน จะเตือนในแอปตอนเปิดแทน':''}</div>${reminderForm(st.reminder)}
+  <div class="lbl">การสั่นตอบสนอง</div><button class="vsw ${P.haptic.enabled?'on':''}" data-act="haptic-onoff" role="switch" aria-checked="${P.haptic.enabled}"><i></i>สั่นเบาๆ ตอนชงและเก็บแสตมป์</button>
+  <div class="lbl">ฤดูกาลตามซีกโลก</div>${chips([{k:'auto',th:`อัตโนมัติ (${h.source==='setting'?'ตั้งเอง':h.hemi==='S'?'ซีกโลกใต้':'ซีกโลกเหนือ'})`},{k:'N',th:'ซีกโลกเหนือ'},{k:'S',th:'ซีกโลกใต้'}],st.hemi,'set-hemi')}
+  <div class="sub" style="font-size:12px;margin-top:6px">ตอนนี้: ฤดู${TH_SEASON[se.season]}${fest.length?` · เทศกาล: ${fest.map(f=>esc(f.th)).join(' + ')}`:''}</div>
+  <div class="lbl">สำรอง & กู้คืนข้อมูล</div><div class="sub" style="font-size:12.5px">ข้อมูลอยู่ในเครื่องนี้เท่านั้น ถ้าเปลี่ยนเครื่องหรือล้างเบราว์เซอร์ ให้บันทึกไฟล์สำรองไว้ก่อน</div>
+  <div style="display:flex;gap:10px;margin-top:8px"><button class="btn sm" data-act="backup">บันทึกไฟล์สำรอง ⤓</button><button class="btn sm soft hd" data-act="import">นำเข้าไฟล์สำรอง ⤒</button></div>
+  <div class="lbl">ความเป็นส่วนตัว</div><div class="sub" style="font-size:12.5px">ไม่มีบัญชี ไม่มีโฆษณา ไม่มีการติดตาม · <a href="privacy.html">อ่านนโยบายความเป็นส่วนตัว</a></div>
+  ${ENV.dev?devPanel():''}`);
+}
+function devPanel(){
+  const d=NOW(), h=hemiNow();
+  return `<div class="lbl">DEV · festival engine</div><pre class="devpre">${esc(JSON.stringify({ now:d.toString(), tz:ENV.timeZone(), region:ENV.region(), hemi:h, season:Festivals.season(d,h.hemi), active:Festivals.active(d).map(f=>f.k), upcoming:Festivals.upcoming(d,90).map(f=>f.k+' '+keyOf(f.start)), stamps:stampCount(), guests:Object.keys(db.guests), usual:usualOrder(), tod:timeOfDay(), closing:closingSoon(), schema:db.v },null,1))}</pre>`;
+}
 /* ----- collection ----- */
 function collectionSheet(){
-  const met=metCounts(), nMet=BARISTAS.filter(b=>met[b.k]).length, best=bestStreak();
+  const met=metCounts(), nMet=LIVE.filter(b=>met[b.k]).length, best=bestStreak(), n=stampCount();
   openSheet(`<div class="sub">ก๊าบก๊าบคาเฟ่ · สะสม</div><div class="H">สมุดสะสมของฉัน</div>
-  <div class="lbl" style="margin-top:12px">น้องเป็ดที่เคยเป็นบาริสต้าให้ (${nMet}/${BARISTAS.length})</div>
-  <div class="ducks">${BARISTAS.map(b=>{ const n=met[b.k]||0; return `<div class="duckcard hd thin ${n?'':'unmet'}"><img src="${bImg(b.k)}" alt="${n?esc(b.th):'ยังไม่เจอ'}"><b>${n?esc(b.th):'???'}</b><small>${n?`เจอ ${n} ครั้ง`:'ยังไม่เจอ'}</small></div>`; }).join('')}</div>
+  <div class="lbl" style="margin-top:12px">น้องเป็ดที่เคยเป็นบาริสต้าให้ (${nMet}/${LIVE.length})</div>
+  <div class="ducks">${LIVE.map(b=>{ const n=met[b.k]||0; return `<div class="duckcard hd thin ${n?'':'unmet'}"><img src="${bImg(b.k)}" alt="${n?esc(b.th):'ยังไม่เจอ'}"><b>${n?esc(b.th):'???'}</b><small>${n?`เจอ ${n} ครั้ง`:'ยังไม่เจอ'}</small></div>`; }).join('')}</div>
   ${RANDOM_BARISTA?'':'<div class="sub" style="font-size:12px;margin-top:8px">ตอนนี้เป๊ะประจำบาร์ทุกวัน · น้องเป็ดตัวอื่นกำลังเตรียมผ้ากันเปื้อน จะเริ่มสุ่มมาเป็นบาริสต้าเร็วๆ นี้ ✿</div>'}
-  <div class="lbl" style="margin-top:16px">รางวัลสตรีค · สถิติติดกันยาวสุด ${best} วัน</div>
+  <div class="lbl" style="margin-top:16px">แขกรับเชิญ · สะสมแล้ว ${n} แสตมป์ (ปลดล็อกแล้วอยู่ถาวร)</div>
+  <div class="ducks">${GUESTS.map(g=>{ const ok=!!db.guests[g.k]; return `<div class="duckcard hd thin ${ok?'':'unmet'}"><img src="${IMG}g-${g.k}.webp" alt="${ok?esc(g.th):'ยังไม่ปลดล็อก'}"><b>${ok?esc(g.th):'???'}</b><small>${ok?esc(g.role):`ครบ ${g.at} แสตมป์ · อีก ${Math.max(0,g.at-n)}`}</small></div>`; }).join('')}</div>
+  ${db.guests.redpanda?'<div class="sub" style="font-size:12px;margin-top:6px">✦ เมนูลับ "เมเปิลซินนามอนลาเต้" เปิดแล้วในหมวดกาแฟ</div>':''}
+  <div class="lbl" style="margin-top:16px">ของตกแต่งโบนัสจากสตรีค · สถิติติดกันยาวสุด ${best} วัน</div>
   <div class="rewards">${REWARDS.map(r=>{ const ok=best>=r.d; return `<div class="reward hd thin ${ok?'ok':''}"><span class="ricon">${r.type==='sleeve'?`<i class="rsl" style="border-color:${SLEEVES.find(x=>x.k===r.k).c}"></i>`:miniSticker(r.k)}</span><div style="flex:1"><b>${r.th}</b><div class="sub" style="font-size:12px">${ok?'ปลดล็อกแล้ว ใช้ได้ที่ขั้น "แต่งแก้ว" ✓':`สะสมติดกัน ${r.d} วัน · อีก ${r.d-best} วัน`}</div><div class="mix hd thin" style="margin-top:6px;height:10px"><i style="width:${Math.min(100,best/r.d*100)}%;background:${ok?'#9DBF6A':'#F2C94C'}"></i></div></div></div>`; }).join('')}</div>
-  <div class="sub" style="font-size:11.5px;margin-top:10px">* ข้อมูลตัวอย่างไม่นับรวมในสตรีคและการสะสม</div>`);
+  <div class="sub" style="font-size:11.5px;margin-top:10px">* นับจากสถิติดีที่สุด ขาดวันไม่รีเซ็ตและไม่เสียอะไร · ข้อมูลตัวอย่างไม่นับรวม</div>`);
 }
 /* ----- summary ----- */
 function stats(y,m){
@@ -496,7 +663,7 @@ function stats(y,m){
   const top = o => Object.entries(o).sort((a,b)=>b[1]-a[1])[0];
   let best=0, run=0, prev=null;
   ents.forEach(([k])=>{ const d=parseKey(k); run = prev && (d-prev)/864e5===1 ? run+1 : 1; best=Math.max(best,run); prev=d; });
-  let cur=0; const t=new Date(); t.setHours(0,0,0,0); let d=new Date(t); if(!db.entries[keyOf(d)]) d.setDate(d.getDate()-1);
+  let cur=0; const t=NOW(); t.setHours(0,0,0,0); let d=new Date(t); if(!db.entries[keyOf(d)]) d.setDate(d.getDate()-1);
   while (db.entries[keyOf(d)]){ cur++; d.setDate(d.getDate()-1); }
   return { n:ents.length, days:new Date(y,m+1,0).getDate(), cnt, shots, best, cur, drink:top(drinks), cup:top(cups), bar:top(bar), mood:top(moods), ents };
 }
@@ -589,7 +756,7 @@ async function drawStamp(x, e, cx, cy, R){
   const fx=artFX(e); if(fx){ const fi=await svgImg(fx).catch(()=>null); if(fi){ const s2=R*2*sc; x.drawImage(fi,cx-s2/2,cy-s2/2,s2,s2); } }
   x.setLineDash([14,11]); x.strokeStyle='#5A4636'; x.globalAlpha=.55; x.lineWidth=5; x.beginPath(); x.arc(cx,cy,R+10,0,7); x.stroke(); x.setLineDash([]); x.globalAlpha=1;
   const sl=(SLEEVES.find(z=>z.k===e.sleeve)||{}).c; if(sl){ x.strokeStyle=sl; x.globalAlpha=.9; x.lineWidth=22; x.beginPath(); x.arc(cx,cy,R+30,0,7); x.stroke(); x.globalAlpha=1; }
-  for (const [i,k] of (e.stickers||[]).entries()){ const si=await svgImg(miniSticker(k)).catch(()=>null); if(si){ const p=STK_POS[i]; x.drawImage(si, cx-R+p[0]/100*2*R, cy-R+p[1]/100*2*R, R*.48, R*.48); } }
+  for (const [i,k] of (e.stickers||[]).entries()){ const si=await (STICKER_IMG[k] ? loadImg(STICKER_IMG[k]) : svgImg(miniSticker(k))).catch(()=>null); if(si){ const p=STK_POS[i]; x.drawImage(si, cx-R+p[0]/100*2*R, cy-R+p[1]/100*2*R, R*.48, R*.48); } }
 }
 async function storyCard(kind, key){
   await Promise.all(['400 40px Itim','600 30px Mali','700 30px Mali'].map(f=>document.fonts.load(f)));
@@ -635,21 +802,21 @@ async function storySheet(kind, key){
   try { const b=await storyCard(kind,key); if(story.url) URL.revokeObjectURL(story.url); story={blob:b,url:URL.createObjectURL(b),name:`moodcup-${kind==='day'?'day':'month'}-${key}.png`}; const im=$('#storyImg'); if(im){ im.src=story.url; $('#storyLoad').remove(); } }
   catch(err){ console.warn(err); const l=$('#storyLoad'); if(l) l.textContent='สร้างการ์ดไม่สำเร็จ ลองใหม่อีกครั้ง'; }
 }
-function downloadBlob(url,name){ const a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); }
+function downloadBlob(blob,name){ P.share.download(blob,name); }
 async function shareBlob(blob,url,name){
-  const f=new File([blob],name,{type:'image/png'});
-  if (navigator.canShare && navigator.canShare({files:[f]})){ try { await navigator.share({files:[f],title:'MOOD CUP · ก๊าบก๊าบคาเฟ่'}); return; } catch(err){ if (err && err.name==='AbortError') return; } }
-  downloadBlob(url,name); toast('เครื่องนี้แชร์ไฟล์ตรงไม่ได้ เลยดาวน์โหลดให้แทนนะ',1);
+  const r = await P.share.png(blob, name);
+  if (r==='downloaded') toast('เครื่องนี้แชร์ไฟล์ตรงไม่ได้ เลยดาวน์โหลด PNG ให้แทนนะ',1);
+  if (r==='shared') P.haptic.play('success');
 }
 /* ----- demo ----- */
 function demo(){
-  const now=new Date(); let added=0;
+  const now=NOW(); let added=0;
   for (let i=1;i<=45;i++){
     const d=new Date(now); d.setDate(d.getDate()-i); const k=keyOf(d);
     if (db.entries[k] || Math.random()<.14) continue;
     const r=Math.random(), pool = (r<.45 ? MENU.filter(m=>m.cat==='coffee') : r<.82 ? MENU.filter(m=>m.cat==='matcha') : MENU.filter(m=>m.cat==='other')).filter(m=>!m.season);
     const m=pool[Math.floor(Math.random()*pool.length)], temp=m.temp||(Math.random()<.55?'iced':'hot');
-    db.entries[k] = { drink:m.k, barista:BARISTAS[Math.floor(Math.random()*12)].k, temp, bean:BEANS[Math.floor(Math.random()*4)].k, grind:'fine', shots:isCoffee(m)?1+Math.floor(Math.random()*3):0, milk:MILKS[Math.floor(Math.random()*4)].k, art:ARTS[Math.floor(Math.random()*3)].k, syrup:SYRUPS[Math.floor(Math.random()*5)].k, scoops:2, water:80, topping:TOPS[Math.floor(Math.random()*5)].k, cup:temp==='iced'?(Math.random()<.6?'tumbler':'glass'):(Math.random()<.6?'mug':'paper'), sleeve:SLEEVES[Math.floor(Math.random()*7)].k, size:SIZES[Math.floor(Math.random()*3)].k, ice:ICES[1+Math.floor(Math.random()*3)].k, sweet:SWEETS[Math.floor(Math.random()*5)].k, stickers:STK.filter(()=>Math.random()<.18).slice(0,3), mood:MOODS[Math.floor(Math.random()*8)].k, note:'', ts:+d, demo:true };
+    db.entries[k] = { drink:m.k, barista:LIVE[Math.floor(Math.random()*LIVE.length)].k, temp, bean:BEANS[Math.floor(Math.random()*4)].k, grind:'fine', shots:isCoffee(m)?1+Math.floor(Math.random()*3):0, milk:MILKS[Math.floor(Math.random()*4)].k, art:ARTS[Math.floor(Math.random()*3)].k, syrup:SYRUPS[Math.floor(Math.random()*5)].k, scoops:2, water:80, topping:TOPS[Math.floor(Math.random()*5)].k, cup:temp==='iced'?(Math.random()<.6?'tumbler':'glass'):(Math.random()<.6?'mug':'paper'), sleeve:SLEEVES[Math.floor(Math.random()*7)].k, size:SIZES[Math.floor(Math.random()*3)].k, ice:ICES[1+Math.floor(Math.random()*3)].k, sweet:SWEETS[Math.floor(Math.random()*5)].k, stickers:STK.filter(()=>Math.random()<.18).slice(0,3), mood:MOODS[Math.floor(Math.random()*8)].k, note:'', ts:+d, demo:true };
     added++;
   }
   save(); closeSheet(); S.calY=now.getFullYear(); S.calM=now.getMonth(); go('home'); toast(`เติมแสตมป์ตัวอย่าง ${added} วันแล้ว ✦`, 1);
@@ -726,8 +893,20 @@ document.addEventListener('click', ev=>{
     case 'mnext': S.calM++; if(S.calM>11){S.calM=0;S.calY++;} render(); break;
     case 'detail': detailSheet(k); break;
     case 'about': aboutSheet(); break;
+    case 'settings': settingsSheet(); break;
+    case 'rem-save': { const v=($('#remTime')||{}).value||'20:00'; S.askReminder=false; setReminder(v).then(()=>{ if ($('#sheet').classList.contains('open')) settingsSheet(); else render(); }); break; }
+    case 'rem-off': S.askReminder=false; setReminder(null).then(()=>{ if ($('#sheet').classList.contains('open')) settingsSheet(); else render(); }); break;
+    case 'haptic-onoff': P.haptic.setEnabled(!P.haptic.enabled); P.haptic.play('light'); settingsSheet(); break;
+    case 'set-hemi': db.settings.hemi=k; save(); settingsSheet(); break;
+    case 'backup': exportBackup(); break;
+    case 'import': P.file.pickJSON().then(obj=>{ if (!confirm('นำเข้าไฟล์สำรอง? วันที่ซ้ำกันจะใช้ข้อมูลจากไฟล์')) return; const r=importBackup(obj); closeSheet(); go('home'); toast(`นำเข้า ${r.n} แก้วแล้ว${r.skip?` (ข้าม ${r.skip} รายการที่อ่านไม่ได้)`:''}`,1); }).catch(err=>{ if (err && err.message!=='none') toast(err.message && /MOOD CUP|เวอร์ชัน/.test(err.message) ? err.message : 'อ่านไฟล์สำรองไม่ได้'); }); break;
+    case 'miss-ok': db.settings.missShown=todayKey(); save(); render(); break;
+    case 'bootg-ok': S.bootGuests=[]; render(); break;
+    case 'nudge-ok': db.settings.lastNudge=todayKey(); save(); render(); break;
+    case 'usual': { const o=usualOrder(); if (o){ Object.assign(S.draft, o); S.cat=M(o.drink).cat; P.haptic.play('light'); const y=app.scrollTop; render(); app.scrollTop=y; toast('จัดให้เหมือนเดิมแล้ว ☕',1); } break; }
+    case 'opt-decaf': { d.decaf=+k; const y=app.scrollTop; render(); app.scrollTop=y; break; }
     case 'demo': demo(); break;
-    case 'reset': if (confirm('ล้างแสตมป์ทั้งหมดในเครื่องนี้?')){ db={entries:{}}; save(); go('home'); toast('ล้างข้อมูลแล้ว',1); } break;
+    case 'reset': if (confirm('ล้างแสตมป์ แขก และการตั้งค่าทั้งหมดในเครื่องนี้? (แนะนำให้บันทึกไฟล์สำรองก่อน)')){ db=migrate({}); save(); applyReminder(); go('home'); toast('ล้างข้อมูลแล้ว',1); } break;
     case 'del': if (confirm('ลบแก้ววันนี้?')){ delete db.entries[todayKey()]; save(); closeSheet(); go('home'); toast('ลบแก้ววันนี้แล้ว',1); } break;
     case 'edit': { closeSheet(); const e=db.entries[todayKey()]; S.edit=true; S.barista=e.barista; S.draft={drink:e.drink, temp:e.temp, ice:e.ice||'normal', size:e.size||'M', sweet:e.sweet??50, milk:e.milk||'fresh'}; enterCafe(); break; }
     case 'cat': S.cat=k; S.draft.drink=menuNow().find(m=>m.cat===k).k; render(); break;
@@ -754,11 +933,11 @@ document.addEventListener('click', ev=>{
     case 'set-sleeve': { const L=lockOf('sleeve',k); if (L){ toast(`ปลดล็อกเมื่อสะสมติดกัน ${L.d} วันนะ (ตอนนี้ ${bestStreak()} วัน)`); break; } d.sleeve=k; refresh(); break; }
     case 'stk': { const L=lockOf('sticker',k); if (L && !d.stickers.includes(k)){ toast(`ปลดล็อกเมื่อสะสมติดกัน ${L.d} วันนะ (ตอนนี้ ${bestStreak()} วัน)`); break; } const i=d.stickers.indexOf(k); if(i>=0) d.stickers.splice(i,1); else if(d.stickers.length<3) d.stickers.push(k); else toast('ติดได้สูงสุด 3 ชิ้นนะ'); refresh(); break; }
     case 'set-mood': { const n=$('#note'); if(n) d.note=n.value; d.mood=k; refresh(); speak(MOOD_REPLY[k]||'ขอบคุณที่เล่าให้ฟังนะ'); break; }
-    case 'dl': if (cardBlob){ const aEl=document.createElement('a'); aEl.href=cardURL; aEl.download=`moodcup-${S.calY}-${pad(S.calM+1)}.png`; document.body.appendChild(aEl); aEl.click(); aEl.remove(); toast('ดาวน์โหลดการ์ดแล้ว',1); } else toast('กำลังสร้างการ์ด...',1); break;
+    case 'dl': if (cardBlob){ downloadBlob(cardBlob, `moodcup-${S.calY}-${pad(S.calM+1)}.png`); toast('ดาวน์โหลดการ์ดแล้ว',1); } else toast('กำลังสร้างการ์ด...',1); break;
     case 'story-day': storySheet('day', k||todayKey()); break;
     case 'story-month': storySheet('month', `${S.calY}-${S.calM}`); break;
     case 'story-share': if (story.blob) shareBlob(story.blob, story.url, story.name); else toast('กำลังวาดการ์ด...',1); break;
-    case 'story-dl': if (story.blob){ downloadBlob(story.url, story.name); toast('ดาวน์โหลดการ์ดแล้ว',1); } else toast('กำลังวาดการ์ด...',1); break;
+    case 'story-dl': if (story.blob){ downloadBlob(story.blob, story.name); toast('ดาวน์โหลดการ์ดแล้ว',1); } else toast('กำลังวาดการ์ด...',1); break;
     case 'share': if (cardBlob) shareBlob(cardBlob, cardURL, `moodcup-${S.calY}-${pad(S.calM+1)}.png`); else toast('กำลังสร้างการ์ด...',1); break;
   }
 });
@@ -770,5 +949,10 @@ function pull(){
   (function tick(now){ const f=Math.min(1,(now-t0)/total); S.shotf=f; $('#fx').innerHTML=fxHTML('shot'); const g=$('#g1'); if(g) g.style.width=f*100+'%'; const gm=$('#gm'); if(gm) gm.textContent=`กำลังดึงช็อตที่ ${Math.min(S.draft.shots,Math.floor(f*S.draft.shots)+1)}...`;
     if (f<1) requestAnimationFrame(tick); else { S.busy=false; S.prog.shot=true; S.draft.shotq='ok'; SFX.play('plop',{vol:.25}); speak(S.draft.shots>=3?'เข้มสะใจ!':'ช็อตสวยงาม'); refreshStep(); } })(t0);
 }
+window.addEventListener('focus', ()=>{ if (S.view==='home' && !$('#sheet').classList.contains('open')) render(); });
+setInterval(applyLighting, 60000);
+/* catch up unlocks for stamps collected before Phase 1 (or imported); shown once on home */
+S.bootGuests = syncGuests(); if (S.bootGuests.length) save();
+applyReminder();
 render();
 })();

@@ -6,11 +6,16 @@
 <title>ก๊าบก๊าบคาเฟ่ · MOOD CUP</title>
 <meta name="description" content="สะสมมู้ดประจำวันด้วยแก้วเครื่องดื่มที่ชงเองกับบาริสต้าน้องเป็ด">
 <meta name="theme-color" content="#FFF8EC">
-<link rel="icon" href="assets/img/icon.png">
+<link rel="icon" href="assets/icons/icon-32.png" sizes="32x32">
+<link rel="icon" href="assets/icons/icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="assets/icons/icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mood Cup">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Itim&family=Mali:wght@400;500;600;700&family=Sriracha&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=8">
+<link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -28,6 +33,7 @@
 </aside>
 
 <div class="phone" id="phone">
+  <div class="splash" id="splash" aria-hidden="true"><img src="assets/img/launch.webp" alt=""></div>
   <div class="grain"></div>
   <main id="app"></main>
   <div class="tabfade" id="tabfade"></div>
@@ -45,8 +51,11 @@
   <div class="toast" id="toast"></div>
   <canvas id="confetti"></canvas>
 </div>
-<script src="sfx.js?v=8"></script>
-<script src="art.js?v=8"></script>
-<script src="app.js?v=8"></script>
+<script src="platform.js?v=9"></script>
+<script src="festivals.js?v=9"></script>
+<script src="sfx.js?v=9"></script>
+<script src="art.js?v=9"></script>
+<script src="app.js?v=9"></script>
+<script>setTimeout(()=>{ const s=document.getElementById('splash'); if(s){ s.classList.add('out'); setTimeout(()=>s.remove(),600); } }, 700);</script>
 </body>
 </html>

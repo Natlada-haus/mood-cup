@@ -31,7 +31,7 @@ const TOPPINGS = [
 ];
 const STICKERS = [
   { k:'heart', th:'หัวใจ' }, { k:'star', th:'ดาว' }, { k:'flower', th:'ดอกไม้' },
-  { k:'smile', th:'ยิ้ม' }, { k:'leaf', th:'ใบชา' }, { k:'cat', th:'น้องแมว' },
+  { k:'smile', th:'ยิ้ม' }, { k:'leaf', th:'ใบชา' }, { k:'bean', th:'เมล็ดกาแฟ' },
 ];
 const MOODS = [
   { k:'happy',   th:'สดใส',     c:'#FFD84D', m:'smile' },
@@ -70,13 +70,14 @@ function stickerSVG(k, x, y, s=1){
     case 'flower': return `<g ${t}>${[0,72,144,216,288].map(a=>`<circle cx="${(Math.cos(a*Math.PI/180)*8).toFixed(1)}" cy="${(Math.sin(a*Math.PI/180)*8).toFixed(1)}" r="7" fill="#FFB0D0" stroke="#fff" stroke-width="3" paint-order="stroke"/>`).join('')}<circle r="5.5" fill="#FFCF3F"/></g>`;
     case 'smile': return `<g ${t}><circle r="13" fill="#FFE066" ${st}/><circle cx="-4.5" cy="-2" r="1.8" fill="#2F3A1E"/><circle cx="4.5" cy="-2" r="1.8" fill="#2F3A1E"/><path d="M-5 3 Q0 8 5 3" stroke="#2F3A1E" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="-8" cy="3" r="2.2" fill="#FF8FB5" opacity=".7"/><circle cx="8" cy="3" r="2.2" fill="#FF8FB5" opacity=".7"/></g>`;
     case 'leaf': return `<g ${t}><path d="M-12 10 C-14 -6 0 -14 13 -12 C13 2 4 13 -12 10Z" fill="#8DBB3F" ${st}/><path d="M-10 8 Q0 0 9 -9" stroke="#5E8A22" stroke-width="1.8" fill="none" stroke-linecap="round"/></g>`;
-    case 'cat': return `<g ${t}><path d="M-12 -4 L-11 -15 L-4 -9 Q0 -10 4 -9 L11 -15 L12 -4 Q14 11 0 11 Q-14 11 -12 -4Z" fill="#FFB65C" ${st}/><circle cx="-4.5" cy="-1" r="1.7" fill="#2F3A1E"/><circle cx="4.5" cy="-1" r="1.7" fill="#2F3A1E"/><path d="M-2 3 Q0 5 2 3" stroke="#2F3A1E" stroke-width="1.6" fill="none" stroke-linecap="round"/><circle cx="-8" cy="3" r="2" fill="#FF8FB5" opacity=".8"/><circle cx="8" cy="3" r="2" fill="#FF8FB5" opacity=".8"/></g>`;
     case 'crown': return `<g ${t}><path d="M-13 8 L-14 -8 L-6 -1 L0 -12 L6 -1 L14 -8 L13 8Z" fill="#FFD23F" ${st}/><circle cx="0" cy="-12" r="2.6" fill="#FF8FB5"/><circle cx="-14" cy="-8" r="2.2" fill="#9FD8F0"/><circle cx="14" cy="-8" r="2.2" fill="#9FD8F0"/><rect x="-11" y="3" width="22" height="3" rx="1.5" fill="#F2A93B"/></g>`;
     case 'duck': return `<g ${t}><path d="M-11 4 Q-12 -6 -4 -8 Q-4 -15 3 -15 Q10 -15 10 -8 L15 -7 Q15 -3 9 -3 Q14 2 11 8 Q6 13 -3 12 Q-12 11 -11 4Z" fill="#FFE066" ${st}/><circle cx="4" cy="-10" r="1.7" fill="#2F3A1E"/><path d="M10 -8 L15 -7 Q15 -4 10 -4Z" fill="#F7A14A"/><circle cx="1" cy="-6" r="2" fill="#FF9DB8" opacity=".7"/></g>`;
   }
   return '';
 }
-function miniSticker(k){ return `<svg viewBox="-18 -18 36 36" class="ico">${stickerSVG(k,0,0,1)}</svg>`; }
+/* bitmap stickers (pencil art). 'bean' replaced the old cat sticker in Phase 1 (no cats). */
+const STICKER_IMG = { bean:'assets/img/stk-bean.webp' };
+function miniSticker(k){ if (STICKER_IMG[k]) return `<svg viewBox="-18 -18 36 36" class="ico"><image href="${STICKER_IMG[k]}" x="-15.5" y="-16" width="31" height="32"/></svg>`; return `<svg viewBox="-18 -18 36 36" class="ico">${stickerSVG(k,0,0,1)}</svg>`; }
 
 /* ---------- mood faces ---------- */
 function faceSVG(k, size=40){
