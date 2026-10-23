@@ -4,3 +4,7 @@ shots/
 qc.py
 *.pyc
 .qc/
+
+# internal files from other agents (never commit)
+pricing-*.md
+raw/
