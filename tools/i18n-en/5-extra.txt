@@ -35,15 +35,15 @@
 ไม่หวาน ⇒ No sugar
 ไม่ใส่นม ⇒ No milk
 // index.html
-คาเฟ่เล็กๆ สำหรับทุกความรู้สึก ชงแก้ววันนี้เองกับบาริสต้าน้องเป็ด แล้วเก็บไว้เป็นแสตมป์ · A little cafe for every feeling. ⇒ A little cafe for every feeling. Brew today's cup with the duckling baristas and keep it as a stamp.
-คาเฟ่เล็กๆ สำหรับทุกความรู้สึก เข้าร้าน เจอบาริสต้าน้องเป็ด ชงแก้ววันนี้เองทีละขั้น แล้วเก็บไว้เป็นแสตมป์ในสมุดรายเดือน ⇒ A little café for every feeling. Step inside, meet the duckling baristas, brew today's cup step by step and keep it as a stamp in your monthly book.
+คาเฟ่เล็กๆ สำหรับทุกความรู้สึก ชงแก้ววันนี้เองกับน้องเป็ดบาริสต้า แล้วเก็บไว้เป็นแสตมป์ · A little cafe for every feeling. ⇒ A little cafe for every feeling. Brew today's cup with the duckling baristas and keep it as a stamp.
+คาเฟ่เล็กๆ สำหรับทุกความรู้สึก เข้าร้าน เจอน้องเป็ดบาริสต้า ชงแก้ววันนี้เองทีละขั้น แล้วเก็บไว้เป็นแสตมป์ในสมุดรายเดือน ⇒ A little café for every feeling. Step inside, meet the duckling baristas, brew today's cup step by step and keep it as a stamp in your monthly book.
 ปิดเสียง ⇒ Mute
 // leftovers from QC
 #Cupmori  #คัพมอริ ⇒ #Cupmori
 เดาจากฤดู ⇒ guessed from season
 ขาประจำ ⇒ the regulars
 จดหมายจากขาประจำ ⇒ Letters from regulars
-Cupmori คือคาเฟ่เล็กๆ สำหรับทุกความรู้สึก ทุกวันเข้าร้าน เจอบาริสต้าน้องเป็ด ชงแก้ววันนี้เองทีละขั้น แล้วเก็บไว้เป็นแสตมป์ ข้อมูลทั้งหมดเก็บในเครื่องนี้เท่านั้น ไม่มีบัญชี ไม่มีโฆษณา ⇒ Cupmori is a little café for every feeling. Each day, step inside, meet the duckling baristas, brew today's cup step by step and keep it as a stamp. Everything stays on this device. No accounts, no ads.
+Cupmori คือคาเฟ่เล็กๆ สำหรับทุกความรู้สึก ทุกวันเข้าร้าน เจอน้องเป็ดบาริสต้า ชงแก้ววันนี้เองทีละขั้น แล้วเก็บไว้เป็นแสตมป์ ข้อมูลทั้งหมดเก็บในเครื่องนี้เท่านั้น ไม่มีบัญชี ไม่มีโฆษณา ⇒ Cupmori is a little café for every feeling. Each day, step inside, meet the duckling baristas, brew today's cup step by step and keep it as a stamp. Everything stays on this device. No accounts, no ads.
 · กลาง ⇒ · Medium
 · อ่อน ⇒ · light
 · เข้ม ⇒ · strong

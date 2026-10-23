@@ -2,7 +2,7 @@
 
 ## Artwork
 - **Phase 1 artwork (Oct 2026) — made with Grok image generation**, matched to the café's pencil style using the existing art as reference, then resized/cut out with `tools/process_phase1.py`:
-  guests `g-frog`, `g-hedgehog`, `g-otter`, `g-sheep`, `g-redpanda` · guest counter scenes `scene-*` · secret-menu cup `d-secret` · decaf cup `d-decaf` · closing-soon sign `sign-closing` · coffee-bean sticker `stk-bean` (replaces the old cat sticker) · app icon `assets/icons/icon-*.png` / `assets/img/icon.png` · launch screen `assets/img/launch.webp`, `assets/icons/launch-*.png`.
+  guests `g-frog`, `g-hedgehog`, `g-otter`, `g-sheep`, `g-redpanda` · guest counter scenes `scene-*` · secret-menu cup `d-secret` · decaf cup `d-decaf` · closing-soon sign `sign-closing` · coffee-bean sticker `stk-bean` (replaces the old cat sticker) · previous app icon `assets/icons/icon-*.png` / `assets/img/icon.png` (kept for rollback; the CI icon `assets/icons/cupmori-icon-*.png` comes from `assets/brand/appicon-ci-1024.webp`) · launch screen `assets/img/launch.webp`, `assets/icons/launch-*.png`.
 - **agy is no longer used** for this project. Earlier artwork (café counters, coffee/matcha bars, drink stamps and cup variants, duck baristas) was created before Phase 1 and is kept as-is; `d-icelatte`, `d-hotmatcha`, `d-glassmatcha`, `d-pumpkin`, `d-xmascocoa` and the `d-v-*` vessel images are code recolours/variants of those drink drawings.
 - **Phase 2 artwork (Oct 2026), made with Grok image generation (one image at a time)** in the same coloured-pencil/pastel style, then processed with `tools/process_phase2.py`, `tools/process_noice.py` and `tools/make_brand.py` (raw files kept outside the repo in `/workspace/mc-art/p2/`):
   - World Bee Day guest `assets/img/g-bee.webp` + counter scene `assets/img/scene-bee.webp`
@@ -40,5 +40,5 @@ tap ← soft-pop-sfx-433612 · blip ← ui-sounds-pack-3-7-359721 · bubble ← 
 |---|---|---|
 | Mali Bold (Cadson Demak) | display / wordmark | SIL Open Font License 1.1, `assets/fonts/OFL-Mali.txt` |
 | Nunito (variable) | English text | SIL Open Font License 1.1, `assets/fonts/OFL-Nunito.txt` |
-| Noto Sans Thai (variable) | Thai body text | SIL Open Font License 1.1, `assets/fonts/OFL-NotoSansThai.txt` |
+| Noto Sans Thai 400 / 600 (static instances cut from the variable font, unmodified glyphs) | Thai body text | SIL Open Font License 1.1, `assets/fonts/OFL-NotoSansThai.txt` |
 Itim and Sriracha (Phase 1) are no longer used.

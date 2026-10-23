@@ -12,6 +12,7 @@ const PATS = Object.keys(DICT).filter(k => k.includes('{}')).sort((a, b) => b.re
   .map(k => [new RegExp('^' + k.split('{}').map(x => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('([\\s\\S]+?)') + '$'), DICT[k]]);
 const WIDE = /\n| · /; const PATS_WIDE = PATS.filter(p => WIDE.test(p[0].source.replace(/\\/g, ''))), PATS_NARROW = PATS.filter(p => !PATS_WIDE.includes(p));
 const missing = new Set();
+const PLURAL = { 'แก้ว': ['cup', 'cups'], 'ช็อต': ['shot', 'shots'] }; /* counted units: '3 แก้ว' -> '3 cups' (the bare word stays 'Cup' / 'Shot' as a step label) */
 const qs = new URLSearchParams(location.search);
 /* device rule (Nadda): Thai by default; English when the device language is English */
 const deviceLang = () => { const l = ((navigator.languages && navigator.languages[0]) || navigator.language || 'th').toLowerCase(); return l.startsWith('en') ? 'en' : 'th'; };
@@ -28,6 +29,7 @@ function tr(core, quiet){
   let m;
   if ((m = core.match(/^"([\s\S]+)"$/))) return '"' + t(m[1], quiet) + '"';
   if ((m = core.match(/^([\s\S]*?)\s*\(([^()]+)\)$/))) return (m[1] ? t(m[1], quiet) + ' ' : '') + '(' + t(m[2], quiet) + ')';
+  if ((m = core.match(/^(\d+)\s+(แก้ว|ช็อต)$/))) return m[1] + ' ' + PLURAL[m[2]][m[1] === '1' ? 0 : 1];
   if ((m = core.match(/^(\d+)\s+(\S[\s\S]*)$/))) return m[1] + ' ' + t(m[2], quiet);
   if ((m = core.match(/^(\S[\s\S]*?)\s+(\d+(?:%|oz)?)$/))) return t(m[1], quiet) + ' ' + m[2];
   if (!quiet) missing.add(core); return core;

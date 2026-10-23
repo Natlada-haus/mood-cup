@@ -77,7 +77,7 @@ const notify = {
   cancel(){ clearTimeout(timer); timer = null; },
   showNow(title, body){
     if (notify.permission() !== 'granted') return false;
-    try { new Notification(title, { body, icon:'assets/icons/icon-192.png', tag:'cupmori-daily' }); return true; } catch (e) { return false; }
+    try { new Notification(title, { body, icon:'assets/icons/cupmori-icon-192.png', tag:'cupmori-daily' }); return true; } catch (e) { return false; }
   },
 };
 

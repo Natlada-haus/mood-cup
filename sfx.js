@@ -1,5 +1,8 @@
 /* Cupmori · sound: SFX (Kenyset) + background music & café ambience (CC0)
    WebAudio, unlocked on first tap; music/ambience fade in/out and pause when tab hidden */
+/* line icons for system controls (VI v1.1: no emoji as system icons) */
+window.ICONS = {note: `<svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>`, spk: `<svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a8 8 0 0 1 0 11"/></svg>`, mute: `<svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>`, cup: `<svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 9h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M16 10h1.5a2.5 2.5 0 0 1 0 5H16"/><path d="M8 3c-1 1 1 2 0 3M12 3c-1 1 1 2 0 3"/></svg>`, bell: `<svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>`};
+
 (() => {
 const FILES = ['tap','blip','bubble','chime','next','plop','ice','pour','stamp','oops','grind','froth','clink','quack'];
 const LOOPS = { music:{src:'assets/bgm/music.mp3', len:24.0, vol:.25}, amb:{src:'assets/bgm/ambience.mp3', len:58.0, vol:.15} };
@@ -70,8 +73,8 @@ function setVol(k, v){
 function setMuted(v){ muted = v; localStorage.setItem(MKEY, v ? '1' : '0'); paint(); if (!v) { unlock(); setTimeout(() => play('bubble', {vol:.3}), 120); } }
 function setBgm(v){ bgmOn = v; localStorage.setItem(BKEY, v ? '1' : '0'); paint(); if (v) { unlock(); startBgm(); } else stopBgm(); }
 function paint(){
-  const b = document.getElementById('muteBtn'); if (b){ b.textContent = muted ? '🔇' : '🔊'; b.title = b.ariaLabel = muted ? 'เปิดเสียงเอฟเฟกต์' : 'ปิดเสียงเอฟเฟกต์'; b.classList.toggle('off', muted); }
-  const m = document.getElementById('bgmBtn'); if (m){ m.textContent = '🎵'; m.title = m.ariaLabel = bgmOn ? 'ปิดเพลงและเสียงบรรยากาศร้าน' : 'เปิดเพลงและเสียงบรรยากาศร้าน'; m.classList.toggle('off', !bgmOn); }
+  const b = document.getElementById('muteBtn'); if (b){ b.innerHTML = muted ? ICONS.mute : ICONS.spk; b.title = b.ariaLabel = muted ? 'เปิดเสียงเอฟเฟกต์' : 'ปิดเสียงเอฟเฟกต์'; b.classList.toggle('off', muted); }
+  const m = document.getElementById('bgmBtn'); if (m){ m.innerHTML = ICONS.note; m.title = m.ariaLabel = bgmOn ? 'ปิดเพลงและเสียงบรรยากาศร้าน' : 'เปิดเพลงและเสียงบรรยากาศร้าน'; m.classList.toggle('off', !bgmOn); }
 }
 document.addEventListener('visibilitychange', () => {
   if (!ctx) return;

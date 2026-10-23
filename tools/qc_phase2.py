@@ -164,4 +164,4 @@ json.dump(sorted(missing), open(os.path.join(OUT, 'i18n-missing.json'), 'w'), en
 print('untranslated strings:', len(missing))
 print('\n'.join(errs) if errs else 'console errors: 0')
 json.dump({'checks':checks, 'errors':errs, 'untranslated':len(missing)}, open(os.path.join(OUT, 'qc.json'), 'w'), ensure_ascii=False, indent=1)
-sys.exit(1 if errs or any(c.startswith('FAIL') for c in checks) else 0)
+sys.exit(1 if errs or missing or any(c.startswith('FAIL') for c in checks) else 0)

@@ -1,10 +1,11 @@
 /* Cupmori CI (cupmori-ci.pdf): Cream #FFF8EC · Cocoa #49342B · Sage #9DAE8D · Forest #526744 · Butter #F5D778
-   Terracotta #BD7258 (decoration only, never small text) · Blush #E7AAA0 · Lavender #C8BFDA. Cocoa text on light colours;
-   primary buttons Forest with Paper text; cards 24px, buttons 16px, touch targets >= 48px. Fonts bundled (OFL), no CDN. */
+   Terracotta #BD7258 (decoration only, never small text) · Blush #E7AAA0 · Lavender #C8BFDA · Sky #BBD4DF · Error #9C4438 (system only) · Line #DDD2C2 (dividers only). VI v1.1: cocoa text on light colours;
+   primary buttons Forest with Paper text; cards 24px, buttons 16px, inputs 12px, touch targets >= 48px. Noto Sans Thai 400/600 (static instances) for Thai body, Nunito for English and numbers, Mali Bold for display only. Fonts bundled (OFL), no CDN. */
 @font-face{font-family:Mali;src:url(assets/fonts/Mali-Bold.woff2) format("woff2");font-weight:700;font-display:swap}
 @font-face{font-family:Nunito;src:url(assets/fonts/Nunito-VF.woff2) format("woff2");font-weight:200 1000;font-display:swap;unicode-range:U+0000-0E00,U+0E80-FFFF}
-@font-face{font-family:"Noto Sans Thai";src:url(assets/fonts/NotoSansThai-VF.woff2) format("woff2");font-weight:100 900;font-display:swap}
-:root{--bg:#FFF8EC;--card:#FFFDF7;--paper:#FFFDF7;--ink:#49342B;--ink2:#6E5A4E;--acc:#526744;--accD:#526744;--sage:#9DAE8D;--forest:#526744;--butter:#F5D778;--terra:#BD7258;--blush:#E7AAA0;--lav:#C8BFDA;--c1:#F5D778;--c2:#E7AAA0;--wood:#C79A6B;--mint:#DCE4D3;--chalk:#FFF4DA;--r:24px;--fd:Mali,"Noto Sans Thai",system-ui,sans-serif;--fb:Nunito,"Noto Sans Thai",system-ui,sans-serif}
+@font-face{font-family:"Noto Sans Thai";src:url(assets/fonts/NotoSansThai-400.woff2) format("woff2");font-weight:100 500;font-display:swap}
+@font-face{font-family:"Noto Sans Thai";src:url(assets/fonts/NotoSansThai-600.woff2) format("woff2");font-weight:501 900;font-display:swap}
+:root{--bg:#FFF8EC;--card:#FFFDF7;--paper:#FFFDF7;--ink:#49342B;--ink2:#6E5A4E;--acc:#526744;--accD:#526744;--sage:#9DAE8D;--forest:#526744;--butter:#F5D778;--terra:#BD7258;--blush:#E7AAA0;--lav:#C8BFDA;--sky:#BBD4DF;--error:#9C4438;--line:#DDD2C2;--r-card:24px;--r-btn:16px;--r-input:12px;--c1:#F5D778;--c2:#E7AAA0;--wood:#C79A6B;--mint:#DCE4D3;--chalk:#FFF4DA;--r:24px;--fd:Mali,"Noto Sans Thai",system-ui,sans-serif;--fb:Nunito,"Noto Sans Thai",system-ui,sans-serif}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
 body{font-family:var(--fb);font-size:16px;line-height:1.6;color:var(--ink);background:#F3E6D3;overflow:hidden}
@@ -189,7 +190,7 @@ img{display:block;max-width:100%}
 .stkbtn.on{background:var(--c1)}
 .moodbtn{display:flex;flex-direction:column;align-items:center;gap:3px;width:calc(25% - 7px);padding:8px 0;border-radius:18px;background:var(--card);font:600 12px var(--fb)}
 .moodbtn.on{background:var(--c1)}
-textarea{width:100%;border:0;border-radius:16px;background:var(--card);padding:12px;font:500 14px var(--fb);color:var(--ink);resize:none;outline:none}
+textarea{width:100%;border:0;border-radius:var(--r-input);background:var(--card);padding:12px;font:500 14px var(--fb);color:var(--ink);resize:none;outline:none}
 .bfoot{position:sticky;bottom:0;display:flex;gap:10px;padding:12px 14px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--bg) 28%);z-index:20}
 .bfoot .btn:last-child{flex:1}
 /* done */
@@ -434,3 +435,16 @@ html.en .H{letter-spacing:0}
 .rm .artfx .steam{opacity:.8}.rm .hearts{display:none}
 .side-logo{display:flex;align-items:center;gap:12px}.side-emblem{width:84px}.side-wordmark{height:54px;width:auto}
 .tabbar button{min-width:56px;min-height:52px;justify-content:center}
+/* sheet titles never run under the close button (long English titles) */
+#sheet .H{padding-right:44px}
+/* VI v1.1: line icons instead of emoji for system controls */
+.ico{display:block;flex:none}
+.tabbar i .ico{margin:3px auto 0}
+.vrow span .ico{display:inline-block;vertical-align:-5px;width:18px;height:18px;margin-right:4px}
+/* VI v1.1: inputs 12px with a visible Forest edge; visible keyboard focus ring, 3px gap from the control */
+input[type=text],input[type=time],input[type=date],input[type=search],select{border-radius:var(--r-input)}
+:focus-visible{outline:3px solid var(--forest);outline-offset:3px}
+textarea:focus-visible,input:focus-visible{outline:3px solid var(--forest);outline-offset:2px}
+.btn:focus-visible,.chip:focus-visible,.tabbar button:focus-visible{outline:3px solid var(--forest);outline-offset:3px}
+.err,.error{color:var(--error)}
+hr,.divider{border:0;border-top:1px solid var(--line)}

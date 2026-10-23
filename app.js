@@ -118,6 +118,9 @@ const VESSELS = {
   soda:[ {k:'sodaglass',th:'แก้วโซดาน้ำผึ้ง'} ],
 };
 const DECAF_MUG = {k:'decafmug',th:'มัคม่วงพระจันทร์ (ดีแคฟ)'};
+const cupName = k => (CUPS.find(x=>x.k===k)||Object.values(VESSELS).flat().concat([DECAF_MUG]).find(x=>x.k===k)||{}).th;
+/* a counted unit on its own (summary tiles, canvas): Thai unchanged; English gets cup/cups, shot/shots */
+const unitOf = (th, n) => String(window.I18N ? I18N.t(`${n} ${th}`) : th).replace(/^\d+\s*/, '');
 const VESSEL_KEYS = Object.values(VESSELS).flat().map(v=>v.k);
 const vesselType = d => { const m=M(d.drink); if (m.secret) return 'secret'; if (m.soda) return 'soda'; if (m.k==='strawmatcha') return 'straw'; if (tempOf(d)==='iced') return 'glass'; return m.k==='usucha' ? 'bowl' : 'mug'; };
 const VARIANT = {
@@ -483,7 +486,7 @@ function homeView(){
     </div></div></div>` : `
     <div class="hero hd"><div class="hero-img">${counterScene(B('pe'),'',{sign:1})}${stars([[24,30,14],[330,40,12,.6]])}</div>
       <div class="hero-body"><div class="sub">${thDate(now)}</div><div class="H" style="margin:2px 0 4px">วันนี้ใจเป็นแก้วไหน?</div>
-      <p style="line-height:1.6">${stampCount()?'เข้าร้าน เจอบาริสต้าน้องเป็ด แล้วชงแก้วของวันนี้เองทีละขั้น เก็บไว้เป็นแสตมป์ประจำวัน':'แก้วแรกของคุณ เริ่มได้เมื่อพร้อม'}</p>
+      <p style="line-height:1.6">${stampCount()?'เข้าร้าน เจอน้องเป็ดบาริสต้า แล้วชงแก้วของวันนี้เองทีละขั้น เก็บไว้เป็นแสตมป์ประจำวัน':'แก้วแรกของคุณ เริ่มได้เมื่อพร้อม'}</p>
       <button class="btn wide" style="margin-top:12px" data-go="start">เข้าร้าน ชงแก้ววันนี้ ☕</button></div></div>`;
   return `<div>
   <div class="top">${brandMark()}<button class="pill beans hd thin" data-go="room" aria-label="เมล็ดกาแฟ ${db.beans} เมล็ด · ไปแต่งร้าน">${beanIcon(18)}<b>${db.beans}</b></button></div>
@@ -948,7 +951,7 @@ function detailSheet(k){
   ${k===todayKey()?`<div style="display:flex;gap:10px;margin-top:16px"><button class="btn soft hd" style="flex:1" data-act="del">ลบแก้ววันนี้</button><button class="btn" style="flex:1" data-act="edit">แก้ไข / ชงใหม่</button></div>`:''}<button class="btn wide yel" style="margin-top:10px" data-act="story-day" data-k="${k}">การ์ดแก้ววันนั้น · สตอรี่ 9:16 ↗</button>`);
 }
 function aboutSheet(){
-  openSheet(`<div class="H">เกี่ยวกับ Cupmori</div><div class="sub">คัพมอริ · ชงความรู้สึก เก็บวันของเรา</div><p style="line-height:1.6;margin-top:8px">Cupmori คือคาเฟ่เล็กๆ สำหรับทุกความรู้สึก ทุกวันเข้าร้าน เจอบาริสต้าน้องเป็ด ชงแก้ววันนี้เองทีละขั้น แล้วเก็บไว้เป็นแสตมป์ ข้อมูลทั้งหมดเก็บในเครื่องนี้เท่านั้น ไม่มีบัญชี ไม่มีโฆษณา</p>
+  openSheet(`<div class="H">เกี่ยวกับ Cupmori</div><div class="sub">คัพมอริ · ชงความรู้สึก เก็บวันของเรา</div><p style="line-height:1.6;margin-top:8px">Cupmori คือคาเฟ่เล็กๆ สำหรับทุกความรู้สึก ทุกวันเข้าร้าน เจอน้องเป็ดบาริสต้า ชงแก้ววันนี้เองทีละขั้น แล้วเก็บไว้เป็นแสตมป์ ข้อมูลทั้งหมดเก็บในเครื่องนี้เท่านั้น ไม่มีบัญชี ไม่มีโฆษณา</p>
   <p class="sub" style="margin-top:6px">ดาวน์โหลดฟรี · มีของตกแต่งให้ซื้อครั้งเดียวผ่าน Apple (ไม่มีผลกับการเล่น ไม่มีกล่องสุ่ม) · เมล็ดกาแฟหาได้จากการชงเท่านั้น ไม่มีขาย</p>
   <div class="lbl">น้องเป็ดบาริสต้าประจำร้าน (สุ่มมาชงให้ทุกวัน)</div><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">${LIVE.map(b=>`<div style="text-align:center;font:600 13px var(--fb)"><img src="${bImg(b.k)}" alt="" style="width:100%;aspect-ratio:1;object-fit:cover;mix-blend-mode:multiply;border-radius:14px">${b.th}</div>`).join('')}</div>
   <div class="lbl">เครดิต</div><ul style="font-size:14px;line-height:1.7;padding-left:18px">
@@ -1019,8 +1022,8 @@ function summarySheet(){
   const bb = B(s.bar[0]);
   openSheet(`<div class="sub">Cupmori · ชงความรู้สึก เก็บวันของเรา</div><div class="H">${summaryTitle(m,y)}</div>
   <div class="donutrow">${donutSVG(s.cnt)}<div class="legend">${['coffee','matcha','other'].map(c=>`<div><i style="background:${CAT[c].c}"></i>${CAT[c].th} ${Math.round(s.cnt[c]/tot*100)}% <span class="sub" style="font-size:12px">(${s.cnt[c]})</span></div>`).join('')}</div></div>
-  <div class="tiles" style="margin-top:12px"><div class="tile hd thin">สะสม<b>${s.n}/${s.days}</b>วัน</div><div class="tile hd thin">ช็อตรวม<b>${s.shots}</b>ช็อต</div><div class="tile hd thin">สตรีคยาวสุด<b>${s.best}</b>วันติด</div>
-  <div class="tile hd thin">สตรีคตอนนี้<b>${s.cur}</b>วัน</div><div class="tile hd thin">เมนูโปรด<b style="font-size:16px">${esc(M(s.drink[0]).th)}</b>${s.drink[1]} แก้ว</div><div class="tile hd thin">แก้วโปรด<b style="font-size:16px">${esc((CUPS.find(c=>c.k===s.cup[0])||{}).th||'-')}</b>${s.cup[1]} ครั้ง</div></div>
+  <div class="tiles" style="margin-top:12px"><div class="tile hd thin">สะสม<b>${s.n}/${s.days}</b>วัน</div><div class="tile hd thin">ช็อตรวม<b>${s.shots}</b>${unitOf('ช็อต',s.shots)}</div><div class="tile hd thin">สตรีคยาวสุด<b>${s.best}</b>วันติด</div>
+  <div class="tile hd thin">สตรีคตอนนี้<b>${s.cur}</b>วัน</div><div class="tile hd thin">เมนูโปรด<b style="font-size:16px">${esc(M(s.drink[0]).th)}</b>${s.drink[1]} แก้ว</div><div class="tile hd thin">แก้วโปรด<b style="font-size:16px">${esc(cupName(s.cup[0])||'-')}</b>${s.cup[1]} ครั้ง</div></div>
   <div class="greet hd thin" style="margin:12px 0 0"><img src="${bImg(bb.k)}" alt=""><span>บาริสต้าประจำเดือน: <b>${esc(bb.th)}</b> (${s.bar[1]} ครั้ง)<br><span class="sub" style="font-size:12px">${s.mood?`มู้ดยอดฮิต: ${esc(MOODS.find(x=>x.k===s.mood[0]).th)}`:''}</span></span></div>
   <div class="lbl" style="margin-top:16px">การ์ดแชร์ (PNG)</div><img class="sharecv" id="shareImg" alt="การ์ดสรุปเดือน"><div style="display:flex;gap:10px;margin-top:12px"><button class="btn wide" data-act="dl">ดาวน์โหลด PNG ⤓</button><button class="btn soft hd" data-act="share">แชร์ ↗</button></div><button class="btn wide yel" style="margin-top:10px" data-act="story-month">การ์ดสตอรี่ 9:16 (IG / TikTok) ✦</button>`);
   makeCard(y,m,s).then(url=>{ const im=$('#shareImg'); if(im) im.src=url; }).catch(err=>{ console.warn(err); });
@@ -1062,11 +1065,11 @@ async function makeCard(y,m,s){
   const tot=s.n||1; let a0=-Math.PI/2; const cx=290, cy=440;
   ['coffee','matcha','other'].forEach(k=>{ const f=s.cnt[k]/tot; if(!f) return; x.beginPath(); x.strokeStyle=CAT[k].c; x.lineWidth=78; x.arc(cx,cy,135,a0,a0+f*Math.PI*2); x.stroke(); a0+=f*Math.PI*2; });
   x.lineWidth=4; x.strokeStyle=ink; x.beginPath(); x.arc(cx,cy,175,0,7); x.stroke(); x.beginPath(); x.arc(cx,cy,96,0,7); x.stroke();
-  x.font='700 54px Mali'; x.fillText(`${s.n}`,cx,cy+12); x.font='600 24px "Nunito","Noto Sans Thai"'; x.fillText('แก้ว',cx,cy+46);
+  x.font='700 54px Mali'; x.fillText(`${s.n}`,cx,cy+12); x.font='600 24px "Nunito","Noto Sans Thai"'; x.fillText(unitOf('แก้ว',s.n),cx,cy+46);
   x.textAlign='left';
   ['coffee','matcha','other'].forEach((k,i)=>{ const yy=360+i*80; x.fillStyle=CAT[k].c; x.beginPath(); x.arc(540,yy-12,20,0,7); x.fill(); x.strokeStyle=ink; x.lineWidth=3; x.stroke(); x.fillStyle=ink; x.font='700 40px Mali'; x.fillText(`${CAT[k].th} ${Math.round(s.cnt[k]/tot*100)}%`,580,yy); });
   // tiles
-  const tiles=[['สะสม',`${s.n}/${s.days}`,'วัน'],['ช็อตรวม',`${s.shots}`,'ช็อต'],['สตรีคยาวสุด',`${s.best}`,'วันติด'],['เมนูโปรด',M(s.drink[0]).th,`${s.drink[1]} แก้ว`]];
+  const tiles=[['สะสม',`${s.n}/${s.days}`,'วัน'],['ช็อตรวม',`${s.shots}`,unitOf('ช็อต',s.shots)],['สตรีคยาวสุด',`${s.best}`,'วันติด'],['เมนูโปรด',M(s.drink[0]).th,`${s.drink[1]} แก้ว`]];
   tiles.forEach((t,i)=>{ const X=70+i*240, Y=660; rr(X,Y,220,170,30,'#FFFDF7',ink); x.fillStyle=ink; x.textAlign='center'; x.font='600 24px "Nunito","Noto Sans Thai"'; x.fillText(t[0],X+110,Y+44); fitText(x,t[1],X+110,Y+112,196,58,'700','Mali'); x.font='600 22px "Nunito","Noto Sans Thai"'; x.fillText(t[2],X+110,Y+148); });
   // barista
   const bb=B(s.bar[0]); rr(70,870,940,150,40,'#FFE7A3',ink);
@@ -1126,7 +1129,7 @@ async function storyCard(kind, key){
     let a0=-Math.PI/2; const cx=W/2, cy=640;
     ['coffee','matcha','other'].forEach(k=>{ const f=st.cnt[k]/tot; if(!f) return; x.beginPath(); x.strokeStyle=CAT[k].c; x.lineWidth=110; x.arc(cx,cy,200,a0,a0+f*Math.PI*2); x.stroke(); a0+=f*Math.PI*2; });
     x.lineWidth=5; x.strokeStyle=ink; x.beginPath(); x.arc(cx,cy,258,0,7); x.stroke(); x.beginPath(); x.arc(cx,cy,142,0,7); x.stroke();
-    x.fillStyle=ink; x.font='700 96px Mali'; x.fillText(`${st.n}`,cx,cy+20); x.font='600 34px "Nunito","Noto Sans Thai"'; x.fillText('แก้ว',cx,cy+70);
+    x.fillStyle=ink; x.font='700 96px Mali'; x.fillText(`${st.n}`,cx,cy+20); x.font='600 34px "Nunito","Noto Sans Thai"'; x.fillText(unitOf('แก้ว',st.n),cx,cy+70);
     x.font='700 38px Mali'; x.fillText(['coffee','matcha','other'].map(k=>`${CAT[k].th} ${Math.round(st.cnt[k]/tot*100)}%`).join('   '),W/2,980);
     const tiles=[['สะสม',`${st.n}/${st.days}`,'วัน'],['สตรีคยาวสุด',`${st.best}`,'วันติด'],['เมนูโปรด',st.drink?M(st.drink[0]).th:'-',st.drink?`${st.drink[1]} แก้ว`:'']];
     tiles.forEach((t,i)=>{ const X=90+i*310, Y=1040; rrect(x,X,Y,280,200,36,'#FFFDF7',ink,4); x.fillStyle=ink; x.textAlign='center'; x.font='600 28px "Nunito","Noto Sans Thai"'; x.fillText(t[0],X+140,Y+52); fitText(x,t[1],X+140,Y+128,248,66); x.font='600 26px "Nunito","Noto Sans Thai"'; x.fillText(t[2],X+140,Y+174); });
@@ -1177,9 +1180,9 @@ function renderVolPop(){
   const sl = (k, label, icon) => { const v=Math.round(SFX.vol(k)*100); return `<label class="vrow"><span>${icon} ${label}</span><input type="range" min="0" max="100" step="5" value="${v}" data-vol="${k}" aria-label="ระดับเสียง${label}"><b id="vv-${k}">${v}%</b></label>`; };
   $('#volPop').innerHTML = `<div class="vhead"><b>ตั้งค่าเสียง</b><button class="vx" data-act="bgm" aria-label="ปิด">✕</button></div>
     <button class="vsw ${SFX.bgm?'on':''}" data-act="bgm-onoff" role="switch" aria-checked="${SFX.bgm}"><i></i>เพลง & เสียงบรรยากาศร้าน</button>
-    ${sl('music','เพลง','🎵')}${sl('amb','เสียงร้าน','☕')}
+    ${sl('music','เพลง',ICONS.note)}${sl('amb','เสียงร้าน',ICONS.cup)}
     <button class="vsw ${SFX.muted?'':'on'}" data-act="sfx-onoff" role="switch" aria-checked="${!SFX.muted}"><i></i>เสียงเอฟเฟกต์</button>
-    ${sl('sfx','เอฟเฟกต์','🔔')}
+    ${sl('sfx','เอฟเฟกต์',ICONS.bell)}
     <div class="vnote">ตั้งค่าจะจำไว้ในเครื่องนี้</div>`;
 }
 function toggleVolPop(force){

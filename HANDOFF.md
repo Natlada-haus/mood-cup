@@ -18,10 +18,18 @@ Direction: a cute casual app first (it also works as a portfolio piece). Co-bran
 - [ ] **WeatherKit + privacy label check**: replace the Open-Meteo call with WeatherKit (§4), add the WeatherKit capability, and re-check the App Privacy answers for approximate location (§8).
 - [ ] Apple Developer Program fee (check the current price on developer.apple.com).
 
+### Brand / VI v1.1 to-do (P'Joe + brand; not done in code)
+- [ ] **Logo files**: the VI book references `assets/*.svg` (line wordmark + hybrid lock-up), `assets/*.png` (transparent emblem 1254 px, solid icon) and `templates/*.svg` / `templates/icons/*.svg` (social/story templates, UI icons, heart-cup micro mark). We don't have them. Drop them in when brand sends them: logo → `data-logo-slot`, micro mark → favicon, UI icons → replace `window.ICONS` (sfx.js) and the tab-bar glyphs.
+- [ ] **Mali Regular**: only Mali Bold is bundled (display). Add `Mali-Regular.woff2` if brand wants Regular display text.
+- [ ] **Remaining emoji in copy** (☕ 🥛 ♨ ✉ ⚙ inside button labels, and the ✿ ❦ ⌂ ❀ tab glyphs) are decorative text, not system icons. Swap them for the VI icon set once it arrives.
+- [ ] **Mascot name**: generic mentions now say “น้องเป็ดบาริสต้า”, and the named ducks (Peh, Berry, Moss, Memo, Bobby) keep their names. The tip-jar product name “เลี้ยงกาแฟน้องเป็ด” is unchanged because it's the approved IAP name. Rename it in App Store Connect if brand wants.
+- [ ] **Polish (moved here to ship faster)**: VI share/story templates for the share cards, a "กำลังเก็บแก้ว…" saving state on the save button, a reason text next to disabled buttons, a full keyboard focus-order audit, an idle-mascot animation (3–5 s), and a CD review of the CI app icon.
+- Brand PDFs (`cupmori-ci.pdf`, `cupmori-vi-book-v1.1.pdf`) are **not in the repo**. They're shipped only in the private handoff zip (`brand/`).
+
 ## Open decisions
 1. **Trademark/name check**: the CI check was preliminary (see §0 for Legal's findings).
 2. **VI book / logo**: pending. The CI (palette, fonts, voice) is applied. The wordmark is built from Mali Bold (`assets/brand/wordmark.svg`), and a logo slot is reserved (`data-logo-slot` on the home header and side panel). Drop the final logo in there.
-3. **App icon**: keep the current duck icon (`assets/icons/icon-*.png`, used by the manifest) or switch to the CI emblem icon (`assets/brand/appicon-ci-1024.webp`)?
+3. **App icon**: the manifest, favicon, apple-touch-icon and web notification now use the **CI icon** (`assets/icons/cupmori-icon-{32,180,192,512,1024}.png`, resized from `assets/brand/appicon-ci-1024.webp`; opaque, no alpha, App Store-safe). The old duck icon (`assets/icons/icon-*.png`) is still in the repo. To roll back, point `manifest.webmanifest`, `index.html` and `platform.js` back at `icon-*`. Nadda/CD: confirm the final choice before submission.
 4. Southern-hemisphere first-snow timing (engine: 1–14 June, flagged `firstSnowSouthUnconfirmed`).
 5. Story drafts (§6) are Thai drafts awaiting Nadda's review (marked "ร่างเนื้อเรื่อง (DRAFT)" in the reader).
 
@@ -39,11 +47,12 @@ index.html            shell: 5-tab bar, bottom sheet, toast, confetti, splash, s
   art.js              SVG stickers, mood faces, MOODS
   app.js              all app logic + views (template strings → #app), one click handler (data-act / data-go)
 style.css             all styling; CI variables at the top, Phase 2 components at the bottom
-assets/fonts/         Mali-Bold, Nunito, NotoSansThai (woff2, bundled, OFL licences next to them)
+assets/fonts/         Mali-Bold, Nunito-VF, NotoSansThai-400/600 (woff2, bundled, OFL licences next to them)
 assets/brand/         emblem.webp, wordmark.svg, appicon-ci-1024.webp
+assets/icons/         cupmori-icon-*.png (CI icon, in use), icon-*.png (previous duck icon, kept for rollback), launch-*.png
 tools/                process_* (art pipelines), make_brand.py, build_i18n_en.py, qc_phase1.py, qc_phase2.py
 ```
-All scripts and the CSS are loaded with `?v=10`. Bump it on every release so caches refresh.
+All scripts and the CSS are loaded with `?v=11`. Bump it on every release so caches refresh.
 
 Views: `home` (stamp calendar, mystery card, letters banner, beans pill) · `cafe` (mood cup, or extra-cup mode via `enterCafe(true)`) · `brew` (mini-game steps) · `done` / `xdone` · `recipes` · `room` (decor + shop + tip jar). Sheets: detail, collection (incl. story shelf), story reader, recipe detail, summary, share card, settings, about.
 Tab bar: แสตมป์ / ชงวันนี้ / สูตร / ร้าน / สะสม.
@@ -112,7 +121,7 @@ StoreKit 2: `Product.products(for: ids)` → show `displayPrice` (replace `price
 **Apply for the Apple Small Business Program (15%).**
 
 ## 6. The five Phase-2 mechanics (build priority: stories > recipes > mystery > decor > mini-game)
-1. **Regulars' stories** (`Content.STORIES`, `storyOpen()`, `storyReader`): 3–5 letters per guest (Peh, frog, hedgehog, otter, sheep, red panda, bee). They unlock by **friendship = total visits + mystery orders served** (`at:0/1/3/6…`), never by consecutive days. Unread letters show as a banner on home, and the shelf is in Collection. *Thai drafts for Nadda's review.*
+1. **Regulars' stories** (`Content.STORIES`, `storyOpen()`, `storyReader`): a welcome letter from Peh, 4 letters each from frog, hedgehog, otter, sheep and red panda, and 3 from the bee (24 in total). They unlock by **friendship = total visits + mystery orders served** (`at:0/1/3/6…`), never by consecutive days. Unread letters show as a banner on home, and the shelf is in Collection. *Thai drafts for Nadda's review.*
 2. **Recipe book** (`Content.RECIPES`, `discover()`, `recipePct()`): 28 recipes (house + secret). Secrets are tied to time of day, weather, season or festival (e.g. Rainy-Day Cocoa, Moonlight Latte, Meadow Soda for Bee Day). Undiscovered ones show as silhouettes, with a completion %.
 3. **Mystery order** (`mysteryFor()`, seed `cupmori-mystery-v1`): one warm Thai hint a day (32 general + 4 Bee Day), deterministic per date and never the same as yesterday. No timer, can't fail, rolls over. Brewing a match in an extra cup gives +12 beans, +1 friendship and a thank-you line.
 4. **Decor** (`Content.DECOR`, room view): 9 items in 3 tiers (plants/frame/lamps → floor lamp, monstera, second table → window seat, pastry counter). You need 2 items from the previous tier to unlock the next. Paid only with earned beans. Placed slots are saved (`decor.place`) and kept separate from paid cosmetics.
@@ -126,7 +135,8 @@ StoreKit 2: `Product.products(for: ids)` → show `displayPrice` (replace `price
 | `assets/img/d-honeysoda.webp` | honey lemon soda glass |
 | `assets/img/d-v-gl{1..6}-{latte,americano,cocoa,hojicha,matcha,mocha}.webp` | glasses regenerated **ice-free** so the code-drawn cubes match the order |
 | `assets/img/room-bg.webp`, `decor-{succulent,paperlamp,floorlamp,monstera,table2,windowseat,pastrycase}.webp` | café room + decor (frame and fairy lights are SVG) |
-| `assets/brand/emblem.webp`, `appicon-ci-1024.webp` | CI emblem / candidate icon |
+| `assets/brand/emblem.webp`, `appicon-ci-1024.webp` | CI emblem / app icon master |
+| `assets/icons/cupmori-icon-{32,180,192,512,1024}.png` | app icon sizes resized from the master (code, no new art); used by the manifest, favicon, apple-touch-icon and notifications |
 | `assets/brand/wordmark.svg` | wordmark outlined from Mali Bold (code, `tools/make_brand.py`) |
 Still to come: festival decor sets, the pastel/secret/cosy/opening pack art (`ready:false`), and the Halloween ghost guest.
 
@@ -141,11 +151,11 @@ Still to come: festival decor sets, the pastel/secret/cosy/opening pack art (`re
 
 ## 9. Language (Thai default + English)
 Thai is the source and the default. English is picked automatically when the device language starts with `en`. Settings → ภาษา · Language forces ไทย/English (the app reloads), and `?lang=en` works for QC.
-`i18n.js` translates every rendered Thai string through `I18N.t()`: exact match → `{}` templates → separators (`·`, `→`, `/`, `+`, `:`) → quotes/parentheses/numbers. A MutationObserver covers the DOM (text + alt/aria/placeholder/title), and canvas `fillText`/`measureText` are wrapped. Unknown strings go to `I18N.missing` (QC lists them).
+`i18n.js` translates every rendered Thai string through `I18N.t()`: exact match → `{}` templates → separators (`·`, `→`, `/`, `+`, `:`) → quotes/parentheses/numbers. Counted units are pluralised in code (`3 แก้ว` → `3 cups`, `1 ช็อต` → `1 shot`; `unitOf()` in app.js for units shown on their own). A MutationObserver covers the DOM (text + alt/aria/placeholder/title), and canvas `fillText`/`measureText` are wrapped. Unknown strings go to `I18N.missing` (QC lists them).
 **Edit English in `tools/i18n-en/*.txt`** (`ไทย ⇒ English`, `{}` = slot), then run `python3 tools/build_i18n_en.py`. For a native SwiftUI port, export the same table to `Localizable.strings`.
 
-## 10. CI (applied)
-Palette: Cream `#FFF8EC`, Cocoa `#49342B`, Sage `#9DAE8D`, Forest `#526744` (primary buttons, Paper text), Butter `#F5D778`, Terracotta `#BD7258` (decoration only), Blush `#E7AAA0`, Lavender `#C8BFDA`. Fonts: Mali Bold (display), Nunito (English), Noto Sans Thai (body), body text 16/1.6. Card radius 24, button radius 16, touch targets ≥ 48 px. Reduce-motion option. Wood only behind images. The share card hides the personal note by default.
+## 10. CI + VI v1.1 (applied)
+Palette: Cream `#FFF8EC`, Cocoa `#49342B`, Sage `#9DAE8D`, Forest `#526744` (primary buttons, Paper text), Butter `#F5D778`, Terracotta `#BD7258` (decoration only), Blush `#E7AAA0`, Lavender `#C8BFDA`. Fonts: Mali Bold (display), Nunito (English), Noto Sans Thai (body), body text 16/1.6. Card radius 24, button radius 16, input radius 12, touch targets ≥ 48 px. VI v1.1 tokens added: Sky `#BBD4DF`, Error `#9C4438` (system errors only), Line `#DDD2C2` (dividers only); CSS vars `--sky --error --line --r-card --r-btn --r-input`. Thai body text is Noto Sans Thai **400/600 only** (static instances `NotoSansThai-400/600.woff2`, cut from the OFL variable font with fontTools), Nunito is for English and numbers, and Mali Bold is for display only. Primary buttons are Forest with Paper text (Terracotta is never a button). Mood always shows a face pictogram plus its name, never colour alone. System controls (music, sound/mute, volume panel, the tab-bar cup) use line SVG icons (`window.ICONS`), not emoji. `:focus-visible` gives a 3 px Forest ring with a 3 px gap. Reduce-motion option. Wood only behind images. The share card hides the personal note by default.
 Voice: start "วันนี้ใจเป็นแก้วไหน?" · tired "วันนี้เหนื่อยแค่ไหน เล่าเท่าที่ไหวนะ" · back "ดีใจที่ได้เจอกันอีกนะ" · saved "เก็บแก้ววันนี้ไว้แล้ว" · empty "แก้วแรกของคุณ เริ่มได้เมื่อพร้อม" · note "เขียนนิดเดียวก็ได้นะ".
 
 ## 11. Festivals (`festivals.js`, date-agnostic)
@@ -156,6 +166,6 @@ Floor = Adjust 2024 iOS all-category medians: **D1 27%, D7 14%, D30 8%**. Stretc
 
 ## 13. Testing
 `python3 -m http.server 8765`, then:
-- `python3 tools/qc_phase2.py` covers the v2→v3 migration (+ safety copy), exact ice cubes, a mood cup without stars, extra cup stars/beans, mystery match, recipe discovery, decor buying/placing, story unlocks, simulated IAP + tip, Bee Day guest + honey soda secret, the festival engine for future years, reduce motion, share-card note hidden, and a full English crawl. It writes `.qc2/*.png`, `qc.json` and `i18n-missing.json` and fails on any console error.
+- `python3 tools/qc_phase2.py` covers the v2→v3 migration (+ safety copy), exact ice cubes, a mood cup without stars, extra cup stars/beans, mystery match, recipe discovery, decor buying/placing, story unlocks, simulated IAP + tip, Bee Day guest + honey soda secret, the festival engine for future years, reduce motion, share-card note hidden, and a full English crawl. It writes `.qc2/*.png`, `qc.json` and `i18n-missing.json` (`.qc2/` is git-ignored) and fails on any console error or untranslated English string.
 - `python3 tools/qc_phase1.py` is the Phase 1 regression.
 Debug params: `?date= ?t= ?hemi=N|S ?lang=en|th ?launch=YYYY-MM-DD ?iap=sim ?weather=sun|rain|cloud ?dev=1`.
