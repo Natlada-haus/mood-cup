@@ -9,3 +9,5 @@ qc.py
 pricing-*.md
 raw/
 *.csv
+cobrand-*.md
+*-research-*.md
