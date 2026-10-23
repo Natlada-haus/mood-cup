@@ -1,17 +1,29 @@
 {
-  "name": "ก๊าบก๊าบคาเฟ่ · MOOD CUP",
-  "short_name": "Mood Cup",
-  "description": "สะสมมู้ดประจำวันด้วยแก้วเครื่องดื่มที่ชงเองกับบาริสต้าน้องเป็ด",
+  "name": "Cupmori",
+  "short_name": "Cupmori",
+  "description": "Cupmori (คัพมอริ) · ชงความรู้สึก เก็บวันของเรา · A little cafe for every feeling.",
   "lang": "th",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#FFF7EA",
+  "background_color": "#FFF8EC",
   "theme_color": "#FFF8EC",
   "icons": [
-    { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "assets/icons/icon-1024.png", "sizes": "1024x1024", "type": "image/png" }
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/icon-1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    }
   ]
 }

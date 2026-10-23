@@ -1,4 +1,4 @@
-/* ===== MOOD CUP — illustration library (pure SVG strings) ===== */
+/* ===== Cupmori — illustration library (pure SVG strings) ===== */
 const DRINKS = {
   coffee:     { th:'กาแฟ',   en:'COFFEE',     sub:'Bold & Cozy',   color:'#6B3E26', top:'#8A5332', bg:'#F2C48D', chip:'#C8915F', desc:'เข้มข้น ปลุกพลัง พร้อมลุยทั้งวัน' },
   matcha:     { th:'มัทฉะ',  en:'MATCHA',     sub:'Smooth & Calm', color:'#6E9A2E', top:'#86B23C', bg:'#D4E000', chip:'#86B23C', desc:'นุ่มละมุน ใจสงบ ชิลแบบญี่ปุ่น' },
@@ -72,6 +72,10 @@ function stickerSVG(k, x, y, s=1){
     case 'leaf': return `<g ${t}><path d="M-12 10 C-14 -6 0 -14 13 -12 C13 2 4 13 -12 10Z" fill="#8DBB3F" ${st}/><path d="M-10 8 Q0 0 9 -9" stroke="#5E8A22" stroke-width="1.8" fill="none" stroke-linecap="round"/></g>`;
     case 'crown': return `<g ${t}><path d="M-13 8 L-14 -8 L-6 -1 L0 -12 L6 -1 L14 -8 L13 8Z" fill="#FFD23F" ${st}/><circle cx="0" cy="-12" r="2.6" fill="#FF8FB5"/><circle cx="-14" cy="-8" r="2.2" fill="#9FD8F0"/><circle cx="14" cy="-8" r="2.2" fill="#9FD8F0"/><rect x="-11" y="3" width="22" height="3" rx="1.5" fill="#F2A93B"/></g>`;
     case 'duck': return `<g ${t}><path d="M-11 4 Q-12 -6 -4 -8 Q-4 -15 3 -15 Q10 -15 10 -8 L15 -7 Q15 -3 9 -3 Q14 2 11 8 Q6 13 -3 12 Q-12 11 -11 4Z" fill="#FFE066" ${st}/><circle cx="4" cy="-10" r="1.7" fill="#2F3A1E"/><path d="M10 -8 L15 -7 Q15 -4 10 -4Z" fill="#F7A14A"/><circle cx="1" cy="-6" r="2" fill="#FF9DB8" opacity=".7"/></g>`;
+    /* paid doodle pack (cupmori.stickers.doodle) */
+    case 'moon': return `<g ${t}><path d="M4 -13 A13 13 0 1 0 12 7 A10 10 0 1 1 4 -13Z" fill="#F5D778" ${st}/><circle cx="-4" cy="2" r="1.6" fill="#49342B"/><path d="M-1 6 Q1 8 3 6" stroke="#49342B" stroke-width="1.4" fill="none" stroke-linecap="round"/></g>`;
+    case 'cloud': return `<g ${t}><path d="M-12 8 Q-16 0 -8 -2 Q-7 -11 2 -10 Q9 -13 11 -4 Q17 -2 14 6 Q13 9 9 9 L-9 9 Q-11 9 -12 8Z" fill="#C8BFDA" ${st}/><circle cx="-3" cy="1" r="1.5" fill="#49342B"/><circle cx="4" cy="1" r="1.5" fill="#49342B"/></g>`;
+    case 'note': return `<g ${t}><path d="M-4 8 L-4 -10 L10 -13 L10 5" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M-4 8 L-4 -10 L10 -13 L10 5" fill="none" stroke="#526744" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="-7" cy="8" rx="4.6" ry="3.6" fill="#9DAE8D" ${st}/><ellipse cx="7" cy="5" rx="4.6" ry="3.6" fill="#9DAE8D" ${st}/></g>`;
   }
   return '';
 }

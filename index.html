@@ -3,19 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>ก๊าบก๊าบคาเฟ่ · MOOD CUP</title>
-<meta name="description" content="สะสมมู้ดประจำวันด้วยแก้วเครื่องดื่มที่ชงเองกับบาริสต้าน้องเป็ด">
+<title>Cupmori · ชงความรู้สึก เก็บวันของเรา</title>
+<meta name="description" content="Cupmori (คัพมอริ) คาเฟ่เล็กๆ สำหรับทุกความรู้สึก ชงแก้ววันนี้เองกับบาริสต้าน้องเป็ด แล้วเก็บไว้เป็นแสตมป์ · A little cafe for every feeling.">
 <meta name="theme-color" content="#FFF8EC">
 <link rel="icon" href="assets/icons/icon-32.png" sizes="32x32">
 <link rel="icon" href="assets/icons/icon-192.png" sizes="192x192">
 <link rel="apple-touch-icon" href="assets/icons/icon-180.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Mood Cup">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Itim&family=Mali:wght@400;500;600;700&family=Sriracha&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=9">
+<meta name="apple-mobile-web-app-title" content="Cupmori">
+<link rel="preload" href="assets/fonts/Mali-Bold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/NotoSansThai-VF.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css?v=10">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -25,9 +24,9 @@
 
 <aside class="side">
   <div class="side-in">
-    <div class="side-logo">ก๊าบก๊าบคาเฟ่</div>
-    <div class="side-sub">MOOD CUP · แก้วมู้ดประจำวัน</div>
-    <p>เข้าร้าน เจอบาริสต้าน้องเป็ดแบบสุ่ม ชงเครื่องดื่มเองทีละขั้น แล้วเก็บแก้ววันนี้เป็นแสตมป์ในสมุดรายเดือน</p>
+    <div class="side-logo" data-logo-slot="side"><img src="assets/brand/emblem.webp" alt="" class="side-emblem"><img src="assets/brand/wordmark.svg" alt="Cupmori" class="side-wordmark"></div>
+    <div class="side-sub">คัพมอริ · ชงความรู้สึก เก็บวันของเรา</div>
+    <p>คาเฟ่เล็กๆ สำหรับทุกความรู้สึก เข้าร้าน เจอบาริสต้าน้องเป็ด ชงแก้ววันนี้เองทีละขั้น แล้วเก็บไว้เป็นแสตมป์ในสมุดรายเดือน</p>
     <img src="assets/img/stamps-row.webp" alt="" class="side-cups">
   </div>
 </aside>
@@ -40,7 +39,8 @@
   <nav class="tabbar hd" id="tabbar">
     <button data-go="home" class="on"><i>✿</i>แสตมป์</button>
     <button data-go="start"><i>☕</i>ชงวันนี้</button>
-    <button data-go="summary"><i>◔</i>สรุป</button>
+    <button data-go="recipes"><i>❦</i>สูตร</button>
+    <button data-go="room"><i>⌂</i>ร้าน</button>
     <button data-go="collect"><i>❀</i>สะสม</button>
   </nav>
   <div class="sheet-back" id="sheetBack"></div>
@@ -51,11 +51,14 @@
   <div class="toast" id="toast"></div>
   <canvas id="confetti"></canvas>
 </div>
-<script src="platform.js?v=9"></script>
-<script src="festivals.js?v=9"></script>
-<script src="sfx.js?v=9"></script>
-<script src="art.js?v=9"></script>
-<script src="app.js?v=9"></script>
+<script src="platform.js?v=10"></script>
+<script src="festivals.js?v=10"></script>
+<script src="i18n-en.js?v=10"></script>
+<script src="i18n.js?v=10"></script>
+<script src="content.js?v=10"></script>
+<script src="sfx.js?v=10"></script>
+<script src="art.js?v=10"></script>
+<script src="app.js?v=10"></script>
 <script>setTimeout(()=>{ const s=document.getElementById('splash'); if(s){ s.classList.add('out'); setTimeout(()=>s.remove(),600); } }, 700);</script>
 </body>
 </html>

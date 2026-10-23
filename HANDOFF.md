@@ -1,156 +1,161 @@
-# MOOD CUP · Phase 1 handoff for P'Joe (iOS build)
+# Cupmori (คัพมอริ) · Phase 2 handoff for P'Joe (iOS build)
 
-Branch: `app-phase1` · Status: Phase 1 feature-complete on the web, **excluding festival art**.
-This repo is deliberately a **clean, framework-free web project**: no Capacitor, no native plugins, no build step.
-You can wrap it however you like (WKWebView shell, or port screens to SwiftUI). Everything that touches the device sits behind `window.Platform` in `platform.js`. Swap that one object for a native bridge and the app logic stays the same.
+**Cupmori** · ชงความรู้สึก เก็บวันของเรา · *A little cafe for every feeling.*
+Branch: `app-phase1` · `main` is untouched (live site). Status: Phase 2 is feature-complete on the web. Festival decor art and paid-pack art are still to come (see §7).
+The repo is still a **clean, framework-free web project**: no Capacitor, no build step, no native plugins. Everything that touches the device sits behind `window.Platform` in `platform.js`. Swap that one object for a native bridge and the app logic stays the same.
+
+Direction: a cute casual app first (it also works as a portfolio piece). Co-brands and real-café systems are a **later plan**, and nothing co-brand is in this build.
+
+---
+
+## 0. P'Joe to-do (before submission)
+- [ ] **Name is final: Cupmori** (Nadda confirmed). Register **cupmori.com** and **cupmori.app** now (RDAP suggests both are free). Social handle set: **@cupmoriapp**.
+- [ ] **Trademark** (Legal's preliminary check; *this is not legal advice*): no CUPMORI or คัพมอริ marks were found in Thai DIP or WIPO. Recommendation: file in **Thailand, classes 9 and 41, for both CUPMORI and คัพมอริ**, after a Thai trademark agent reviews registration **251113366 (MORI)** and the class 9 results. **US:** before launching there, a lawyer should check for a conflict with **franky, Inc.'s MORI application (99894903)**.
+- [ ] **Privacy policy placeholders**: fill `[PROVIDER NAME]`, `[CONTACT EMAIL]`, `[EFFECTIVE DATE]` in `PRIVACY.md` + `privacy.html`, then host the page at a public URL for App Store Connect.
+- [ ] **Launch date** (tentative; you set it). The festival engine is date-agnostic. Pass the App Store release date as `Platform.env.launchDate` (`?launch=YYYY-MM-DD` on web). It only controls the 30-day **Opening Day Set** window; `null` = not offered.
+- [ ] **THB price tiers**: prices are approved (§5). Confirm the matching Apple price tiers in App Store Connect.
+- [ ] **Apple Small Business Program**: apply (15% commission instead of 30%) before the first IAP goes live.
+- [ ] **WeatherKit + privacy label check**: replace the Open-Meteo call with WeatherKit (§4), add the WeatherKit capability, and re-check the App Privacy answers for approximate location (§8).
+- [ ] Apple Developer Program fee (check the current price on developer.apple.com).
+
+## Open decisions
+1. **Trademark/name check**: the CI check was preliminary (see §0 for Legal's findings).
+2. **VI book / logo**: pending. The CI (palette, fonts, voice) is applied. The wordmark is built from Mali Bold (`assets/brand/wordmark.svg`), and a logo slot is reserved (`data-logo-slot` on the home header and side panel). Drop the final logo in there.
+3. **App icon**: keep the current duck icon (`assets/icons/icon-*.png`, used by the manifest) or switch to the CI emblem icon (`assets/brand/appicon-ci-1024.webp`)?
+4. Southern-hemisphere first-snow timing (engine: 1–14 June, flagged `firstSnowSouthUnconfirmed`).
+5. Story drafts (§6) are Thai drafts awaiting Nadda's review (marked "ร่างเนื้อเรื่อง (DRAFT)" in the reader).
 
 ---
 
 ## 1. Architecture
-
 ```
-index.html            shell: tab bar, bottom sheet, toast, confetti canvas, splash; loads the scripts in this order:
-  platform.js         window.Platform: storage / notify / haptic / share / file / env   ← swap for native
-  festivals.js        window.Festivals: pure date engine (festivals, seasons, hemisphere)  ← port or reuse in JSContext
-  sfx.js              window.SFX: WebAudio SFX + BGM loops (haptics forwarded to Platform.haptic)
-  art.js              SVG stickers, mood faces, MOODS, STICKER_IMG (bitmap stickers)
-  app.js              all app logic + views (string templates -> #app innerHTML), one click handler using data-act / data-go
-style.css             all styling (Phase 1 additions are at the bottom under "===== Phase 1 =====")
-privacy.html          in-app privacy page (generated from PRIVACY.md)
-manifest.webmanifest  PWA manifest (web only)
-tools/process_phase1.py   raw Grok art -> app assets (sizes/alpha/icon/launch)
-tools/qc_phase1.py        headless QC walk-through -> .qc/*.png, exits 1 on console errors
-docs/ios/PrivacyInfo.xcprivacy  draft privacy manifest (see §8)
+index.html            shell: 5-tab bar, bottom sheet, toast, confetti, splash, side brand panel (wide screens)
+  platform.js         window.Platform: storage / notify / haptic / share / file / env / purchases / weather   ← swap for native
+  festivals.js        window.Festivals: pure date engine (astronomical lunar dates, seasons, hemisphere)
+  i18n-en.js          window.I18N_EN: English dictionary (GENERATED, see §9)
+  i18n.js             window.I18N: Thai source → English, MutationObserver + canvas wrapper
+  content.js          window.Content: mystery hints, recipes, stories, decor, bean rules (pure data)
+  sfx.js              window.SFX: WebAudio SFX + BGM loops
+  art.js              SVG stickers, mood faces, MOODS
+  app.js              all app logic + views (template strings → #app), one click handler (data-act / data-go)
+style.css             all styling; CI variables at the top, Phase 2 components at the bottom
+assets/fonts/         Mali-Bold, Nunito, NotoSansThai (woff2, bundled, OFL licences next to them)
+assets/brand/         emblem.webp, wordmark.svg, appicon-ci-1024.webp
+tools/                process_* (art pipelines), make_brand.py, build_i18n_en.py, qc_phase1.py, qc_phase2.py
 ```
+All scripts and the CSS are loaded with `?v=10`. Bump it on every release so caches refresh.
 
-Flow: `home` (calendar, banners, guest progress) → `cafe` (random duck or guest visit, chalk menu, options, usual order) → `brew` (step-by-step mini-games) → `done` (stamp, unlocks, reminder ask, share). Sheets: detail, collection, summary, story card, settings, about.
+Views: `home` (stamp calendar, mystery card, letters banner, beans pill) · `cafe` (mood cup, or extra-cup mode via `enterCafe(true)`) · `brew` (mini-game steps) · `done` / `xdone` · `recipes` · `room` (decor + shop + tip jar). Sheets: detail, collection (incl. story shelf), story reader, recipe detail, summary, share card, settings, about.
+Tab bar: แสตมป์ / ชงวันนี้ / สูตร / ร้าน / สะสม.
+Time: always `NOW()` (= `Platform.env.now()`). Debug overrides on web: `?date=YYYY-MM-DD&t=HH:MM`.
 
-`app.js` keeps the state in `S` (view state) and `db` (persisted). Rendering is `render()` → `homeView()/cafeView()/brewView()/doneView()`. There is no framework and no virtual DOM.
+## 2. Product rules (please keep)
+- **Store model:** free download plus one-time cosmetic IAP. No ads, no loot boxes, no paid gameplay advantage. **No external payment links** (no Buy Me a Coffee etc.). Club subscription comes **later** and is not built.
+- **Beans are earn-only and are never sold.** There is no IAP for beans, and paid cosmetics are kept separate from bean decor.
+- Tip jar "เลี้ยงกาแฟน้องเป็ด" goes through Apple IAP only and unlocks **nothing**, just a thank-you from the duck.
+- Past festivals: free while the festival is live, buyable afterwards (฿29 each).
+- No punishment, no timers, no lives. Missing a day never takes anything away. The mystery order has no timer and rolls over.
+- **Mood cups are never judged**: no stars, only a gentle duck reaction. Stars and beans apply only to the **extra cup (แก้วพิเศษ)**, which is never logged as a mood.
+- No health claims, no forced happiness, no guilt (CI voice §10). No cats anywhere. The Halloween guest is the ghost only.
+- Local-first: no account, no server, no analytics. Weather is **opt-in**.
 
-Time: always use `NOW()` (= `Platform.env.now()`), never `new Date()`. On web it accepts the debug URL overrides `?date=YYYY-MM-DD` and `?t=HH:MM`. A native port should pass the real clock.
-
-## 2. Product rules baked into the code (please keep)
-- Business model: the app has nothing to sell. Physical merch runs separately alongside the app (no shop/links in the app). Real-café co-brands (incl. the Catherine Farm idea) are **on hold**, and nothing co-brand is in the build.
-- No loot boxes, no ads, no paid gameplay advantages (approved model: free download, one-time cosmetic IAP, past-festival unlocks, tip jar via IAP only, no external payment links; Club subscription later), no health or energy claims (decaf copy is only "ถ้าอยากเลี่ยงคาเฟอีน…").
-- Local-first: no account, no server, no analytics. Data leaves the device only through user-initiated share/backup.
-- No cats anywhere (art, stickers, text). The old `cat` sticker is migrated to `bean`.
-- Guests unlock by **cumulative** stamps 3/7/14/30/60 and **never re-lock**. Streaks give cosmetics only and use the **best** streak, so missing a day never takes anything away.
-- Sample data (`demo:true`) never counts for unlocks or streaks.
-
-## 3. Data model & storage keys
-
-All keys go through `Platform.storage` (localStorage on web).
-
-| Key | Owner | Value |
-|---|---|---|
-| `ggcafe.moodcup.v1` | app.js | main DB JSON (name kept for continuity; **schema version is `db.v`**, currently `2`) |
-| `ggcafe.moodcup.v1.bak-v1` | app.js | one-time raw copy of a v1 DB taken right before migrating to v2 |
-| `ggcafe.moodcup.mute` | sfx.js | `'1'` = SFX muted |
-| `ggcafe.moodcup.bgm` | sfx.js | `'0'` = music/ambience off |
-| `ggcafe.moodcup.vol` | sfx.js | JSON `{music, amb, sfx}` 0..1 |
-| `ggcafe.moodcup.haptic` | platform.js | `'0'` = haptics off |
-
-DB (schema v2):
+## 3. Data model (schema v3)
+Main key: `ggcafe.moodcup.v1` (name kept for continuity; the version is `db.v`). Before each migration a raw copy is written to `ggcafe.moodcup.v1.bak-v<from>`.
+Other keys: `ggcafe.moodcup.mute|bgm|vol` (sfx.js), `ggcafe.moodcup.haptic`, `cupmori.weather` (`{day, w}`, today only).
 ```js
 {
-  v: 2,
-  entries: {                       // one cup per local calendar day, key "YYYY-MM-DD"
-    "2026-10-23": {
-      drink: "latte",              // MENU key (incl. "secret" once unlocked)
-      barista: "pe",               // duck key (launch roster: pe, berry, moss, momo, bobby)
-      guest: "frog",               // optional: guest who visited that day
-      temp: "hot"|"iced", ice, size: "S"|"M"|"L", sweet: 0|25|50|100|120, milk, decaf: 1 (optional),
-      bean, grind, shots, shotq, art, syrup, scoops, water, topping,
-      cup: "mug1".."mug6"|"gl1".."gl6"|"bw1".."bw6"|"straw"|"secretcup"|"decafmug"|legacy "mug"/"tumbler"/"paper"/"glass",
-      sleeve, stickers: ["heart","bean",...max 3], mood, note (<=60 chars), price, ts, demo?: true
-    }
-  },
-  guests: { frog: { on: "2026-10-23", at: 3 }, ... },   // permanent unlocks
-  settings: { reminder: "20:30"|null, reminderAsked: bool, hemi: "auto"|"N"|"S", lastNudge: "YYYY-MM-DD"|null, missShown: "YYYY-MM-DD"|null },
-  lastBarista: "berry"
+  v: 3,
+  entries: { "YYYY-MM-DD": { drink, barista, guest?, temp, ice: "0".."5", size, sweet, milk, decaf?, bean, grind, shots, shotq,
+                             art, syrup, scoops, water, topping, cup, sleeve, stickers[], mood, note, price, ts, demo? } },
+  guests:  { frog: { on, at }, bee: {...} },             // permanent
+  settings:{ reminder: "20:00"|null, reminderAsked, hemi, lastNudge, missShown,
+             lang: "auto"|"th"|"en", reduceMotion: false, weatherOptIn: false, shareNote: false },
+  lastBarista,
+  beans: 0, beansEarned: 0,                               // balance / lifetime
+  beanDay: { k: "YYYY-MM-DD", mood: bool, extras: n },    // daily earning caps
+  extras:  [ { k, drink, stars, ts, mystery?, recipes? } ],   // last 60 extra cups (never mood entries)
+  mystery: { "YYYY-MM-DD": { h: hintId, by: guestKey } }, // served mystery orders
+  recipes: { recipeKey: "YYYY-MM-DD" },                   // discovered
+  friends: { guestKey: n },                               // bonus friendship (mystery orders served for that guest)
+  decor:   { owned: { k: true }, place: { slot: k } },
+  stories: { read: { "guest:ep": true } },
+  purchases: { owned: { productId: true }, tips: n }
 }
 ```
-Migration (`migrate()` in app.js): v1 → v2 maps sticker `cat`→`bean` (deduped), adds `guests` and `settings`. On boot `syncGuests()` back-fills unlocks for users who already had stamps. It is idempotent, so you can call it again any time.
+Migration v2→v3 (`migrate()`): ice words become cube counts (none→0, less→2, normal→4, extra→5) and the v3 fields are added with safe defaults. It is idempotent and tested by `qc_phase2.py`.
+Backup file: `{ app:"cupmori", schema:3, data }` (`"moodcup"` files are still accepted). Import merges by taking the **union** of recipes/decor/stories/purchases/mystery and the **max** of beans/friends/tips.
 
-Backup/import: `exportBackup()` writes `{ app:"moodcup", schema:2, exportedAt, data: db }`. `importBackup()` accepts that file (or a raw DB). It refuses newer schemas, validates the date keys and drink keys, merges (when a date exists in both, the file's entry wins), unions the guests, and re-runs `syncGuests()`.
-
-## 4. Platform adapters to swap for native (`platform.js`)
-
-| Adapter | Web implementation (now) | Native replacement suggestion |
+## 4. Platform adapters (`platform.js`)
+| Adapter | Web now | Native |
 |---|---|---|
-| `Platform.storage.get/set/remove/getJSON/setJSON/keys` | localStorage, falls back to memory | UserDefaults (or a file in Application Support). If you keep WKWebView, localStorage persists in the app container, but iOS can purge WebKit data, so mirror the DB to native storage |
-| `Platform.notify.requestPermission/permission/scheduleDaily(hhmm,{title,body,shouldFire})/cancel/showNow` | Notification API only while the page is open + **in-app reminder banner** (`reminderDue()`) when the app is opened after the reminder time | `UNUserNotificationCenter` with `UNCalendarNotificationTrigger(dateMatching:{hour,minute}, repeats:true)`. To honour "skip days already stamped" (`shouldFire`), cancel today's request after a stamp, or schedule the next 7 single-day requests and refresh them on app open/stamp |
-| `Platform.haptic.play(kind)` / `setEnabled` | `navigator.vibrate` (iOS Safari ignores it) | `UIImpactFeedbackGenerator` (light/medium/heavy), `UINotificationFeedbackGenerator` (success/warn), short sequence for `stamp`. Kinds used: `light`, `success`, `stamp`, plus raw ms numbers/arrays from the brew steps (map them to light/medium) |
-| `Platform.share.png(blob,name)` → `'shared'|'cancelled'|'downloaded'` | Web Share API level 2 with files, otherwise PNG download | `UIActivityViewController` with the PNG data (story cards are 1080×1920, month card 1080×1350) |
-| `Platform.share.download(blob,name)` | `<a download>` | save to Photos (`PHPhotoLibrary`, needs NSPhotoLibraryAddUsageDescription) or share sheet |
-| `Platform.file.saveJSON(obj,name)` / `pickJSON()` | download / `<input type=file>` | `UIDocumentPickerViewController` (export + import) |
-| `Platform.env.now/timeZone/region/hemiOverride/dev` | Date + Intl; URL overrides for QC | `Date()`, `TimeZone.current.identifier`, `Locale.current.region`; drop the overrides in release |
+| storage | localStorage | UserDefaults / file (mirror the DB; WebKit data can be purged) |
+| notify (daily reminder, default **20:00**) | Notification API + in-app banner | `UNCalendarNotificationTrigger` |
+| haptic | `navigator.vibrate` | UIImpact/UINotificationFeedbackGenerator |
+| share / file | Web Share / download / file input | UIActivityViewController / UIDocumentPicker |
+| env | Date, Intl, `?date ?t ?hemi ?launch ?lang ?iap=sim ?dev=1` | real clock; `launchDate` = App Store release date |
+| **weather** (opt-in) | geolocation rounded to 0.1° (~10 km) → Open-Meteo `weather_code` → `'sun'|'rain'|'cloud'`, cached for today only | **WeatherKit** + CoreLocation *when in use*, reduced accuracy. Keep it opt-in; without permission the app guesses from the season/time zone |
+| **purchases** | catalog + `?iap=sim` simulator | **StoreKit 2** (§5) |
 
-Only `app.js` and `sfx.js` call these, and always via `window.Platform`. Search the code for `P.` and `Platform.`.
-
-## 5. Festival & season date engine (`festivals.js`)
-Pure functions with no DOM or storage. Easy to port to Swift, or run as-is in a JSContext.
-- `Festivals.active(date)` returns **all** festivals active on that day as `[{k, th, en, start, end, menu:[], decor:[]}]`. Overlaps are intentional: the UI should show **every** active decor set. Example: 29 Oct 2027 = Halloween + Diwali.
-- `Festivals.upcoming(date, days)`, `Festivals.festivalMenu(date)`: limited-time MENU keys. `pumpkin` is tied to Halloween and `xmascocoa` to Christmas, which replaced the old month-number check.
-- `Festivals.season(date, hemi)` returns `{season, themeMonth, hemi, flags}`. Southern hemisphere uses the theme from 6 months away. Flags: `springPicnic` (April N / October S), `autumnToWinter` (November theme), `firstSnow` (north: from 20 Nov; south: 1–14 June, per the plan's "around June", unconfirmed → also sets `firstSnowSouthUnconfirmed`).
-- `Festivals.hemisphere({override, setting, timeZone, region})` picks in this order: URL override, then user setting (Settings → ฤดูกาลตามซีกโลก), then time zone (regex of southern zones), then region code, then N. **No location permission needed.**
-- Rule-based dates: Easter (Computus), Oktoberfest (Saturday 15 days before the 1st Sunday of Oct → that Sunday, or 3 Oct), plus fixed windows (Valentine 10–14 Feb, Songkran 11–15 Apr, Pride June, Tanabata 1–7 Jul, Halloween October, Christmas 1–26 Dec).
-- **No Mother's Day** (neither the May international date nor Thai 12 Aug): Nadda removed it from the calendar. May currently has no festival on purpose.
-- Lunar table `LUNAR` (verified Oct 2026, **2026–2030 only**): Lunar New Year, Mid-Autumn, Diwali (Lakshmi Puja, New Delhi), Loy Krathong. For years missing from the table these festivals simply don't fire. `Festivals.hasLunarData(year)` lets you warn. **Add 2031+ before 2031.**
-- Display windows (e.g. LNY −2…+7 days, Loy Krathong −3…+1) are in each `range()`. Tweak them freely.
-- `decor:[]` is empty: festival art is Phase 2. Hook point: when the art exists, map `k → [assets]` and render the overlays in `counterScene()`.
-- Debug: `?date=2027-10-29&hemi=S&dev=1` → Settings shows the engine JSON.
-
-## 6. Feature map (where things live in app.js)
-| Feature | Functions |
-|---|---|
-| 5-duck random barista (never the same twice in a row) | `LAUNCH_DUCKS`, `LIVE`, `enterCafe()` (other 7 ducks remain in `BARISTAS` but are never shown) |
-| Guests + visits + secret menu | `GUESTS`, `syncGuests()`, `visitorFor()` (deterministic ~1 in 3 days, not on the unlock day), `counterScene(...,{guest})`, `MENU.secret` + `secretOpen()` |
-| Cosmetic streak bonuses | `REWARDS`, `bestStreak()`, `lockOf()`, `currentStreak()` (display only) |
-| "คิดถึงนะ" greeting | `missGap()` (≥3 days away, once per day) in `banners()` |
-| Daily reminder | asked after the first real cup (`S.askReminder`), `reminderForm()`, `setReminder()`, `applyReminder()`, `reminderDue()`; Settings sheet to change/turn off |
-| Time-of-day lighting / closing soon / decaf | `timeOfDay()`, `applyLighting()` (classes `tod-*` on `#phone`), `closingSoon()` (22:00–05:00) + `.closesign`, `DECAFS`, `DECAF_MUG` |
-| Usual order "เหมือนเดิมไหม?" | `usualOrder()` (mode of the last 10 real cups, ≥2 repeats, only if still on the menu), `data-act="usual"` |
-| Backup / import / reset | `exportBackup()`, `importBackup()`, Settings sheet |
-| Share | `storyCard()`, `makeCard()`, `shareBlob()` → `Platform.share` |
-
-## 7. Asset list
-All raster art sits on cream paper and is drawn with `mix-blend-mode: multiply` (except the alpha cut-outs).
-
-Phase 1 (16 Grok images; raw files outside the repo; processed with `tools/process_phase1.py`):
-| # | File(s) | Size | Use |
+## 5. IAP catalog & StoreKit mapping (prices approved; confirm THB tiers in App Store Connect)
+| Product ID | Type | THB | What |
 |---|---|---|---|
-| 1–5 | `assets/img/g-frog|hedgehog|otter|sheep|redpanda.webp` | 300×300 | guest portraits (collection, banners, unlock card) |
-| 6–10 | `assets/img/scene-frog|hedgehog|otter|sheep|redpanda.webp` | 747×1000 | guest-visit counter scenes (same layout as `counter-*`, so the chalk menu overlay lines up) |
-| 11 | `assets/img/d-secret.webp` | 300×300 | secret menu cup (maple cinnamon latte) |
-| 12 | `assets/img/d-decaf.webp` | 300×300 | decaf mug / late-night hint |
-| 13 | `assets/img/sign-closing.webp` | 420×388, alpha | "ใกล้ปิดร้าน" sign (text is HTML) |
-| 14 | `assets/img/stk-bean.webp` | 155×160, alpha | bean sticker (replaces cat) |
-| 15 | `assets/icons/icon-1024.png` (+512/192/180/32, `assets/img/icon.png` 180) | 1024² full-bleed, no alpha | app icon: use 1024 for the App Store / asset catalog; iOS applies the corner mask |
-| 16 | `assets/img/launch.webp` (1080×1920), `assets/icons/launch-2732.png` (art centred on cream, safe under aspect-fill), `assets/icons/launch-1290x2796.png` | | launch screen. For a storyboard, use cream `#FFF7EA` background + the centred image |
+| `cupmori.stickers.doodle` | non-consumable | 29 | Doodle sticker pack (moon, cloud, note). **Art ready** |
+| `cupmori.fest.<festivalKey>` ×13 | non-consumable | 29 | Past-festival decor (free while live). Art: next phase |
+| `cupmori.cups.pastel` | non-consumable | 79 | Pastel cup set (art pending) |
+| `cupmori.secret.pack` | non-consumable | 99 | Secret-menu cup pack (art pending) |
+| `cupmori.decor.cozy` | non-consumable | 149 | Cosy café decor set (art pending) |
+| `cupmori.opening.set` | non-consumable | 199 | Opening Day Set, **first 30 days after launch only** (`launchDate`) |
+| `cupmori.tip.small/medium/large` | consumable | 29 / 99 / 199 | Tip jar "เลี้ยงกาแฟน้องเป็ด" (unlocks nothing) |
 
-Existing assets (unchanged): `counter-{pe,berry,moss,momo,bobby}.webp`, `b-*.webp` (13 duck portraits; only 5 used), `coffee/matcha/steam.webp` brew stages, `d-*.webp` drinks + `d-v-*` vessel variants, `stamps-row.webp`, `assets/sfx/*.mp3`, `assets/bgm/*.mp3` (CC0, see CREDITS.md).
-Fonts: Itim, Mali, Sriracha come from Google Fonts on web. **Bundle them (SIL OFL) in the iOS app** so it works offline and makes no third-party request.
+Festival keys: lunarNewYear, valentine, easter, songkran, worldBeeDay, pride, tanabata, midAutumn, oktoberfest, halloween, diwali, loyKrathong, christmas.
+StoreKit 2: `Product.products(for: ids)` → show `displayPrice` (replace `priceLabel`) → `product.purchase()` → verify the `Transaction` → `finish()` → return `{status:'purchased'}` to `Platform.purchases.buy`. Restore = `AppStore.sync()` + `Transaction.currentEntitlements` → `restore()` returns owned non-consumable ids. Items with `ready:false` show "เร็วๆ นี้" (soon) and cannot be bought.
+**Apply for the Apple Small Business Program (15%).**
 
-## 8. Privacy policy & privacy manifest notes
-- Policy text: `PRIVACY.md` (Thai + English summary) and the in-app page `privacy.html` (Settings and the footer link to it). Before publishing, fill in the **provider name, contact email and effective date**, and host the page at a public URL for App Store Connect.
-- App Privacy "nutrition label": **Data Not Collected** is accurate as long as there are no analytics/crash SDKs and no server. Notes stay on the device.
-- `docs/ios/PrivacyInfo.xcprivacy` is a draft: `NSPrivacyTracking=false`, no tracking domains, no collected data types, and the UserDefaults required-reason API with reason `CA92.1`. If you add file-timestamp, disk-space or system-boot-time APIs or any SDK, add their entries. Re-check Apple's current required-reason list when you submit.
-- Permissions: notifications only (asked when the user sets a reminder). Do **not** request location: hemisphere comes from time zone/region. Photo-library add permission is needed only if you save cards straight to Photos.
-- Age rating: cute content; Halloween is ghosts only, and the Halloween art is not in Phase 1.
+## 6. The five Phase-2 mechanics (build priority: stories > recipes > mystery > decor > mini-game)
+1. **Regulars' stories** (`Content.STORIES`, `storyOpen()`, `storyReader`): 3–5 letters per guest (Peh, frog, hedgehog, otter, sheep, red panda, bee). They unlock by **friendship = total visits + mystery orders served** (`at:0/1/3/6…`), never by consecutive days. Unread letters show as a banner on home, and the shelf is in Collection. *Thai drafts for Nadda's review.*
+2. **Recipe book** (`Content.RECIPES`, `discover()`, `recipePct()`): 28 recipes (house + secret). Secrets are tied to time of day, weather, season or festival (e.g. Rainy-Day Cocoa, Moonlight Latte, Meadow Soda for Bee Day). Undiscovered ones show as silhouettes, with a completion %.
+3. **Mystery order** (`mysteryFor()`, seed `cupmori-mystery-v1`): one warm Thai hint a day (32 general + 4 Bee Day), deterministic per date and never the same as yesterday. No timer, can't fail, rolls over. Brewing a match in an extra cup gives +12 beans, +1 friendship and a thank-you line.
+4. **Decor** (`Content.DECOR`, room view): 9 items in 3 tiers (plants/frame/lamps → floor lamp, monstera, second table → window seat, pastry counter). You need 2 items from the previous tier to unlock the next. Paid only with earned beans. Placed slots are saved (`decor.place`) and kept separate from paid cosmetics.
+5. **Brewing mini-game**: exact ice cubes 0–5 that you can see, sweetness tag, hold-to-pour milk/soda with a gold sweet spot, toppings (whip, cheese foam, dust, boba) drawn on the real cup art. Every step is no-fail, and quality only changes the extra-cup stars (`craftStars`).
+**Beans:** mood cup +5 (first save of the day) · extra cup 1/2/3★ → +2/+4/+6 (first 3 extras a day) · mystery +12 · new recipe +8. Earn-only.
 
-## 9. Open decisions (for Nadda)
-1. Hiding the 7 deferred ducks entirely (current build) vs showing them as "coming soon".
-2. Southern-hemisphere **first-snow** timing (plan says around June; engine uses 1–14 June, flagged `firstSnowSouthUnconfirmed`).
-3. May festival slot: currently empty. Waiting on Nadda: possibly **World Bee Day (20 May)** using the planned bee art. Not built yet.
-4. Halloween guest: little ghost vs mini Krasue vs both (art is Phase 2).
-5. Launch languages: Thai only vs Thai + English (all UI strings are Thai inline today; an English pass needs a string table).
-6. Sign-in provider (none today; local-only) and whether any sync is wanted later.
-7. Location permission: current answer is "not needed".
-8. Launch date and Apple Developer Program payment (99 USD/yr; confirm the current price on developer.apple.com before paying).
-9. Privacy policy: provider name, contact email, hosting URL.
-10. Reminder default time (20:00 suggested in the picker).
+## 7. Assets (new in Phase 2; all Grok-generated in the café's pencil style unless noted; see CREDITS.md)
+| File | Use |
+|---|---|
+| `assets/img/g-bee.webp`, `scene-bee.webp` (747×1000) | World Bee Day guest portrait + counter scene |
+| `assets/img/d-honeysoda.webp` | honey lemon soda glass |
+| `assets/img/d-v-gl{1..6}-{latte,americano,cocoa,hojicha,matcha,mocha}.webp` | glasses regenerated **ice-free** so the code-drawn cubes match the order |
+| `assets/img/room-bg.webp`, `decor-{succulent,paperlamp,floorlamp,monstera,table2,windowseat,pastrycase}.webp` | café room + decor (frame and fairy lights are SVG) |
+| `assets/brand/emblem.webp`, `appicon-ci-1024.webp` | CI emblem / candidate icon |
+| `assets/brand/wordmark.svg` | wordmark outlined from Mali Bold (code, `tools/make_brand.py`) |
+Still to come: festival decor sets, the pastel/secret/cosy/opening pack art (`ready:false`), and the Halloween ghost guest.
 
-## 10. Testing
-- `python3 -m http.server 8765` then `python3 tools/qc_phase1.py` walks through first run → full latte brew → reminder → story card → guest unlock → all guests/secret menu/usual order → guest visit → 22:40 closing + decaf → miss-you + in-app reminder → v1→v2 migration → backup export/import → festival overlap (south) → privacy page. It asserts on the data and fails on any console error.
-- Debug params: `?date=`, `?t=`, `?hemi=N|S`, `?dev=1`.
+## 8. Privacy & App Store checklist
+- **Privacy label**: no data collected by the developer. Weather: when the user opts in, an approximate location (rounded ~10 km) is sent **only** to the weather provider for today's forecast and is not stored. With WeatherKit, Apple's own WeatherKit disclosure applies. Re-check whether App Store Connect wants "Coarse Location – App Functionality, not linked, no tracking" for your final implementation. Purchases are handled by Apple.
+- `docs/ios/PrivacyInfo.xcprivacy`: tracking false, UserDefaults reason `CA92.1`. Add entries if you add SDKs.
+- Permissions: notifications (when a reminder is set), location *when in use* (only if weather is switched on), photo-library add (only if you save cards to Photos).
+- **Age rating**: 4+ (cute café, no violence, no gambling, no loot boxes, no user-generated content shared online).
+- **Screenshots** (6.9" and 6.5" iPhone, Thai + English): 1 home with stamp calendar + mystery card · 2 café counter with duck barista · 3 brewing (hold-to-pour gauge) · 4 cup with ice/toppings + gentle duck reply · 5 recipe book · 6 decorated café room · 7 a regular's letter · 8 monthly recap / share card.
+- In-app purchases are listed in App Store Connect with review screenshots; restore button is in Settings and the shop.
+- Fonts are bundled (OFL), so there are no third-party requests except the opt-in weather.
+
+## 9. Language (Thai default + English)
+Thai is the source and the default. English is picked automatically when the device language starts with `en`. Settings → ภาษา · Language forces ไทย/English (the app reloads), and `?lang=en` works for QC.
+`i18n.js` translates every rendered Thai string through `I18N.t()`: exact match → `{}` templates → separators (`·`, `→`, `/`, `+`, `:`) → quotes/parentheses/numbers. A MutationObserver covers the DOM (text + alt/aria/placeholder/title), and canvas `fillText`/`measureText` are wrapped. Unknown strings go to `I18N.missing` (QC lists them).
+**Edit English in `tools/i18n-en/*.txt`** (`ไทย ⇒ English`, `{}` = slot), then run `python3 tools/build_i18n_en.py`. For a native SwiftUI port, export the same table to `Localizable.strings`.
+
+## 10. CI (applied)
+Palette: Cream `#FFF8EC`, Cocoa `#49342B`, Sage `#9DAE8D`, Forest `#526744` (primary buttons, Paper text), Butter `#F5D778`, Terracotta `#BD7258` (decoration only), Blush `#E7AAA0`, Lavender `#C8BFDA`. Fonts: Mali Bold (display), Nunito (English), Noto Sans Thai (body), body text 16/1.6. Card radius 24, button radius 16, touch targets ≥ 48 px. Reduce-motion option. Wood only behind images. The share card hides the personal note by default.
+Voice: start "วันนี้ใจเป็นแก้วไหน?" · tired "วันนี้เหนื่อยแค่ไหน เล่าเท่าที่ไหวนะ" · back "ดีใจที่ได้เจอกันอีกนะ" · saved "เก็บแก้ววันนี้ไว้แล้ว" · empty "แก้วแรกของคุณ เริ่มได้เมื่อพร้อม" · note "เขียนนิดเดียวก็ได้นะ".
+
+## 11. Festivals (`festivals.js`, date-agnostic)
+Lunar New Year, Mid-Autumn, Diwali and Loy Krathong are **computed astronomically** (Meeus new/full moons). The verified `LUNAR` table (2026–2030) overrides the computed dates, so the engine works for any year (spot-checked 2031–2040; known edge: 2023 Loy Krathong is one day off because of a leap month, which is outside the launch window). **May = World Bee Day** (window 17–23 May): the bee guest visits and the honey menu appears (honey latte, honey lemon soda). `Festivals.isLive(k, date)` / `isPast(k, date)` drive the free-while-live store rule. There is no Mother's Day.
+
+## 12. Retention targets (from `/workspace/projects/_research/cupmori-retention-v1.md`)
+Floor = Adjust 2024 iOS all-category medians: **D1 27%, D7 14%, D30 8%**. Stretch: **D30 10%** (Tsuki on iOS). Add basic D1/D7/D30 cohort measurement (privacy-preserving, e.g. App Store Connect App Analytics) before judging the stories/decor loop. Review about 6 weeks after launch.
+
+## 13. Testing
+`python3 -m http.server 8765`, then:
+- `python3 tools/qc_phase2.py` covers the v2→v3 migration (+ safety copy), exact ice cubes, a mood cup without stars, extra cup stars/beans, mystery match, recipe discovery, decor buying/placing, story unlocks, simulated IAP + tip, Bee Day guest + honey soda secret, the festival engine for future years, reduce motion, share-card note hidden, and a full English crawl. It writes `.qc2/*.png`, `qc.json` and `i18n-missing.json` and fails on any console error.
+- `python3 tools/qc_phase1.py` is the Phase 1 regression.
+Debug params: `?date= ?t= ?hemi=N|S ?lang=en|th ?launch=YYYY-MM-DD ?iap=sim ?weather=sun|rain|cloud ?dev=1`.

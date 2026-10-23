@@ -1,0 +1,63 @@
+// moods (art.js MOODS) and art labels
+สดใส ⇒ Bright
+ชิลๆ ⇒ Chill
+อินเลิฟ ⇒ In love
+ตื่นเต้น ⇒ Excited
+เหนื่อยนิด ⇒ A bit tired
+ยุ่งมาก ⇒ Very busy
+สงบ ⇒ Calm
+เศร้าหน่อย ⇒ A little sad
+ครีม ⇒ Cream
+ชมพู ⇒ Pink
+ชาไทย ⇒ Thai tea
+ซอสคาราเมล ⇒ Caramel sauce
+ดอกไม้ ⇒ Flower
+ดาว ⇒ Star
+นมชมพู ⇒ Pink milk
+นุ่มละมุน ใจสงบ ชิลแบบญี่ปุ่น ⇒ Soft and gentle, a calm, Japanese-style chill
+ฟองนมนุ่ม ⇒ Soft milk foam
+ฟ้า ⇒ Sky blue
+มะนาว ⇒ Lime
+มัทฉะเพียว ⇒ Pure matcha
+ยิ้ม ⇒ Smile
+ลาเวนเดอร์ ⇒ Lavender
+สตรอว์เบอร์รี ⇒ Strawberry
+สีส้มสดใส พลังเต็มร้อย ⇒ Bright orange, full of energy
+หวานฉ่ำ ⇒ Extra sweet
+หวานน้อย ⇒ Less sweet
+หวานสดใส วันนี้ขอน่ารักหน่อย ⇒ Sweet and bright, a cute kind of day
+อบอุ่นเหมือนได้กอดตัวเอง ⇒ Warm, like a hug for yourself
+เขียวเข้ม ⇒ Deep green
+เข้มข้น ปลุกพลัง พร้อมลุยทั้งวัน ⇒ Rich and energising, ready for the day
+เม็ดสี ⇒ Sprinkles
+แก้วมัคเซรามิก ⇒ Ceramic mug
+ใบชา ⇒ Tea leaves
+ไม่หวาน ⇒ No sugar
+ไม่ใส่นม ⇒ No milk
+// index.html
+คาเฟ่เล็กๆ สำหรับทุกความรู้สึก ชงแก้ววันนี้เองกับบาริสต้าน้องเป็ด แล้วเก็บไว้เป็นแสตมป์ · A little cafe for every feeling. ⇒ A little cafe for every feeling. Brew today's cup with the duckling baristas and keep it as a stamp.
+คาเฟ่เล็กๆ สำหรับทุกความรู้สึก เข้าร้าน เจอบาริสต้าน้องเป็ด ชงแก้ววันนี้เองทีละขั้น แล้วเก็บไว้เป็นแสตมป์ในสมุดรายเดือน ⇒ A little café for every feeling. Step inside, meet the duckling baristas, brew today's cup step by step and keep it as a stamp in your monthly book.
+ปิดเสียง ⇒ Mute
+// leftovers from QC
+#Cupmori  #คัพมอริ ⇒ #Cupmori
+เดาจากฤดู ⇒ guessed from season
+ขาประจำ ⇒ the regulars
+จดหมายจากขาประจำ ⇒ Letters from regulars
+Cupmori คือคาเฟ่เล็กๆ สำหรับทุกความรู้สึก ทุกวันเข้าร้าน เจอบาริสต้าน้องเป็ด ชงแก้ววันนี้เองทีละขั้น แล้วเก็บไว้เป็นแสตมป์ ข้อมูลทั้งหมดเก็บในเครื่องนี้เท่านั้น ไม่มีบัญชี ไม่มีโฆษณา ⇒ Cupmori is a little café for every feeling. Each day, step inside, meet the duckling baristas, brew today's cup step by step and keep it as a stamp. Everything stays on this device. No accounts, no ads.
+· กลาง ⇒ · Medium
+· อ่อน ⇒ · light
+· เข้ม ⇒ · strong
+· แนะนำ {} ⇒ · suggested {0}
+นมสตีมเนียนนุ่ม หอมละมุน ⇒ silky steamed milk, soft and fragrant
+ภาพสไตล์ดินสอสีเดิมของโปรเจกต์ ⇒ the project's original coloured-pencil art
+ภาษา ⇒ ภาษา
+มาร์ชแมลโลว์ ⇒ marshmallows
+สถิติติดกันยาวสุด ⇒ Best run:
+สถิติติดกันยาวสุด {} ⇒ Best run: {0}
+ไม่มีหมดเวลา ชงเป็นแก้วพิเศษเมื่อไหร่ก็ได้ · ⇒ No time limit, brew it as an extra cup anytime ·
+ปลอกแก้ว ⇒ Sleeve
+· {} ⇒ · {0}
+สูงสุด 3 ชิ้น ⇒ up to 3
+ดูได้ที่ "สะสม" ⇒ see them in "Collection"
+แขกปลดล็อกแล้ว 1 ตัว! ✦ ⇒ 1 guest unlocked! ✦
+เดาจากฤดู ⇒ guessed from season

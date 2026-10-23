@@ -1,4 +1,4 @@
-/* MOOD CUP · sound: SFX (Kenyset) + background music & café ambience (CC0)
+/* Cupmori · sound: SFX (Kenyset) + background music & café ambience (CC0)
    WebAudio, unlocked on first tap; music/ambience fade in/out and pause when tab hidden */
 (() => {
 const FILES = ['tap','blip','bubble','chime','next','plop','ice','pour','stamp','oops','grind','froth','clink','quack'];

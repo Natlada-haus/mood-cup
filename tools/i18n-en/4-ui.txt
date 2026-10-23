@@ -1,0 +1,663 @@
+คัพมอริ ⇒ Cupmori
+คัพมอริ · ชงความรู้สึก เก็บวันของเรา ⇒ Cupmori · A little cafe for every feeling.
+Cupmori · ชงความรู้สึก เก็บวันของเรา ⇒ Cupmori · A little cafe for every feeling.
+ชงความรู้สึก เก็บวันของเรา ⇒ A little cafe for every feeling.
+#Cupmori  #คัพมอริ ⇒ #Cupmori
+แก้วพิเศษ ⇒ Extra cup
+แก้วพิเศษ ✦ ⇒ Extra cup ✦
+แก้วพิเศษ · ⇒ Extra cup ·
+บันทึกไฟล์สำรองแล้ว เก็บไว้ในที่ปลอดภัยนะ ⇒ Backup saved. Keep it somewhere safe
+ไฟล์นี้ไม่ใช่ไฟล์สำรองของ Cupmori ⇒ This isn't a Cupmori backup file
+ไฟล์สำรองมาจากเวอร์ชันใหม่กว่า กรุณาอัปเดตแอปก่อน ⇒ This backup is from a newer version. Please update the app first
+สรุปเดือน ⇒ Monthly recap
+คิดถึงนะ ⇒ Missing you
+วันนี้ใจเป็นแก้วไหน? แวะมาชงสักแก้วเมื่อพร้อมนะ ⇒ Which cup is your heart today? Drop by and brew one whenever you're ready
+ตั้งเตือนทุกวัน {} น. แล้ว ⇒ Daily reminder set for {0}
+ตั้งเตือนทุกวัน ⇒ Daily reminder at
+น. แล้ว ⇒ is set
+ตั้งเตือน ⇒ Set reminder
+จะเตือนในแอปตอนเปิด เพราะเครื่องนี้ไม่อนุญาตแจ้งเตือน ⇒ Notifications aren't allowed on this device, so I'll remind you in the app instead
+ปิดการเตือนแล้ว ⇒ Reminder off
+เวลาเตือน ⇒ Reminder time
+ปิดการเตือน ⇒ Turn off reminder
+ไม่ต้องเตือน ⇒ No reminder
+{} มาเยี่ยมร้าน Cupmori ⇒ {0} is visiting Cupmori
+มาเยี่ยมร้าน Cupmori ⇒ visiting Cupmori
+หน้าร้าน Cupmori กับบาริสต้า{} ⇒ Cupmori's counter with barista {0}
+หน้าร้าน Cupmori กับบาริสต้า ⇒ Cupmori's counter with barista
+ใกล้ปิดร้าน ⇒ Nearly closing
+แก้ววันนี้ · ⇒ Today's cup ·
+แก้ววันนี้ ⇒ Today's cup
+บาริสต้าวันนี้: ⇒ Today's barista:
+บาริสต้าวันนี้: {} ⇒ Today's barista: {0}
+· มู้ด ⇒ · mood
+มู้ด {} ⇒ Mood: {0}
+ดูแสตมป์ ⇒ See stamp
+แก้ไข ⇒ Edit
+เข้าร้าน เจอบาริสต้าน้องเป็ด แล้วชงแก้วของวันนี้เองทีละขั้น เก็บไว้เป็นแสตมป์ประจำวัน ⇒ Step inside, meet the duckling baristas, brew today's cup step by step and keep it as today's stamp
+แก้วแรกของคุณ เริ่มได้เมื่อพร้อม ⇒ Your first cup, whenever you're ready
+เข้าร้าน ชงแก้ววันนี้ ☕ ⇒ Come in, brew today's cup ☕
+เมล็ดกาแฟ ⇒ Coffee beans
+เมล็ดกาแฟ {} เมล็ด ⇒ {0} coffee beans
+เมล็ด · ไปแต่งร้าน ⇒ beans · decorate the café
+ไปแต่งร้าน ⇒ decorate the café
+สรุปเดือนนี้ ◔ ⇒ This month ◔
+ชงแก้วพิเศษ ✦ ⇒ Brew an extra cup ✦
+ชงแก้วพิเศษ ⇒ Brew an extra cup
+ชงแก้วพิเศษ {} {} ⇒ Brew an extra {0}, {1}
+เติมข้อมูลตัวอย่าง ⇒ Add sample data
+ตั้งค่า & สำรองข้อมูล ⚙ ⇒ Settings & backup ⚙
+เกี่ยวกับ & เครดิต ⇒ About & credits
+ข้อมูลเก็บในเครื่องนี้เท่านั้น · ⇒ Data stays on this device only ·
+ข้อมูลเก็บในเครื่องนี้เท่านั้น ⇒ Data stays on this device only
+นโยบายความเป็นส่วนตัว ⇒ Privacy policy
+ล้างข้อมูล ⇒ Clear data
+ดีใจที่ได้เจอกันอีกนะ ⇒ So glad to see you again
+แสตมป์ แขก เมล็ดกาแฟ และของที่ได้มายังอยู่ครบ ไม่มีอะไรหายเลย ☕ ⇒ Your stamps, guests, beans and keepsakes are all still here. Nothing was lost ☕
+ปิด ⇒ Close
+✉ จดหมายจาก{} ⇒ ✉ A letter from {0}
+จดหมายจาก{} ⇒ A letter from {0}
+✉ จดหมายจาก ⇒ ✉ A letter from
+จดหมายจาก ⇒ A letter from
+จดหมายจากเป๊ะ ⇒ A letter from Peh
+จดหมายจากขาประจำ ⇒ Letters from regulars
+จดหมายจากหัวหน้าบาร์ ⇒ A letter from the head barista
+· และอีก {} ฉบับ ⇒ · and {0} more
+และอีก {} ฉบับ ⇒ and {0} more
+· และอีก ⇒ · and
+ฉบับ ⇒ more
+· แตะเพื่ออ่าน ⇒ · tap to read
+แตะเพื่ออ่าน ⇒ Tap to read
+แขกปลดล็อกแล้ว {} ตัว! ✦ ⇒ {0} guests unlocked! ✦
+แขกปลดล็อกแล้ว ⇒ Guests unlocked:
+ตัว! ✦ ⇒ ! ✦
+· ดูได้ที่ ⇒ · see them in
+สะสม ⇒ Collection
+ถึงเวลาแก้ววันนี้แล้ว ⇒ Time for today's cup
+แวะมาชงสักแก้วไหม? ใช้เวลาแป๊บเดียว ⇒ Brew a cup? It only takes a moment
+ไปชง ⇒ Let's brew
+ยังไม่ปลดล็อก ⇒ Not unlocked yet
+สะสมแล้ว {} แก้ว ⇒ {0} cups collected
+สะสมแล้ว {} แสตมป์ ⇒ {0} stamps collected
+สะสมแล้ว ⇒ Collected
+แสตมป์ · อีก ⇒ stamps · in
+อีก {} แสตมป์ แขกคนใหม่จะมาเยี่ยมร้าน ⇒ a new guest visits in {0} more stamps
+แสตมป์ แขกคนใหม่จะมาเยี่ยมร้าน ⇒ stamps, a new guest will visit
+แขกครบทั้ง {} ตัวแล้ว! แวะมาเยี่ยมร้านเรื่อยๆ นะ ✦ ⇒ All {0} guests have visited! Keep dropping by ✦
+แขกครบทั้ง ⇒ All
+ตัวแล้ว! แวะมาเยี่ยมร้านเรื่อยๆ นะ ✦ ⇒ guests have visited! Keep dropping by ✦
+สมุดแสตมป์ก๊าบ ⇒ Quack Stamp Book
+· สะสมแล้ว ⇒ · collected
+เดือนก่อน ⇒ Previous month
+เดือนถัดไป ⇒ Next month
+สัดส่วนเดือนนี้ ⇒ This month's mix
+{} · สะสมแล้ว {} แก้ว ⇒ {0} · {1} cups collected
+% · มัทฉะ ⇒ % · matcha
+% · อื่นๆ ⇒ % · other
+เดือนนี้ยังว่างอยู่ แก้วแรกของเดือน เริ่มได้เมื่อพร้อม ⇒ This month is still empty. The first cup of the month, whenever you're ready
+สตอฯ มัทฉะ ⇒ Straw. Matcha
+· ออเดอร์ลึกลับ ⇒ · Mystery order
+ออเดอร์ลึกลับวันนี้ ⇒ Today's mystery order
+ออเดอร์ลึกลับวันนี้ · จาก{} ⇒ Today's mystery order · from {0}
+ออเดอร์ลึกลับวันนี้ · จาก ⇒ Today's mystery order · from
+ออเดอร์ลึกลับ ⇒ Mystery order
+✓ วันนี้เสิร์ฟแล้ว ชงเล่นต่อได้เลย ⇒ ✓ Served today. Feel free to keep brewing
+มาช่วยชงวันนี้ ⇒ is helping out today
+แวะมาเยี่ยมร้าน ⇒ is visiting the café
+· บาริสต้าวันนี้ ⇒ · today's barista
+ดึกแล้ว ขอบคุณที่แวะมานะ ใกล้ปิดร้านแล้วแต่ยังชงให้ได้ ⇒ It's late, thanks for stopping by. We're nearly closed, but there's still time for a cup
+~ เมนูวันนี้ ~ ⇒ ~ Today's menu ~
+✕ ออก ⇒ ✕ Leave
+ออก ⇒ Leave
+แก้ไขแก้ววันนี้ ⇒ Edit today's cup
+แก้วพิเศษไว้ลองสูตรและชงตามออเดอร์ลึกลับ ไม่บันทึกเป็นมู้ด · ได้ดาวฝีมือและเมล็ดกาแฟ ⇒ Extra cups are for trying recipes and mystery orders. They aren't saved as a mood · earn skill stars and beans
+แก้วพิเศษไว้ลองสูตรและชงตามออเดอร์ลึกลับ ไม่บันทึกเป็นมู้ด ⇒ Extra cups are for trying recipes and mystery orders. They aren't saved as a mood
+ได้ดาวฝีมือและเมล็ดกาแฟ ⇒ earn skill stars and beans
+เหมือนเดิมไหม? ⇒ The usual?
+ดึกแล้ว ถ้าอยากเลี่ยงคาเฟอีน ลองแบบ ⇒ It's late. To skip caffeine, try
+หรือโกโก้ดูไหม? ⇒ or cocoa?
+ดีแคฟแล้ว ✓ ⇒ Decaf ✓
+เปลี่ยนเป็นดีแคฟ ⇒ Switch to decaf
+ชา & อื่นๆ ⇒ Tea & more
+ทำเองทีละขั้น {} สเต็ป: {} ⇒ Made by hand, {0} steps: {1}
+ทำเองทีละขั้น ⇒ Made by hand,
+สเต็ป: ⇒ steps:
+สั่ง {} {} ⇒ Order {0}, {1}
+สั่ง ⇒ Order
+· ฿ ⇒ · ฿
+฿{} ⇒ ฿{0}
+฿{} → ⇒ ฿{0} →
+ปรับแก้วของคุณ ⇒ Make it yours
+ร้อน หรือ เย็น ⇒ Hot or iced
+เมนูนี้เสิร์ฟแบบ ⇒ This drink is served
+เย็นเท่านั้น 🧊 ⇒ iced only 🧊
+ร้อนเท่านั้น ☕ ⇒ hot only ☕
+ขนาดแก้ว ⇒ Cup size
+ระดับความหวาน ⇒ Sweetness
+ชนิดนม ⇒ Milk
+{} +{} ⇒ {0} +{1}
+· บาร์ชง ⇒ · brew bar
+บาริสต้า ⇒ Barista
+บาริสต้า {} ⇒ Barista {0}
+ชมพู ผู้ช่วยบาร์มัทฉะ ⇒ Chompoo, matcha bar helper
+สเต็ป ⇒ Step
+สเต็ป {} ⇒ Step {0}
+สเต็ป {} · {} ⇒ Step {0} · {1}
+ย้อน ⇒ Back
+← ย้อน ⇒ ← Back
+เมนู ⇒ Menu
+← เมนู ⇒ ← Menu
+เสิร์ฟแก้วพิเศษ ✦ ⇒ Serve the extra cup ✦
+เก็บแก้ววันนี้ ✦ ⇒ Keep today's cup ✦
+ถัดไป → ⇒ Next →
+ความละเอียด ⇒ Grind size
+บดเสร็จแล้ว 18 g ✓ ⇒ Ground, 18 g ✓
+ผงกาแฟ 0–18 g ⇒ Coffee 0–18 g
+ผงกาแฟ {} g ⇒ Coffee {0} g
+เอสเปรสโซ่ใช้แบบละเอียดดีสุดนะ ⇒ Fine works best for espresso
+บดใหม่ ⇒ Grind again
+กดค้างเพื่อบด ⚙ ⇒ Hold to grind ⚙
+แรงกด ⇒ Pressure
+แรงกด {} kg ⇒ Pressure {0} kg
+พอดีเป๊ะ! ✦ ⇒ Spot on! ✦
+ใช้ได้ ✓ ⇒ Good ✓
+โซนเขียว 11–16 kg ⇒ Green zone 11–16 kg
+แทมป์อีกครั้ง ⇒ Tamp again
+กดค้างเพื่อแทมป์ แล้วปล่อย ⇒ Hold to tamp, then let go
+จำนวนช็อต ⇒ Shots
+ได้ ⇒ Got
+· เพอร์เฟกต์ ✦ ⇒ · perfect ✦
+กดค้าง แล้วปล่อยในโซนทอง ⇒ Hold, then release in the gold zone
+โซนทอง ⇒ Gold zone
+โซนทอง = พอดีแก้ว ⇒ Gold zone = perfect fill
+ช็อตเพอร์เฟกต์ ⇒ Perfect shot
+กดค้างเพื่อดึงใหม่ ⇒ Hold to pull again
+กดค้างเพื่อดึงช็อต ☕ ⇒ Hold to pull the shot ☕
+หรือแตะเพื่อดึงอัตโนมัติ ⇒ or tap to pull automatically
+นมเนียนนุ่ม ✦ ⇒ Silky milk ✦
+นมอุ่นแล้ว ✓ ⇒ Milk warmed ✓
+โซนเขียว 55–65°C ⇒ Green zone 55–65°C
+สตีมใหม่ ⇒ Steam again
+กดค้างเพื่อสตีมนม ♨ ⇒ Hold to steam ♨
+กดค้างเทนมเย็น ⇒ Hold to pour cold milk
+ก่อนราดช็อต ⇒ before the shot
+กดค้างเพื่อเทนมเย็น 🥛 ⇒ Hold to pour cold milk 🥛
+ลายลาเต้อาร์ต ⇒ Latte art pattern
+วาดสำเร็จ ✓ เทใหม่ ⇒ Done ✓ Pour again
+เทนม วาดลาย ♡ ⇒ Pour & draw ♡
+มอคค่าใส่ซอสช็อกโกแลตแล้ว ✓ ⇒ Chocolate sauce added for the mocha ✓
+ความหวาน ⇒ Sweetness
+กี่ช้อน? ⇒ How many scoops?
+{} กี่ช้อน? ⇒ {0}: how many scoops?
+1 ช้อน · อ่อน ⇒ 1 scoop · light
+2 ช้อน · กลาง ⇒ 2 scoops · medium
+3 ช้อน · เข้ม ⇒ 3 scoops · strong
+1 ช้อน ⇒ 1 scoop
+{} ช้อน ⇒ {0} scoops
+อ่อน ⇒ light
+เข้ม ⇒ strong
+ผงเนียน ไม่มีก้อน ✓ ⇒ Smooth, no lumps ✓
+ร่อนแล้ว ⇒ Sifted
+ร่อนแล้ว {} ⇒ Sifted {0}
+แตะรัวๆ ⇒ Tap tap tap
+ร่อนเสร็จแล้ว ✓ ⇒ All sifted ✓
+แตะเพื่อเคาะตะแกรง ⋯ ⇒ Tap to shake the sieve ⋯
+อุณหภูมิน้ำ: ⇒ Water temp:
+อุณหภูมิน้ำ ⇒ Water temperature
+· แนะนำ ⇒ · suggested
+แนะนำ {} ⇒ suggested {0}
+น้ำ {} ⇒ water {0}
+เทน้ำแล้ว ✓ 70 ml ⇒ Poured ✓ 70 ml
+เทน้ำร้อน 70 ml 💧 ⇒ Pour 70 ml hot water 💧
+เทน้ำ ⇒ Pour water
+ฟองนุ่มละเอียดแล้ว ✓ ⇒ Soft, fine foam ✓
+วนนิ้วเป็นวงกลม ⟳ ในถ้วยนี้ ⇒ Swirl your finger ⟳ in this bowl
+ฟอง {}% ⇒ Foam {0}%
+ฟอง {}% ✓ ⇒ Foam {0}% ✓
+ฟอง ⇒ Foam
+กดค้างให้ตีอัตโนมัติ ⇒ Hold to whisk automatically
+มีสตรอว์เบอร์รีบดรองแก้วแล้ว ✓ ⇒ Crushed strawberry in the glass ✓
+กดค้างเพื่อเทนมอุ่น 🥛 ⇒ Hold to pour warm milk 🥛
+น้ำผึ้งรองก้นแก้วแล้ว ✓ ⇒ Honey in the glass ✓
+กดค้างเพื่อเทโซดา 🫧 ⇒ Hold to pour soda 🫧
+ตักแล้ว ⇒ Added
+ตักแล้ว {} ⇒ Added {0}
+แตะทีละก้อน ⇒ one cube per tap
+น้ำแข็งครบแล้ว ✓ ⇒ Ice done ✓
+ตักน้ำแข็ง 🧊 ⇒ Add ice 🧊
+น้ำแข็ง {} ⇒ Ice: {0}
+น้ำแข็ง (ก้อน) ⇒ Ice (cubes)
+น้ำแข็งเย็นเจี๊ยบ ครบแล้ว ⇒ Ice-cold and all set
+เครื่องดื่มเย็น: เลือกทรงแก้วใสที่ชอบ ⇒ Iced drink: choose a glass you like
+เครื่องดื่มร้อน: เลือกแก้วมัคเซรามิกที่ชอบ ⇒ Hot drink: choose a ceramic mug you like
+อุสุฉะ: เสิร์ฟในถ้วยชาวันแบบญี่ปุ่น เลือกลายเคลือบได้ ⇒ Usucha: served in a Japanese chawan, pick a glaze
+เมนูนี้เสิร์ฟในแก้วใสทรงสูงแบบเดียว ⇒ This drink comes in its own tall glass
+เมนูลับเสิร์ฟในแก้วลายดาวใบพิเศษ ⇒ The secret menu comes in a special star cup
+· ดีแคฟมีมัคม่วงพระจันทร์ให้เลือกด้วย ⇒ · decaf also has the purple moon mug
+สีปลอกแก้ว ⇒ Sleeve colour
+ล็อก ⇒ Locked
+สติกเกอร์ ⇒ Stickers
+🔒 ของตกแต่งโบนัส: เคยสะสมติดกัน 7 / 14 / 30 วัน ⇒ 🔒 Bonus decorations: a 7 / 14 / 30-day best run
+นับสถิติดีที่สุด ขาดวันก็ไม่หาย ⇒ counts your best run, missing a day loses nothing
+โน้ตสั้นๆ ⇒ A short note
+ไม่ใส่ก็ได้ · เก็บในเครื่องนี้เท่านั้น ⇒ optional · stays on this device
+ไม่ใส่ก็ได้ ⇒ optional
+เก็บในเครื่องนี้เท่านั้น ⇒ stays on this device
+เขียนนิดเดียวก็ได้นะ ⇒ Just a few words is fine
+เทพอดีเป๊ะ ✦ ⇒ Perfect pour ✦
+เทเรียบร้อย ✓ ⇒ Poured ✓
+พอดีแก้ว ⇒ perfect fill
+เทใหม่ ⇒ Pour again
+ออเดอร์: ⇒ Order:
+· 🌙 ดีแคฟ ⇒ · 🌙 decaf
+กำลังดึง... ⇒ Pulling...
+กำลังดึง... {} ⇒ Pulling... {0}
+โซนทอง! ปล่อยเลย ✦ ⇒ Gold zone! Let go ✦
+เข้มเกินแล้ว ปล่อย! ⇒ Getting strong, let go!
+กำลังเท... ⇒ Pouring...
+กำลังเท... {}% ⇒ Pouring... {0}%
+เกือบล้นแล้ว ปล่อยได้เลย ⇒ Nearly full, let go now
+ช็อตยังไม่เต็มแก้ว กดค้างอีกนิดนะ ⇒ The shot isn't full yet. Hold a little longer
+ช็อตเพอร์เฟกต์! ครีม่าสวยมาก ⇒ Perfect shot! Gorgeous crema
+เข้มหน่อย แต่หอมดีนะ ⇒ A bit strong, but it smells lovely
+ใช้ได้เลย ครั้งหน้าลองปล่อยในโซนทองนะ ⇒ Nice one. Next time try letting go in the gold zone
+บดเสร็จ หอมฟุ้งเลย ⇒ All ground, smells wonderful
+กดค้างจนเต็มนะ ⇒ Hold until it's full
+กดค้างนานขึ้นอีกนิดนะ ⇒ Hold a little longer
+แทมป์เรียบเนียนเป๊ะ! ⇒ A perfectly smooth tamp!
+เบาไปนิด แต่ใช้ได้นะ ⇒ A bit light, but it works
+แน่นไปหน่อย ไม่เป็นไรเลย ⇒ A bit firm, no problem at all
+กดค้างอีกนิด นมยังเย็นอยู่เลย ⇒ Hold a bit more, the milk's still cold
+นมเนียนนุ่ม ไมโครโฟมสวย ⇒ Silky milk, beautiful microfoam
+อุ่นกำลังดื่มง่ายเลย ⇒ Warm and easy to drink
+ร้อนไปนิด แต่ยังหอมอยู่นะ ⇒ A little hot, but still lovely
+เทอีกนิดนะ ยังไม่ถึงครึ่งแก้วเลย ⇒ Pour a bit more, it's not half full yet
+เทพอดีเป๊ะเลย ✦ ⇒ A perfect pour ✦
+น้อยไปนิด แต่เข้มข้นดีนะ ⇒ A little short, but nice and rich
+เต็มแก้วเลย ใจดีจัง ⇒ Filled to the brim, how generous
+ฟองนุ่มละเอียดสวยมาก ⇒ Beautifully soft, fine foam
+เก็บแก้ววันนี้ไว้แล้ว ⇒ Today's cup is saved
+วันนี้เป็นไง: ⇒ How today went:
+วันนี้เป็นไง ⇒ How today went
+น้องเป็ดแบ่งเมล็ดกาแฟให้ {} เมล็ด ไว้แต่งร้านนะ ⇒ The ducks shared {0} beans with you for decorating
+น้องเป็ดแบ่งเมล็ดกาแฟให้ ⇒ The ducks shared
+เมล็ด ไว้แต่งร้านนะ ⇒ beans with you for decorating
+มีจดหมายใหม่ {} ฉบับ ⇒ {0} new letter(s)
+มีจดหมายใหม่ 1 ฉบับ ⇒ 1 new letter
+มีจดหมายใหม่ ⇒ New letters:
+แตะเพื่ออ่าน · เก็บไว้ที่ ⇒ Tap to read · kept in
+ด้วย ⇒ too
+แขกใหม่ปลดล็อก! ✦ ⇒ New guest unlocked! ✦
+ครบ {} แสตมป์ · จะแวะมาเยี่ยมร้านในวันต่อๆ ไป ⇒ {0} stamps · they'll drop by in the coming days
+ครบ {} แสตมป์ ⇒ {0} stamps
+ครบ ⇒ Reached
+แสตมป์ · จะแวะมาเยี่ยมร้านในวันต่อๆ ไป ⇒ stamps · they'll drop by in the coming days
+และเปิด ⇒ and unlocked
+ให้แล้ว ⇒ for you
+ชงติดกัน ⇒ Brewed
+วันแล้ว ✦ ⇒ days in a row ✦
+ชงติดกัน {} วันแล้ว ✦ ⇒ {0} days in a row ✦
+ขาดวันก็ไม่เป็นไรนะ ของที่ได้แล้วอยู่ถาวร ⇒ Missing a day is okay. What you've earned stays forever
+ให้น้องเป็ดช่วยเตือนชงแก้วทุกวันไหม? ⇒ Want the ducks to remind you each day?
+เลือกเวลาได้ จะเปลี่ยนหรือปิดภายหลังก็ได้ที่ ⇒ Pick a time. You can change or turn it off later in
+ตั้งค่า ⇒ Settings
+แชร์แก้ววันนี้ · สตอรี่ 9:16 ↗ ⇒ Share today's cup · Story 9:16 ↗
+ดูสมุดแสตมป์ ⇒ See stamp book
+✓ เสิร์ฟแล้ว · ⇒ ✓ Served ·
+✓ เสิร์ฟแล้ว ⇒ ✓ Served
+ไม่มีหมดเวลา ชงเป็นแก้วพิเศษเมื่อไหร่ก็ได้ · + ⇒ No time limit, brew it as an extra cup anytime · +
+ไม่มีหมดเวลา ชงเป็นแก้วพิเศษเมื่อไหร่ก็ได้ ⇒ No time limit, brew it as an extra cup anytime
++{} เมล็ด ⇒ +{0} beans
+ชงเล่นอีกแก้ว ⇒ Brew another for fun
+ชงให้เลย ⇒ Brew it
+ค้นพบสูตรลับ ✦ ⇒ Secret recipe found ✦
+ค้นพบสูตรใหม่ ✦ ⇒ New recipe found ✦
+เก็บไว้ในสมุดสูตรแล้ว ⇒ Saved to the recipe book
+เสิร์ฟแล้ว! ⇒ Served!
+· ไม่บันทึกเป็นมู้ด ⇒ · not saved as a mood
+ไม่บันทึกเป็นมู้ด ⇒ not saved as a mood
+ฝีมือ ⇒ Skill
+จาก 3 ดาว ⇒ of 3 stars
+ฝีมือ {} จาก 3 ดาว ⇒ Skill: {0} of 3 stars
+ได้เมล็ดกาแฟ +{} เมล็ด ⇒ +{0} coffee beans
+ได้เมล็ดกาแฟ + ⇒ Beans +
+วันนี้ครบโควตาเมล็ดจากแก้วพิเศษแล้ว ชงเล่นและค้นสูตรต่อได้เรื่อยๆ นะ ⇒ You've had today's beans from extra cups. Keep brewing and finding recipes as much as you like
+ตรงออเดอร์ลึกลับ! ✦ ⇒ Mystery order matched! ✦
+ยังไม่ตรงออเดอร์ลึกลับวันนี้ ไม่เป็นไรนะ ลองใหม่ได้เสมอ ไม่มีหมดเวลา ⇒ Not quite today's mystery order. That's okay, try again anytime, there's no time limit
+ชงอีกแก้ว ⇒ Brew another
+สมุดสูตร ⇒ Recipe book
+สูตร ⇒ Recipes
+กลับหน้าแรก ⇒ Back home
+อากาศจริง ⇒ live weather
+เดาจากฤดู ⇒ guessed from season
+สูตรที่ยังไม่ค้นพบ ⇒ Undiscovered recipe
+สูตรลับ ✦ ⇒ Secret recipe ✦
+ผสมวัตถุดิบในแก้วไหนก็ได้ แล้วสูตรจะถูกค้นพบเอง · สูตรลับต้องชงให้ถูกช่วงเวลา ⇒ Mix ingredients in any cup and recipes reveal themselves · secret recipes need the right moment
+ผสมวัตถุดิบในแก้วไหนก็ได้ แล้วสูตรจะถูกค้นพบเอง ⇒ Mix ingredients in any cup and recipes reveal themselves
+สูตรลับต้องชงให้ถูกช่วงเวลา ⇒ secret recipes need the right moment
+สูตรประจำร้าน ⇒ House recipes
+สูตรลับตามช่วงเวลา ✦ ⇒ Seasonal secret recipes ✦
+ลองชงแก้วพิเศษ ✦ ⇒ Try an extra cup ✦
+แก้วพิเศษไม่บันทึกเป็นมู้ด · แก้ววันนี้ก็ค้นพบสูตรได้เหมือนกัน ⇒ Extra cups aren't saved as a mood · today's cup can find recipes too
+แก้วพิเศษไม่บันทึกเป็นมู้ด ⇒ Extra cups aren't saved as a mood
+แก้ววันนี้ก็ค้นพบสูตรได้เหมือนกัน ⇒ today's cup can find recipes too
+คำใบ้ ⇒ Hint
+ค้นพบเมื่อ ⇒ Found on
+ค้นพบเมื่อ {} ⇒ Found on {0}
+ยังไม่ค้นพบ ลองชงตามคำใบ้ดูนะ ⇒ Not found yet. Try brewing from the hint
+มุมร้านของฉัน ⇒ My café corner
+มุมร้านยังโล่งๆ อยู่ ค่อยๆ แต่งทีละชิ้นนะ ⇒ The corner is still bare. Decorate one piece at a time
+ร้านของฉัน ⇒ My café
+ร้าน ⇒ Café
+แต่งร้านด้วยเมล็ดกาแฟที่ได้จากการชง · เมล็ดกาแฟหาได้จากการชงเท่านั้น ไม่มีขาย ⇒ Decorate with beans you earn by brewing · beans only come from brewing, never sold
+แต่งร้านด้วยเมล็ดกาแฟที่ได้จากการชง ⇒ Decorate with beans you earn by brewing
+เมล็ดกาแฟหาได้จากการชงเท่านั้น ไม่มีขาย ⇒ beans only come from brewing, never sold
+· เมล็ดกาแฟหาได้จากการชงเท่านั้น ไม่มีขาย ⇒ · beans only come from brewing, never sold
+ชั้นที่ {} ⇒ Tier {0}
+ชั้นที่ ⇒ Tier
+🔒 มีของชั้นที่ {} ครบ 2 ชิ้นก่อนนะ ⇒ 🔒 Get 2 items from tier {0} first
+· 🔒 มีของชั้นที่ ⇒ · 🔒 get 2 items from tier
+มีของชั้นที่ ⇒ Get 2 items from tier
+ครบ 2 ชิ้นก่อนนะ ⇒ first
+มีของชั้นที่ {} ครบ 2 ชิ้นก่อน ยังขาดอีก {} เมล็ด ⇒ Get 2 tier-{0} items first. {1} more beans needed
+ยังขาดอีก ⇒ Still need
+ยังขาดอีก {} เมล็ด · ชงแก้ววันนี้หรือแก้วพิเศษเพื่อสะสมนะ ⇒ {0} more beans needed · brew today's cup or an extra cup to earn more
+เมล็ด · ชงแก้ววันนี้หรือแก้วพิเศษเพื่อสะสมนะ ⇒ beans · brew today's cup or an extra cup to earn more
+เก็บเข้าคลัง ⇒ Put away
+วางในร้าน ⇒ Place in café
+วางได้ช่องละ 1 ชิ้น (ของที่ใช้ช่องเดียวกันจะสลับกัน) ⇒ One item per spot (items sharing a spot swap places)
+วางได้ช่องละ 1 ชิ้น ⇒ One item per spot
+ของที่ใช้ช่องเดียวกันจะสลับกัน ⇒ items sharing a spot swap places
+· ของที่แลกแล้วอยู่ถาวร ⇒ · what you get is yours forever
+ของที่แลกแล้วอยู่ถาวร ⇒ what you get is yours forever
+มีแล้ว ✓ ⇒ Owned ✓
+เร็วๆ นี้ ⇒ Soon
+· เร็วๆ นี้ ⇒ · soon
+· ในแอป iOS ⇒ · in the iOS app
+ของตกแต่งพิเศษ ⇒ Special decorations
+ซื้อครั้งเดียวใช้ได้ตลอด · ของตกแต่งเท่านั้น ไม่มีผลกับการเล่น · ไม่มีกล่องสุ่ม · ไม่มีโฆษณา · ชำระผ่าน Apple ⇒ Buy once, keep forever · cosmetic only, no gameplay effect · no loot boxes · no ads · paid through Apple
+ซื้อครั้งเดียวใช้ได้ตลอด ⇒ Buy once, keep forever
+ของตกแต่งเท่านั้น ไม่มีผลกับการเล่น ⇒ cosmetic only, no gameplay effect
+ไม่มีกล่องสุ่ม ⇒ no loot boxes
+ไม่มีโฆษณา ⇒ no ads
+ชำระผ่าน Apple ⇒ paid through Apple
+ชำระผ่าน Apple เท่านั้น ⇒ paid through Apple only
+ของเทศกาล · ระหว่างเทศกาลใช้ฟรี หลังจบเทศกาลซื้อเก็บได้ ⇒ Festival items · free during the festival, buy to keep afterwards
+ของเทศกาล ⇒ Festival items
+ระหว่างเทศกาลใช้ฟรี หลังจบเทศกาลซื้อเก็บได้ ⇒ free during the festival, buy to keep afterwards
+ใช้ฟรีตอนนี้ ✦ ⇒ Free now ✦
+ยังไม่ถึงเทศกาล ⇒ Not festival time yet
+กู้คืนการซื้อ ⇒ Restore purchases
+เลี้ยงกาแฟน้องเป็ด ⇒ Buy the ducks a coffee
+ถ้าชอบร้านเล็กๆ นี้ เลี้ยงกาแฟน้องเป็ดได้นะ ไม่ปลดล็อกอะไร แค่น้องเป็ดดีใจมาก ♡ · ชำระผ่าน Apple เท่านั้น ⇒ If you like this little café, you can buy the ducks a coffee. It doesn't unlock anything, it just makes them very happy ♡ · paid through Apple only
+ถ้าชอบร้านเล็กๆ นี้ เลี้ยงกาแฟน้องเป็ดได้นะ ไม่ปลดล็อกอะไร แค่น้องเป็ดดีใจมาก ♡ ⇒ If you like this little café, you can buy the ducks a coffee. It doesn't unlock anything, it just makes them very happy ♡
+เลี้ยงกาแฟได้ในแอป iOS ⇒ Tips are available in the iOS app
+ขอบคุณที่เคยเลี้ยงกาแฟ {} ครั้งนะ ก๊าบ ♡ ⇒ Thanks for the {0} coffee(s), quack ♡
+ขอบคุณที่เคยเลี้ยงกาแฟ ⇒ Thanks for the coffees:
+ครั้งนะ ก๊าบ ♡ ⇒ quack ♡
+ขอบคุณที่เลี้ยงกาแฟนะ! ⇒ Thank you for the coffee!
+น้องเป็ดดีใจจนหางกระดิก ก๊าบ ก๊าบ ♡ ⇒ The ducks are so happy their tails are wiggling. Quack quack ♡
+ร้านเล็กๆ นี้อยู่ได้เพราะมีเธอแวะมานะ ⇒ This little café keeps going because you drop by
+{} แล้ว ขอบคุณนะ ♡ ⇒ {0}, thank you ♡
+แล้ว ขอบคุณนะ ♡ ⇒ thank you ♡
+รอการยืนยันจาก Apple นะ ⇒ Waiting for Apple to confirm
+การซื้อในแอปใช้ได้ในแอป iOS นะ ⇒ In-app purchases work in the iOS app
+· ตอนที่ ⇒ · Episode
+ตอนที่ ⇒ Episode
+ตอนที่ {}/{} ⇒ Episode {0}/{1}
+ตอนที่ {} {} ⇒ Episode {0}: {1}
+ตอนที่ {} ⇒ Episode {0}
+ร่างเนื้อเรื่อง (DRAFT) ⇒ Story draft (DRAFT)
+ร่างเนื้อเรื่อง ⇒ Story draft
+· รอคุณนัดดาตรวจ ⇒ · awaiting Nadda's review
+รอคุณนัดดาตรวจ ⇒ awaiting Nadda's review
+ฉบับถัดไป ✉ ⇒ Next letter ✉
+เก็บจดหมาย ⇒ Keep the letter
+ปลดล็อกเมื่อ ⇒ Unlocks after
+ปลดล็อกเมื่อแวะมาเจอกันอีก {} ครั้ง ⇒ Unlocks after {0} more visits
+ปลดล็อกเมื่อแวะมาเจอกันอีก 1 ครั้ง ⇒ Unlocks after 1 more visit
+ปลดล็อกเมื่อเจอกันครั้งแรก ⇒ Unlocks at your first meeting
+แวะมาเจอกันอีก ⇒ more visits:
+ครั้ง ⇒ times
+{} ครั้ง ⇒ {0} times
+({} ครั้ง) ⇒ ({0} times)
+เจอกันครั้งแรก ⇒ first meeting
+มิตรภาพ ⇒ Friendship
+มิตรภาพ {} ⇒ Friendship {0}
+· นับจากวันที่แวะมาและออเดอร์ลึกลับที่ชงให้ ⇒ · counts visits and mystery orders you brewed
+นับจากวันที่แวะมาและออเดอร์ลึกลับที่ชงให้ ⇒ counts visits and mystery orders you brewed
+มาเฉพาะช่วงวันผึ้งโลก ⇒ Only visits around World Bee Day
+มาเฉพาะช่วงวันผึ้งโลก (17–23 พ.ค.) ⇒ Only visits around World Bee Day (17–23 May)
+มาช่วงวันผึ้งโลก 17–23 พ.ค. ⇒ Visits for World Bee Day, 17–23 May
+17–23 พ.ค. ⇒ 17–23 May
+มาเยี่ยมเมื่อครบ ⇒ Visits at
+มาเยี่ยมเมื่อครบ {} แสตมป์ ⇒ Visits at {0} stamps
+ขนาด ⇒ Size
+ผง ⇒ Powder
+ช้อน · น้ำ ⇒ scoops · water
+แขกวันนั้น ⇒ That day's guest
+ลบแก้ววันนี้ ⇒ Delete today's cup
+แก้ไข / ชงใหม่ ⇒ Edit / rebrew
+การ์ดแก้ววันนั้น · สตอรี่ 9:16 ↗ ⇒ That day's card · Story 9:16 ↗
+การ์ดแก้ววันนั้น ⇒ That day's card
+สตอรี่ 9:16 ↗ ⇒ Story 9:16 ↗
+สตอรี่ 9:16 ⇒ Story 9:16
+เกี่ยวกับ Cupmori ⇒ About Cupmori
+Cupmori คือคาเฟ่เล็กๆ สำหรับทุกความรู้สึก ทุกวันเข้าร้าน เจอบาริสต้าน้องเป็ด ชงแก้ววันนี้เองทีละขั้น แล้วเก็บไว้เป็นแสตมป์ ข้อมูลทั้งหมดเก็บในเครื่องนี้เท่านั้น ⇒ Cupmori is a little café for every feeling. Each day, step inside, meet the duckling baristas, brew today's cup step by step and keep it as a stamp. Everything stays on this device.
+ดาวน์โหลดฟรี · มีของตกแต่งให้ซื้อครั้งเดียวผ่าน Apple ⇒ Free to download · optional one-time cosmetic purchases through Apple
+ดาวน์โหลดฟรี ⇒ Free to download
+มีของตกแต่งให้ซื้อครั้งเดียวผ่าน Apple ⇒ optional one-time cosmetic purchases through Apple
+มีของตกแต่งให้ซื้อครั้งเดียวผ่าน Apple (ไม่มีผลกับการเล่น ไม่มีกล่องสุ่ม) ⇒ optional one-time cosmetic purchases through Apple (no gameplay effect, no loot boxes)
+ไม่มีผลกับการเล่น ไม่มีกล่องสุ่ม ⇒ no gameplay effect, no loot boxes
+น้องเป็ดบาริสต้าประจำร้าน ⇒ The duckling baristas
+น้องเป็ดบาริสต้าประจำร้าน (สุ่มมาชงให้ทุกวัน) ⇒ The duckling baristas (a different one each day)
+สุ่มมาชงให้ทุกวัน ⇒ a different one each day
+เครดิต ⇒ Credits
+ภาพประกอบใหม่ ⇒ New illustrations
+แขก ฉากแขกในร้าน ผึ้งน้อย ห้องแต่งร้าน ของแต่งร้าน แก้วไม่มีน้ำแข็ง โซดาน้ำผึ้ง ฯลฯ ⇒ guests, guest scenes, Little Bee, the café room, decor, ice-free glasses, honey soda, etc.
+: สร้างด้วย ⇒ : made with
+ในสไตล์ดินสอสีเดียวกับร้าน ⇒ in the café's coloured-pencil style
+ภาพชุดแรกของร้าน ⇒ Original café art
+หน้าร้าน บาร์ แก้ว และน้องเป็ด ⇒ counter, bar, cups and ducklings
+: ภาพสไตล์ดินสอสีเดิมของโปรเจกต์ ⇒ : the project's original coloured-pencil art
+ดู CREDITS.md ⇒ see CREDITS.md
+สติกเกอร์ หน้ามู้ด น้ำแข็ง ท็อปปิ้ง เกจ และกราฟ: SVG ที่เขียนด้วยโค้ด ⇒ Stickers, mood faces, ice, toppings, gauges and charts: hand-coded SVG
+ฟอนต์: Mali, Nunito, Noto Sans Thai ⇒ Fonts: Mali, Nunito, Noto Sans Thai
+ฟอนต์: Mali, Nunito, Noto Sans Thai (SIL Open Font License 1.1, ฝังในแอป) ⇒ Fonts: Mali, Nunito, Noto Sans Thai (SIL Open Font License 1.1, bundled)
+ฝังในแอป ⇒ bundled
+เพลงโลไฟ: Seth_Makes_Sounds · เสียงบรรยากาศร้าน: Anya_Media ⇒ Lo-fi music: Seth_Makes_Sounds · café ambience: Anya_Media
+เพลงโลไฟ ⇒ Lo-fi music
+เสียงบรรยากาศร้าน ⇒ Café ambience
+· เสียงเอฟเฟกต์: Kenyset ⇒ · sound effects: Kenyset
+เสียงเอฟเฟกต์ ⇒ Sound effects
+เตือนชงแก้วทุกวัน ⇒ Daily cup reminder
+ตอนนี้: ทุกวัน {} น. ⇒ Now: daily at {0}
+ตอนนี้: ทุกวัน ⇒ Now: daily at
+น. ⇒  
+ตอนนี้: ปิดอยู่ ⇒ Now: off
+ตอนนี้ ⇒ Now
+· เครื่องนี้ไม่อนุญาตแจ้งเตือน จะเตือนในแอปตอนเปิดแทน ⇒ · notifications aren't allowed here, so you'll get an in-app reminder instead
+ภาษา · Language ⇒ Language · ภาษา
+อัตโนมัติ ⇒ Auto
+อัตโนมัติ ({}) ⇒ Auto ({0})
+ไทย ⇒ ไทย
+ภาพเคลื่อนไหว ⇒ Motion
+ลดการเคลื่อนไหว ⇒ Reduce motion
+ลดการเคลื่อนไหว (ไม่มีคอนเฟตตี้ ไอน้ำ และการเด้ง) ⇒ Reduce motion (no confetti, steam or bouncing)
+ไม่มีคอนเฟตตี้ ไอน้ำ และการเด้ง ⇒ no confetti, steam or bouncing
+อากาศจริงสำหรับสูตรลับ ⇒ Live weather for secret recipes
+ใช้ตำแหน่งโดยประมาณเพื่อดูอากาศวันนี้ ⇒ Use your approximate location to check today's weather
+ไม่บังคับ · ถ้าไม่เปิด แอปจะเดาอากาศจากฤดูกาลแทน · ตำแหน่งถูกปัดเป็นประมาณ 10 กม. ใช้ถามอากาศวันนี้เท่านั้น ไม่เก็บและไม่ส่งให้ใคร ⇒ Optional · when off, the app guesses the weather from the season · your location is rounded to about 10 km, used only to ask for today's weather, never stored or shared
+ไม่บังคับ ⇒ Optional
+ถ้าไม่เปิด แอปจะเดาอากาศจากฤดูกาลแทน ⇒ when off, the app guesses the weather from the season
+ตำแหน่งถูกปัดเป็นประมาณ 10 กม. ใช้ถามอากาศวันนี้เท่านั้น ไม่เก็บและไม่ส่งให้ใคร ⇒ your location is rounded to about 10 km, used only to ask for today's weather, never stored or shared
+· วันนี้: ⇒ · today:
+การ์ดแชร์ ⇒ Share card
+แสดงโน้ตส่วนตัวบนการ์ดแชร์ ⇒ Show my private note on share cards
+แสดงโน้ตส่วนตัวบนการ์ดแชร์ (ปิดไว้เป็นค่าเริ่มต้น) ⇒ Show my private note on share cards (off by default)
+ปิดไว้เป็นค่าเริ่มต้น ⇒ off by default
+การซื้อในแอป ⇒ In-app purchases
+การสั่นตอบสนอง ⇒ Haptics
+สั่นเบาๆ ตอนชงและเก็บแสตมป์ ⇒ A gentle buzz while brewing and saving stamps
+ฤดูกาลตามซีกโลก ⇒ Seasons by hemisphere
+ตั้งเอง ⇒ Manual
+ซีกโลกใต้ ⇒ Southern
+ซีกโลกเหนือ ⇒ Northern
+ตอนนี้: ฤดู{} ⇒ Now: {0}
+ตอนนี้: ฤดู ⇒ Now:
+ตอนนี้: {} ⇒ Now: {0}
+· เทศกาล: ⇒ · festival:
+เทศกาล: {} ⇒ Festival: {0}
+สำรอง & กู้คืนข้อมูล ⇒ Backup & restore
+ข้อมูลอยู่ในเครื่องนี้เท่านั้น ถ้าเปลี่ยนเครื่องหรือล้างเบราว์เซอร์ ให้บันทึกไฟล์สำรองไว้ก่อน ⇒ Your data lives only on this device. Before switching devices or clearing the browser, save a backup
+บันทึกไฟล์สำรอง ⤓ ⇒ Save backup ⤓
+นำเข้าไฟล์สำรอง ⤒ ⇒ Import backup ⤒
+ความเป็นส่วนตัว ⇒ Privacy
+ไม่มีบัญชี ไม่มีโฆษณา ไม่มีการติดตาม · ⇒ No accounts, no ads, no tracking ·
+ไม่มีบัญชี ไม่มีโฆษณา ไม่มีการติดตาม ⇒ No accounts, no ads, no tracking
+อ่านนโยบายความเป็นส่วนตัว ⇒ Read the privacy policy
+Cupmori · สะสม ⇒ Cupmori · Collection
+สมุดสะสมของฉัน ⇒ My collection
+จดหมายจากขาประจำ · ปลดล็อกจากจำนวนครั้งที่เจอกัน ⇒ Letters from regulars · unlocked by how often you meet
+ปลดล็อกจากจำนวนครั้งที่เจอกัน ⇒ unlocked by how often you meet
+ปลดล็อกจากจำนวนครั้งที่เจอกัน (ไม่ต้องติดกัน) ⇒ unlocked by how often you meet (not in a row)
+ไม่ต้องติดกัน ⇒ not in a row
+น้องเป็ดที่เคยเป็นบาริสต้าให้ ⇒ Ducklings who've brewed for you
+ยังไม่เจอ ⇒ Not met yet
+เจอ ⇒ Met
+เจอ {} ครั้ง ⇒ Met {0} times
+ตอนนี้เป๊ะประจำบาร์ทุกวัน · น้องเป็ดตัวอื่นกำลังเตรียมผ้ากันเปื้อน จะเริ่มสุ่มมาเป็นบาริสต้าเร็วๆ นี้ ✿ ⇒ Peh runs the bar every day for now · the other ducklings are getting their aprons ready and will start taking turns soon ✿
+แขกรับเชิญ · สะสมแล้ว ⇒ Guests · collected
+แขกรับเชิญ ⇒ Guests
+ปลดล็อกแล้วอยู่ถาวร ⇒ unlocked forever
+✦ เมนูลับ ⇒ ✦ Secret menu
+เปิดแล้วในหมวดกาแฟ ⇒ now in the Coffee menu
+ของตกแต่งโบนัสจากสตรีค · สถิติติดกันยาวสุด ⇒ Streak bonus decorations · best run
+ของตกแต่งโบนัสจากสตรีค ⇒ Streak bonus decorations
+สถิติติดกันยาวสุด {} วัน ⇒ Best run: {0} days
+วัน ⇒ days
+{} วัน ⇒ {0} days
+1 วัน ⇒ 1 day
+ปลดล็อกแล้ว ใช้ได้ที่ขั้น ⇒ Unlocked, use it at the step
+ปลดล็อกแล้ว ใช้ได้ที่ขั้น "แต่งแก้ว" ✓ ⇒ Unlocked, use it at "Decorate" ✓
+สะสมติดกัน ⇒ Collect
+สะสมติดกัน {} วัน ⇒ {0}-day run
+วัน · อีก ⇒ days · in
+อีก {} วัน ⇒ {0} more days
+อีก {} ⇒ {0} more
+* นับจากสถิติดีที่สุด ขาดวันไม่รีเซ็ตและไม่เสียอะไร · ข้อมูลตัวอย่างไม่นับรวม ⇒ * Based on your best run. Missing a day never resets or takes anything away · sample data doesn't count
+* นับจากสถิติดีที่สุด ขาดวันไม่รีเซ็ตและไม่เสียอะไร ⇒ * Based on your best run. Missing a day never resets or takes anything away
+ข้อมูลตัวอย่างไม่นับรวม ⇒ sample data doesn't count
+ยังไม่มีแสตมป์ในเดือนนี้เลย ลองชงแก้วแรก หรือเติมข้อมูลตัวอย่างดูก่อนก็ได้ ⇒ No stamps this month yet. Brew your first cup, or try the sample data
+ช็อตรวม ⇒ Total shots
+สตรีคยาวสุด ⇒ Best run
+วันติด ⇒ days in a row
+สตรีคตอนนี้ ⇒ Current run
+เมนูโปรด ⇒ Favourite drink
+แก้วโปรด ⇒ Favourite cup
+บาริสต้าประจำเดือน: ⇒ Barista of the month:
+บาริสต้าประจำเดือน ⇒ Barista of the month
+มู้ดยอดฮิต: ⇒ Top mood:
+มู้ดยอดฮิต: {} ⇒ Top mood: {0}
+การ์ดสรุปเดือน ⇒ Monthly card
+ดาวน์โหลด PNG ⤓ ⇒ Download PNG ⤓
+แชร์ ↗ ⇒ Share ↗
+การ์ดสตอรี่ 9:16 ⇒ Story card 9:16
+การ์ดสตอรี่ 9:16 (IG ⇒ Story card 9:16 (IG
+การ์ดสตอรี่ ⇒ Story card
+การ์ดแก้ววันนี้ ⇒ Today's cup card
+การ์ดแก้ววันนี้ · สตอรี่ 9:16 ⇒ Today's cup card · Story 9:16
+· สตอรี่ 9:16 ⇒ · Story 9:16
+ขนาด 1080×1920 พร้อมลง IG / TikTok Story ⇒ 1080×1920, ready for IG / TikTok Stories
+ขนาด 1080×1920 พร้อมลง IG ⇒ 1080×1920, ready for IG
+แสดงโน้ตส่วนตัวบนการ์ด ⇒ Show my private note on the card
+การ์ดแชร์ (PNG) ⇒ Share card (PNG)
+กำลังวาดการ์ด... ⇒ Drawing your card...
+ดาวน์โหลด ⤓ ⇒ Download ⤓
+สร้างการ์ดไม่สำเร็จ ลองใหม่อีกครั้ง ⇒ Couldn't make the card. Please try again
+เครื่องนี้แชร์ไฟล์ตรงไม่ได้ เลยดาวน์โหลด PNG ให้แทนนะ ⇒ This device can't share files directly, so the PNG was downloaded instead
+เติมแสตมป์ตัวอย่าง ⇒ Add sample stamps
+ระดับเสียง ⇒ Volume
+ตั้งค่าเสียง ⇒ Sound settings
+เพลง & เสียงบรรยากาศร้าน ⇒ Music & café ambience
+เพลง ⇒ Music
+เสียงร้าน ⇒ Café sounds
+เอฟเฟกต์ ⇒ Effects
+ตั้งค่าจะจำไว้ในเครื่องนี้ ⇒ Settings are remembered on this device
+วาง {} ในร้านแล้ว ✦ ⇒ {0} placed in the café ✦
+วาง ⇒ Placed
+ในร้านแล้ว ✦ ⇒ in the café ✦
+กู้คืนแล้ว {} รายการ ⇒ Restored {0} item(s)
+กู้คืนแล้ว ⇒ Restored
+รายการ ⇒ item(s)
+ไม่พบการซื้อที่ต้องกู้คืน ⇒ No purchases to restore
+หรือยังไม่ได้อยู่ในแอป iOS ⇒ or you're not in the iOS app yet
+ไม่ได้รับสิทธิ์ตำแหน่ง ไม่เป็นไรนะ ใช้อากาศตามฤดูแทน ⇒ No location permission, that's okay. Using the season instead
+อากาศวันนี้: ⇒ Today's weather:
+อากาศวันนี้: {} ⇒ Today's weather: {0}
+นำเข้าไฟล์สำรอง? วันที่ซ้ำกันจะใช้ข้อมูลจากไฟล์ ⇒ Import this backup? Days that overlap will use the file's data
+นำเข้า ⇒ Imported
+นำเข้า {} แก้วแล้ว ⇒ Imported {0} cups
+แก้วแล้ว ⇒ cups
+ข้าม ⇒ skipped
+ข้าม {} รายการที่อ่านไม่ได้ ⇒ skipped {0} unreadable item(s)
+รายการที่อ่านไม่ได้ ⇒ unreadable item(s)
+อ่านไฟล์สำรองไม่ได้ ⇒ Couldn't read the backup file
+จัดให้เหมือนเดิมแล้ว ☕ ⇒ Same as usual, coming up ☕
+ล้างแสตมป์ แขก และการตั้งค่าทั้งหมดในเครื่องนี้? ⇒ Clear all stamps, guests and settings on this device?
+แนะนำให้บันทึกไฟล์สำรองก่อน ⇒ Saving a backup first is a good idea
+ล้างข้อมูลแล้ว ⇒ Data cleared
+ลบแก้ววันนี้? ⇒ Delete today's cup?
+ลบแก้ววันนี้แล้ว ⇒ Today's cup deleted
+ออกจากบาร์ชง? แก้วนี้จะยังไม่ถูกบันทึก ⇒ Leave the brew bar? This cup won't be saved yet
+เลือกได้ดีเลย ⇒ Great choice
+หัวใจสวยมากกก ⇒ Such a pretty heart
+ลายสวยเหมือนมือโปร ⇒ Pretty as a pro's
+ผงเนียนกริบเลย ⇒ Perfectly smooth powder
+อุณหภูมิกำลังดี หอมเลย ⇒ Just the right temperature, smells lovely
+อุ่นๆ ก็ดื่มง่ายนะ ⇒ Warm is easy to drink too
+ครั้งหน้าลอง ⇒ next time, try
+ร้อนไปนิด อาจขมหน่อย ⇒ A little too hot, may be slightly bitter
+ปลดล็อกเมื่อสะสมติดกัน ⇒ Unlocks after a run of
+ปลดล็อกเมื่อสะสมติดกัน {} วันนะ ⇒ Unlocks after a {0}-day run
+วันนะ ⇒ days
+ติดได้สูงสุด 3 ชิ้นนะ ⇒ Up to 3 stickers
+ขอบคุณที่เล่าให้ฟังนะ ⇒ Thank you for sharing
+ดาวน์โหลดการ์ดแล้ว ⇒ Card downloaded
+กำลังสร้างการ์ด... ⇒ Making your card...
+กำลังดึงช็อตที่ ⇒ Pulling shot
+กำลังดึงช็อตที่ {} ⇒ Pulling shot {0}
+เข้มสะใจ! ⇒ Nice and strong!
+ช็อตสวยงาม ⇒ Beautiful shot
+เปิดเสียงเอฟเฟกต์ ⇒ Turn sound effects on
+ปิดเสียงเอฟเฟกต์ ⇒ Turn sound effects off
+ปิดเพลงและเสียงบรรยากาศร้าน ⇒ Turn music and ambience off
+เปิดเพลงและเสียงบรรยากาศร้าน ⇒ Turn music and ambience on
+ชงวันนี้ ⇒ Brew
+ชงวันนี้ {} ⇒ Brew today {0}
+ชงอีกแก้ว ⇒ Brew another
+บาริสต้าประจำเดือน: {} ⇒ Barista of the month: {0}
+เบอร์รี่ (หมวกเบเร่ต์) ⇒ Berry (beret)
+ภาพประกอบใหม่ (แขก ฉากแขกในร้าน ผึ้งน้อย ห้องแต่งร้าน ของแต่งร้าน แก้วไม่มีน้ำแข็ง โซดาน้ำผึ้ง ฯลฯ): สร้างด้วย ⇒ New illustrations (guests, guest scenes, Little Bee, the café room, decor, ice-free glasses, honey soda, etc.): made with
+{} ✎ ⇒ {0} ✎
+{} ✓ ⇒ {0} ✓
+{} ✦ ⇒ {0} ✦
+{} ↗ ⇒ {0} ↗
+✦ {} ⇒ ✦ {0}
+🔒 {} ⇒ 🔒 {0}
+✉ {} ⇒ ✉ {0}
+— {} ⇒ — {0}
+☂ {} ⇒ ☂ {0}
+☀ {} ⇒ ☀ {0}
+☁ {} ⇒ ☁ {0}
+❄ {} ⇒ ❄ {0}
+{} ก๊าบ! ⇒ {0} quack!
+{} ซิลวูเปล้~ ⇒ {0} s'il vous plaît~
+{} ค่อยๆ นะ ⇒ {0} take it slow
+{} ครับผม! ⇒ {0} yes sir!
+{} หอมๆ~ ⇒ {0} smells good~
+{} ...อุ่นจัง ⇒ {0} ...so warm
+{} เย้! ⇒ {0} yay!
+แสตมป์ ⇒ Stamps
+สมุด ⇒ Book
+แขก ⇒ Guests

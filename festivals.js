@@ -1,4 +1,4 @@
-/* MOOD CUP · festival & season date engine (no art; decor registry is empty in Phase 1)
+/* Cupmori · festival & season date engine (no art; decor registry is empty in Phase 1)
    - Real calendar dates each year (lunar festivals from a verified table, rule-based ones computed)
    - Overlaps: active() returns EVERY festival active on a date -> the app shows all decor sets
    - Seasons are hemisphere-aware; the southern hemisphere uses the theme from 6 months away
@@ -16,7 +16,43 @@ const LUNAR = {
   diwali:      { 2026:[11,8], 2027:[10,29],2028:[10,17],2029:[11,5], 2030:[10,26] }, // Lakshmi Puja (New Delhi)
   loyKrathong: { 2026:[11,24],2027:[11,13],2028:[11,1], 2029:[11,20],2030:[11,9] },  // full moon, 12th Thai lunar month
 };
-const lunar = (k, y) => { const v = LUNAR[k][y]; return v ? D(y, v[0], v[1]) : null; };
+/* Any year: astronomical new/full moons (Meeus ch. 49, main periodic terms; accurate to a few minutes), then each
+   festival's rule. The verified LUNAR table above wins when it has the year; everything else is computed, so the
+   engine works for ANY launch date / any year. Computed dates can differ by a day in rare years (leap months,
+   local almanac choices); extend the table yearly for exactness. */
+const RAD = Math.PI / 180;
+function moonPhaseJDE(k){ // k integer = new moon, k+0.5 = full moon (k counted from 2000-01-06)
+  const T = k / 1236.85, E = 1 - 0.002516 * T - 0.0000074 * T * T;
+  const M = (2.5534 + 29.10535670 * k - 0.0000014 * T * T) * RAD, Mp = (201.5643 + 385.81693528 * k + 0.0107582 * T * T) * RAD;
+  const F = (160.7108 + 390.67050284 * k - 0.0016118 * T * T) * RAD, Om = (124.7746 - 1.56375588 * k + 0.0020672 * T * T) * RAD;
+  let jde = 2451550.09766 + 29.530588861 * k + 0.00015437 * T * T;
+  const full = Math.abs(k % 1) > 0.25;
+  jde += full
+    ? -0.40614 * Math.sin(Mp) + 0.17302 * E * Math.sin(M) + 0.01614 * Math.sin(2 * Mp) + 0.01043 * Math.sin(2 * F) + 0.00734 * E * Math.sin(Mp - M) - 0.00515 * E * Math.sin(Mp + M) + 0.00209 * E * E * Math.sin(2 * M) - 0.00111 * Math.sin(Mp - 2 * F) - 0.00057 * Math.sin(Mp + 2 * F) + 0.00056 * E * Math.sin(2 * Mp + M) - 0.00042 * Math.sin(3 * Mp) + 0.00042 * E * Math.sin(M + 2 * F) + 0.00038 * E * Math.sin(M - 2 * F) - 0.00024 * E * Math.sin(2 * Mp - M) - 0.00017 * Math.sin(Om)
+    : -0.40720 * Math.sin(Mp) + 0.17241 * E * Math.sin(M) + 0.01608 * Math.sin(2 * Mp) + 0.01039 * Math.sin(2 * F) + 0.00739 * E * Math.sin(Mp - M) - 0.00514 * E * Math.sin(Mp + M) + 0.00208 * E * E * Math.sin(2 * M) - 0.00111 * Math.sin(Mp - 2 * F) - 0.00057 * Math.sin(Mp + 2 * F) + 0.00056 * E * Math.sin(2 * Mp + M) - 0.00042 * Math.sin(3 * Mp) + 0.00042 * E * Math.sin(M + 2 * F) + 0.00038 * E * Math.sin(M - 2 * F) - 0.00024 * E * Math.sin(2 * Mp - M) - 0.00017 * Math.sin(Om);
+  return jde;
+}
+const jdeToUTC = jde => new Date((jde - 2440587.5) * 864e5 - 69e3);           // TT -> UTC (deltaT ~69 s)
+const localDay = (utc, tzHours) => { const t = new Date(utc.getTime() + tzHours * 36e5); return { d:D(t.getUTCFullYear(), t.getUTCMonth() + 1, t.getUTCDate()), h:t.getUTCHours() + t.getUTCMinutes() / 60 }; };
+/* all new (phase 0) or full (phase .5) moons in [from, to) as UTC instants */
+function moons(from, to, phase){
+  const out = []; let k = Math.floor((from.getFullYear() + from.getMonth() / 12 - 2000) * 12.3685) - 1 + phase;
+  for (;; k++){ const t = jdeToUTC(moonPhaseJDE(k)); if (t >= to) break; if (t >= from) out.push(t); }
+  return out;
+}
+const lastBefore = (list, d, tz) => list.map(t => localDay(t, tz).d).filter(x => x <= d).pop();
+const COMPUTE = {
+  /* month 1 contains the 'Rain Water' solar term (~19 Feb): CNY = last new moon (China time) on or before 19 Feb */
+  lunarNewYear: y => lastBefore(moons(D(y, 1, 1), D(y, 3, 1), 0), D(y, 2, 19), 8),
+  /* month 8 contains the autumn equinox (~23 Sep): Mid-Autumn = its new moon + 14 days (China time) */
+  midAutumn: y => addDays(lastBefore(moons(D(y, 8, 1), D(y, 10, 1), 0), D(y, 9, 23), 8), 14),
+  /* Lakshmi Puja: the Kartika new moon (India time) between 17 Oct and 15 Nov; before ~15:00 IST it is observed the day before */
+  diwali: y => { const t = moons(D(y, 10, 10), D(y, 11, 20), 0).find(t => { const l = localDay(t, 5.5).d; return l >= D(y, 10, 17) && l <= D(y, 11, 16); }); if (!t) return null; const l = localDay(t, 5.5); return l.h < 15 ? addDays(l.d, -1) : l.d; },
+  /* 15th waxing day of the 12th Thai lunar month: the full moon (Thai time; the day before when it falls before ~18:00)
+     between 30 Oct and 28 Nov. Thai leap-month years can shift this by a month: keep the table updated. */
+  loyKrathong: y => moons(D(y, 10, 20), D(y, 12, 5), 0.5).map(t => { const l = localDay(t, 7); return l.h < 18 ? addDays(l.d, -1) : l.d; }).find(d => d >= D(y, 10, 30) && d <= D(y, 11, 28)) || null,
+};
+const lunar = (k, y) => { const v = LUNAR[k][y]; if (v) return D(y, v[0], v[1]); try { return COMPUTE[k](y) || null; } catch (e) { return null; } };
 
 /* Easter (Gregorian, anonymous algorithm / Computus) */
 function easter(y){
@@ -39,7 +75,8 @@ const FESTIVALS = [
   { k:'valentine', th:'วาเลนไทน์', en:"Valentine's Day", range:y => [D(y, 2, 10), D(y, 2, 14)] },
   { k:'easter', th:'อีสเตอร์', en:'Easter', range:y => { const d = easter(y); return [addDays(d, -7), addDays(d, 1)]; } },
   { k:'songkran', th:'สงกรานต์', en:'Songkran', range:y => [D(y, 4, 11), D(y, 4, 15)] },
-  /* May: intentionally empty (Mother's Day removed by Nadda, Oct 2026). Possible World Bee Day (20 May) is an open decision — see HANDOFF §9. */
+  /* May: World Bee Day (20 May, approved by Nadda, Oct 2026). Mother's Day stays removed. The bee guest visits all week. */
+  { k:'worldBeeDay', th:'วันผึ้งโลก', en:'World Bee Day', menu:['honeylatte','honeysoda'], guest:'bee', range:y => [D(y, 5, 17), D(y, 5, 23)] },
   { k:'pride', th:'Pride', en:'Pride Month', range:y => [D(y, 6, 1), D(y, 6, 30)] },
   { k:'tanabata', th:'ทานาบาตะ', en:'Tanabata', range:y => [D(y, 7, 1), D(y, 7, 7)] },
   { k:'midAutumn', th:'ไหว้พระจันทร์', en:'Mid-Autumn', range:y => { const d = lunar('midAutumn', y); return d && [addDays(d, -5), addDays(d, 1)]; } },
@@ -80,16 +117,19 @@ function rangesFor(f, y){ return [y - 1, y].map(yy => f.range(yy)).filter(Boolea
 function active(date){
   const t = dayOnly(date), y = t.getFullYear();
   return FESTIVALS.filter(f => (!f.when || f.when()) && rangesFor(f, y).some(([a, b]) => t >= dayOnly(a) && t <= dayOnly(b)))
-    .map(f => { const [a, b] = rangesFor(f, y).find(([a, b]) => t >= dayOnly(a) && t <= dayOnly(b)); return { k:f.k, th:f.th, en:f.en, start:a, end:b, menu:f.menu || [], decor:[] }; });
+    .map(f => { const [a, b] = rangesFor(f, y).find(([a, b]) => t >= dayOnly(a) && t <= dayOnly(b)); return { k:f.k, th:f.th, en:f.en, start:a, end:b, menu:f.menu || [], guest:f.guest || null, decor:[] }; });
 }
 function upcoming(date, days=60){
   const t = dayOnly(date), out = [];
-  FESTIVALS.forEach(f => { if (f.when && !f.when()) return; [t.getFullYear(), t.getFullYear() + 1].forEach(y => { const r = f.range(y); if (r && dayOnly(r[0]) > t && (r[0] - t) / 864e5 <= days) out.push({ k:f.k, th:f.th, start:r[0], end:r[1] }); }); });
+  FESTIVALS.forEach(f => { if (f.when && !f.when()) return; [t.getFullYear(), t.getFullYear() + 1].forEach(y => { const r = f.range(y); if (r && dayOnly(r[0]) > t && (r[0] - t) / 864e5 <= days) out.push({ k:f.k, th:f.th, en:f.en, start:r[0], end:r[1] }); }); });
   return out.sort((a, b) => a.start - b.start);
 }
 /* menu keys available today because a festival is active */
 const festivalMenu = date => [...new Set(active(date).flatMap(f => f.menu))];
-const hasLunarData = y => Object.values(LUNAR).every(t => t[y]);
+const hasLunarData = y => Object.values(LUNAR).every(t => t[y]);   // true = verified table; false = computed (still works)
+/* has festival k already ended this year (for 'past festival' IAP: free while live, buyable after) */
+function isPast(k, date){ const f = FESTIVALS.find(x => x.k === k); if (!f) return false; const r = f.range(date.getFullYear()); return !!r && dayOnly(r[1]) < dayOnly(date); }
+const isLive = (k, date) => active(date).some(f => f.k === k);
 
-window.Festivals = { FESTIVALS, LUNAR, easter, oktoberfest, hemisphere, season, active, upcoming, festivalMenu, hasLunarData };
+window.Festivals = { FESTIVALS, LUNAR, COMPUTE, lunar, isPast, isLive, easter, oktoberfest, hemisphere, season, active, upcoming, festivalMenu, hasLunarData };
 })();

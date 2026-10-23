@@ -11,3 +11,4 @@ raw/
 *.csv
 cobrand-*.md
 *-research-*.md
+.qc2/
