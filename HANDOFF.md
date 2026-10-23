@@ -31,7 +31,7 @@ Time: always use `NOW()` (= `Platform.env.now()`), never `new Date()`. On web it
 
 ## 2. Product rules baked into the code (please keep)
 - Business model: the app has nothing to sell. Physical merch runs separately alongside the app (no shop/links in the app). Real-café co-brands (incl. the Catherine Farm idea) are **on hold**, and nothing co-brand is in the build.
-- No loot boxes, no paid features / IAP, no ads, no health or energy claims (decaf copy is only "ถ้าอยากเลี่ยงคาเฟอีน…").
+- No loot boxes, no ads, no paid gameplay advantages (approved model: free download, one-time cosmetic IAP, past-festival unlocks, tip jar via IAP only, no external payment links; Club subscription later), no health or energy claims (decaf copy is only "ถ้าอยากเลี่ยงคาเฟอีน…").
 - Local-first: no account, no server, no analytics. Data leaves the device only through user-initiated share/backup.
 - No cats anywhere (art, stickers, text). The old `cat` sticker is migrated to `bean`.
 - Guests unlock by **cumulative** stamps 3/7/14/30/60 and **never re-lock**. Streaks give cosmetics only and use the **best** streak, so missing a day never takes anything away.
