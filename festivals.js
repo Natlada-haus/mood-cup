@@ -32,9 +32,6 @@ function oktoberfest(y){
   return [addDays(sun, -15), sun.getDate() < 3 ? D(y, 10, 3) : sun];
 }
 
-/* Mother's Day mode is an OPEN DECISION for Nadda: 'intl' (2nd Sunday of May), 'th' (12 Aug), 'both' */
-const CONFIG = { mothersDay:'intl' };
-
 /* Each festival: k, th (Thai name), en, range(y) -> [start, end] (inclusive, local dates) or null.
    menu: limited-time MENU keys tied to this festival (existing art only). decor: [] (Phase 2 art). */
 const FESTIVALS = [
@@ -42,8 +39,7 @@ const FESTIVALS = [
   { k:'valentine', th:'วาเลนไทน์', en:"Valentine's Day", range:y => [D(y, 2, 10), D(y, 2, 14)] },
   { k:'easter', th:'อีสเตอร์', en:'Easter', range:y => { const d = easter(y); return [addDays(d, -7), addDays(d, 1)]; } },
   { k:'songkran', th:'สงกรานต์', en:'Songkran', range:y => [D(y, 4, 11), D(y, 4, 15)] },
-  { k:'mothersDayIntl', th:'วันแม่ (สากล)', en:"Mother's Day", when:() => CONFIG.mothersDay !== 'th', range:y => { const d = nthWeekday(y, 5, 0, 2); return [addDays(d, -5), d]; } },
-  { k:'mothersDayTH', th:'วันแม่ (ไทย)', en:"Mother's Day (TH)", when:() => CONFIG.mothersDay !== 'intl', range:y => [D(y, 8, 7), D(y, 8, 12)] },
+  /* May: intentionally empty (Mother's Day removed by Nadda, Oct 2026). Possible World Bee Day (20 May) is an open decision — see HANDOFF §9. */
   { k:'pride', th:'Pride', en:'Pride Month', range:y => [D(y, 6, 1), D(y, 6, 30)] },
   { k:'tanabata', th:'ทานาบาตะ', en:'Tanabata', range:y => [D(y, 7, 1), D(y, 7, 7)] },
   { k:'midAutumn', th:'ไหว้พระจันทร์', en:'Mid-Autumn', range:y => { const d = lunar('midAutumn', y); return d && [addDays(d, -5), addDays(d, 1)]; } },
@@ -95,5 +91,5 @@ function upcoming(date, days=60){
 const festivalMenu = date => [...new Set(active(date).flatMap(f => f.menu))];
 const hasLunarData = y => Object.values(LUNAR).every(t => t[y]);
 
-window.Festivals = { FESTIVALS, LUNAR, CONFIG, easter, oktoberfest, hemisphere, season, active, upcoming, festivalMenu, hasLunarData };
+window.Festivals = { FESTIVALS, LUNAR, easter, oktoberfest, hemisphere, season, active, upcoming, festivalMenu, hasLunarData };
 })();
