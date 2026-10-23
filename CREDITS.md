@@ -1,8 +1,10 @@
 # Credits · ก๊าบก๊าบคาเฟ่ MOOD CUP
 
 ## Artwork
-- Café counter, coffee bar, matcha bar, drink stamps, cups, barista เป๊ะ: drawn with agy (Google Antigravity CLI) for this project.
-- `d-icelatte`, `d-hotmatcha`, `d-glassmatcha`, `d-pumpkin` (Halloween), `d-xmascocoa` (Christmas): colour variants of the agy drink drawings above (recoloured in code, same pencil line-art).
+- **Phase 1 artwork (Oct 2026) — made with Grok image generation**, matched to the café's pencil style using the existing art as reference, then resized/cut out with `tools/process_phase1.py`:
+  guests `g-frog`, `g-hedgehog`, `g-otter`, `g-sheep`, `g-redpanda` · guest counter scenes `scene-*` · secret-menu cup `d-secret` · decaf cup `d-decaf` · closing-soon sign `sign-closing` · coffee-bean sticker `stk-bean` (replaces the old cat sticker) · app icon `assets/icons/icon-*.png` / `assets/img/icon.png` · launch screen `assets/img/launch.webp`, `assets/icons/launch-*.png`.
+- **agy is no longer used** for this project. Earlier artwork (café counters, coffee/matcha bars, drink stamps and cup variants, duck baristas) was created before Phase 1 and is kept as-is; `d-icelatte`, `d-hotmatcha`, `d-glassmatcha`, `d-pumpkin`, `d-xmascocoa` and the `d-v-*` vessel images are code recolours/variants of those drink drawings.
+- Stickers (except the bean), mood faces, hand-drawn lines and charts: SVG written in code.
 
 ## Background audio (CC0 1.0, public domain; commercial use OK, no attribution required)
 | File | Source | Author | License |
