@@ -30,6 +30,7 @@ Flow: `home` (calendar, banners, guest progress) → `cafe` (random duck or gues
 Time: always use `NOW()` (= `Platform.env.now()`), never `new Date()`. On web it accepts the debug URL overrides `?date=YYYY-MM-DD` and `?t=HH:MM`. A native port should pass the real clock.
 
 ## 2. Product rules baked into the code (please keep)
+- Business model: the app has nothing to sell. Physical merch runs separately alongside the app (no shop/links in the app). Real-café co-brands (incl. the Catherine Farm idea) are **on hold**, and nothing co-brand is in the build.
 - No loot boxes, no paid features / IAP, no ads, no health or energy claims (decaf copy is only "ถ้าอยากเลี่ยงคาเฟอีน…").
 - Local-first: no account, no server, no analytics. Data leaves the device only through user-initiated share/backup.
 - No cats anywhere (art, stickers, text). The old `cat` sticker is migrated to `bean`.
@@ -91,7 +92,7 @@ Only `app.js` and `sfx.js` call these, and always via `window.Platform`. Search 
 Pure functions with no DOM or storage. Easy to port to Swift, or run as-is in a JSContext.
 - `Festivals.active(date)` returns **all** festivals active on that day as `[{k, th, en, start, end, menu:[], decor:[]}]`. Overlaps are intentional: the UI should show **every** active decor set. Example: 29 Oct 2027 = Halloween + Diwali.
 - `Festivals.upcoming(date, days)`, `Festivals.festivalMenu(date)`: limited-time MENU keys. `pumpkin` is tied to Halloween and `xmascocoa` to Christmas, which replaced the old month-number check.
-- `Festivals.season(date, hemi)` returns `{season, themeMonth, hemi, flags}`. Southern hemisphere uses the theme from 6 months away. Flags: `springPicnic` (April N / October S), `autumnToWinter` (November theme), `firstSnow` (≥ 20th of the November theme month), `firstSnowSouthUnconfirmed`.
+- `Festivals.season(date, hemi)` returns `{season, themeMonth, hemi, flags}`. Southern hemisphere uses the theme from 6 months away. Flags: `springPicnic` (April N / October S), `autumnToWinter` (November theme), `firstSnow` (north: from 20 Nov; south: 1–14 June, per the plan's "around June", unconfirmed → also sets `firstSnowSouthUnconfirmed`).
 - `Festivals.hemisphere({override, setting, timeZone, region})` picks in this order: URL override, then user setting (Settings → ฤดูกาลตามซีกโลก), then time zone (regex of southern zones), then region code, then N. **No location permission needed.**
 - Rule-based dates: Easter (Computus), Oktoberfest (Saturday 15 days before the 1st Sunday of Oct → that Sunday, or 3 Oct), Mother's Day (2nd Sunday of May; Thai 12 Aug behind `CONFIG.mothersDay`), plus fixed windows (Valentine 10–14 Feb, Songkran 11–15 Apr, Pride June, Tanabata 1–7 Jul, Halloween October, Christmas 1–26 Dec).
 - Lunar table `LUNAR` (verified Oct 2026, **2026–2030 only**): Lunar New Year, Mid-Autumn, Diwali (Lakshmi Puja, New Delhi), Loy Krathong. For years missing from the table these festivals simply don't fire. `Festivals.hasLunarData(year)` lets you warn. **Add 2031+ before 2031.**
@@ -139,7 +140,7 @@ Fonts: Itim, Mali, Sriracha come from Google Fonts on web. **Bundle them (SIL OF
 
 ## 9. Open decisions (for Nadda)
 1. Hiding the 7 deferred ducks entirely (current build) vs showing them as "coming soon".
-2. Southern-hemisphere **first-snow** timing (engine currently mirrors November → late May; flagged `firstSnowSouthUnconfirmed`).
+2. Southern-hemisphere **first-snow** timing (plan says around June; engine uses 1–14 June, flagged `firstSnowSouthUnconfirmed`).
 3. Mother's Day: international (2nd Sunday of May, current default), Thai (12 Aug), or both (`Festivals.CONFIG.mothersDay = 'intl'|'th'|'both'`).
 4. Halloween guest: little ghost vs mini Krasue vs both (art is Phase 2).
 5. Launch languages: Thai only vs Thai + English (all UI strings are Thai inline today; an English pass needs a string table).

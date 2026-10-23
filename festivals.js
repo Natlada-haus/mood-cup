@@ -73,8 +73,9 @@ function season(date, hemi='N'){
   const m = date.getMonth(), mm = hemi === 'S' ? (m + 6) % 12 : m, d = date.getDate();
   const s = { season:NORTH_SEASON[mm], themeMonth:mm, hemi, flags:[] };
   if (mm === 3) s.flags.push('springPicnic');                    // April (N) / October (S): picnic + frog cousin (Phase 2 art)
-  if (mm === 10){ s.flags.push('autumnToWinter'); if (d >= 20) s.flags.push('firstSnow'); } // November: leaves -> first snow late month
-  if (hemi === 'S' && s.flags.includes('firstSnow')) s.flags.push('firstSnowSouthUnconfirmed'); // OPEN DECISION (see HANDOFF)
+  if (mm === 10){ s.flags.push('autumnToWinter'); if (hemi === 'N' && d >= 20) s.flags.push('firstSnow'); } // November theme: leaves -> first snow late month (north)
+  /* South: the plan moves the first-snow gimmick to early southern winter (around June) — NOT CONFIRMED by Nadda (see HANDOFF) */
+  if (hemi === 'S' && m === 5 && d <= 14) s.flags.push('firstSnow', 'firstSnowSouthUnconfirmed');
   return s;
 }
 
